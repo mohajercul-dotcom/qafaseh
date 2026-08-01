@@ -68,7 +68,10 @@ const setHeaderOffset = () => {
     const header = document.querySelector("header");
     const main = document.querySelector("main");
     if (header && main) {
+        const isMobile = window.innerWidth <= 900;
+        const bottomNavHeight = isMobile ? 70 : 0;
         main.style.paddingTop = (header.offsetHeight + 20) + "px";
+        main.style.paddingBottom = bottomNavHeight + "px";
     }
 };
 if (document.readyState === "loading") {
@@ -103,7 +106,7 @@ padding:30px 0;
 main{
 height:auto;
 padding-top:30px;
-padding-bottom:30px;
+padding-bottom:80px;
 }
 }
 
