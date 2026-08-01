@@ -70,10 +70,20 @@ title="تماس با ما"
 <style lang="scss">
 
 header{
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:50;
 height:80px;
 background:var(--card);
 border-bottom:1px solid var(--border);
-transition:background .6s ease, border-color .6s ease;
+box-shadow:0 1px 3px rgba(0,0,0,.04);
+transition:background .6s ease, border-color .6s ease, box-shadow .6s ease;
+
+@media(max-width:900px){
+box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
 
 .nav{
 height:100%;
@@ -172,17 +182,16 @@ gap:12px;
 
 @media(max-width:900px){
 height:auto;
-padding:20px 0;
+padding:12px 0 10px;
 
 .nav{
 grid-template-columns:1fr;
-gap:20px;
+gap:14px;
 }
 
-.right-menu,
-.left-menu{
+.right-menu{
 justify-content:center;
-flex-wrap:wrap;
+gap:8px;
 }
 }
 }

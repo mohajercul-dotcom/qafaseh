@@ -1,5 +1,31 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import BookCover from "../components/BookCover.astro";
+import { getCollection } from "astro:content";
+import { statSync } from "node:fs";
+import { slugify, normalizeAuthor } from "../lib/books.js";
+import { toPersian } from "../lib/number.ts";
+
+const shiiteBooks = await getCollection("shiite");
+const atheismBooks = await getCollection("atheism");
+const allBooks = [
+    ...shiiteBooks.map((b) => ({ ...b, category: "shiite" })),
+    ...atheismBooks.map((b) => ({ ...b, category: "atheism" })),
+];
+
+const totalBooks = allBooks.length;
+const authorNames = new Set(allBooks.map((b) => normalizeAuthor(b.data.author)));
+const totalAuthors = authorNames.size;
+const shiiteCount = shiiteBooks.length;
+const atheismCount = atheismBooks.length;
+
+const newest = [...allBooks].sort((a, b) => {
+    const ta = a.data.pubDate || (a.filePath ? statSync(a.filePath).mtime : 0);
+    const tb = b.data.pubDate || (b.filePath ? statSync(b.filePath).mtime : 0);
+    return new Date(tb) - new Date(ta);
+}).slice(0, 5);
+const mostRead = [...allBooks].sort((a, b) => (b.data.reads || 0) - (a.data.reads || 0)).slice(0, 5);
+const today = allBooks.find((b) => b.data.featured) || newest[0];
 ---
 
 <MainLayout>
@@ -24,35 +50,45 @@ import MainLayout from "../layouts/MainLayout.astro";
 
 <section class="widgets">
 
-    <div class="card">
+    {
+        today && (
+            <div class="card today-card">
 
-        <h3>کتاب امروز</h3>
+                <h3>کتاب امروز</h3>
 
-        <h2>
-            انسان در جستجوی معنا
-        </h2>
+                <a class="today-link" href={`/books/${slugify(today.data.title)}`}>
+                    <div class="today-info">
+                        <h2>{today.data.title}</h2>
+                        <p class="today-author">{today.data.author}</p>
+                        {(today.data.caption || today.data.description) && (
+                            <p class="today-desc">{today.data.caption || today.data.description}</p>
+                        )}
+                    </div>
+                    <BookCover
+                        title={today.data.title}
+                        author={today.data.author}
+                        category={today.category}
+                        cover={today.data.cover}
+                    />
+                </a>
 
-        <p>
-            ویکتور فرانکل
-        </p>
-
-    </div>
+            </div>
+        )
+    }
 
     <div class="card">
 
         <h3>تازه‌های سایت</h3>
 
-        <p>
-            نقد الحاد مدرن
-        </p>
-
-        <p>
-            تاریخ تشیع
-        </p>
-
-        <p>
-            فلسفه دین
-        </p>
+        <div class="card-list">
+            {
+                newest.map((b) => (
+                    <a class="card-link" href={`/books/${slugify(b.data.title)}`}>
+                        {b.data.title}
+                    </a>
+                ))
+            }
+        </div>
 
     </div>
 
@@ -60,17 +96,16 @@ import MainLayout from "../layouts/MainLayout.astro";
 
         <h3>پرخواننده‌ترین</h3>
 
-        <p>
-            ۱ - انسان خردمند
-        </p>
-
-        <p>
-            ۲ - دنیای سوفی
-        </p>
-
-        <p>
-            ۳ - الغدیر
-        </p>
+        <div class="card-list">
+            {
+                mostRead.map((b, i) => (
+                    <a class="card-link ranked" href={`/books/${slugify(b.data.title)}`}>
+                        <span class="rank">{[ "۰۱", "۰۲", "۰۳", "۰۴", "۰۵" ][i]}</span>
+                        <span>{b.data.title}</span>
+                    </a>
+                ))
+            }
+        </div>
 
     </div>
 
@@ -81,7 +116,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         </h3>
 
         <strong>
-            1250
+            {toPersian(totalBooks)}
         </strong>
 
     </div>
@@ -93,7 +128,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         </h3>
 
         <strong>
-            430
+            {toPersian(totalAuthors)}
         </strong>
 
     </div>
@@ -105,7 +140,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         </h3>
 
         <strong>
-            350
+            {toPersian(shiiteCount)}
         </strong>
 
     </div>
@@ -117,7 +152,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         </h3>
 
         <strong>
-            120
+            {toPersian(atheismCount)}
         </strong>
 
     </div>
@@ -171,17 +206,123 @@ box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
 
 h3{
 margin-bottom:20px;
+background:color-mix(in srgb, var(--accent) 14%, transparent);
+color:var(--text);
+padding:8px 14px;
+border-radius:12px;
+border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+font-size:14px;
+font-weight:700;
 }
 
-p{
+.card-list{
+display:flex;
+flex-direction:column;
+}
+
+.card-link{
+display:block;
+color:var(--text);
+text-decoration:none;
+padding:11px 4px;
+font-size:14px;
+transition:color .2s, background .2s ease;
+border-radius:10px;
+
+&:not(:last-child){
+border-bottom:1px dashed var(--border);
+}
+
+&:hover{
+color:var(--accent);
+background:color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+&.ranked{
+display:flex;
+align-items:center;
+gap:12px;
+
+.rank{
+flex-shrink:0;
+font-size:12px;
+font-weight:700;
+color:var(--accent);
+background:color-mix(in srgb, var(--accent) 14%, transparent);
+min-width:34px;
+text-align:center;
+padding:3px 6px;
+border-radius:8px;
+}
+}
+}
+}
+
+.today-card{
+display:flex;
+flex-direction:column;
+
+.today-link{
+display:flex;
+gap:22px;
+text-decoration:none;
+align-items:stretch;
+flex:1;
+
+:global(.cover-photo),
+:global(.cover-img){
+width:130px;
+flex-shrink:0;
+order:2;
+align-self:flex-start;
+}
+
+.today-info{
+flex:1;
+min-width:0;
+display:flex;
+flex-direction:column;
+order:1;
+
+h2{
+font-size:20px;
+font-weight:800;
+color:var(--text);
+line-height:1.6;
+margin-bottom:6px;
+}
+
+.today-author{
+color:var(--accent);
+font-size:13px;
+font-weight:600;
+margin:0 0 10px;
+}
+
+.today-desc{
+flex:1;
 color:var(--gray);
-margin:8px 0;
+font-size:13px;
+line-height:1.9;
+margin:0;
+text-align:justify;
+}
+}
 }
 }
 
 .stat{
 grid-column:span 3;
 text-align:center;
+
+h3{
+background:transparent;
+border:none;
+padding:0;
+border-radius:0;
+font-size:13px;
+margin-bottom:10px;
+}
 
 strong{
 font-size:40px;

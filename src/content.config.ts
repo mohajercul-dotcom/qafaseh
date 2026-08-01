@@ -14,6 +14,11 @@ const bookSchema = z.object({
     download: z.string().optional(),
     format: z.string().optional(),
     cover: z.string().optional(),
+    reads: z.number().optional(),
+    featured: z.boolean().optional(),
+    caption: z.string().optional(),
+    description: z.string().optional(),
+    pubDate: z.coerce.date().optional(),
 });
 
 const shiite = defineCollection({

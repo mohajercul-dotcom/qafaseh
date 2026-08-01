@@ -56,13 +56,27 @@ const searchIndex = [
 
 </main>
 
-<script is:inline>
+ <script is:inline>
 
 const savedTheme = localStorage.getItem("theme");
 
 if(savedTheme === "dark"){
 document.documentElement.classList.add("dark");
 }
+
+const setHeaderOffset = () => {
+    const header = document.querySelector("header");
+    const main = document.querySelector("main");
+    if (header && main) {
+        main.style.paddingTop = (header.offsetHeight + 20) + "px";
+    }
+};
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setHeaderOffset);
+} else {
+    setHeaderOffset();
+}
+window.addEventListener("resize", setHeaderOffset);
 
 </script>
 
@@ -81,7 +95,7 @@ min-height:100vh;
 }
 
 main{
-min-height:calc(100vh - 80px);
+min-height:100vh;
 padding:30px 0;
 }
 

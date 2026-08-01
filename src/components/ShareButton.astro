@@ -1,8 +1,8 @@
 ---
-const { title, author } = Astro.props;
+const { title, author, excerpt, url, shortUrl } = Astro.props;
 
-const pageUrl = Astro.url.href;
-const shareText = `${title} — ${author}`;
+const pageUrl = shortUrl || url || Astro.url.href;
+const shareText = excerpt ? `${excerpt} — برای ادامه متن کلیک کنید` : `${title} — ${author}`;
 const encodedText = encodeURIComponent(shareText);
 const encodedUrl = encodeURIComponent(pageUrl);
 
@@ -13,7 +13,7 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${enco
 
 <div class="share-block">
 
-    <button class="share-toggle" data-copy-url={pageUrl} data-copy-text={shareText}>
+    <button class="share-toggle" data-copy-url={pageUrl} data-copy-text={shareText} data-copy-title={title}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"/>
             <circle cx="6" cy="12" r="3"/>
@@ -38,9 +38,27 @@ const block = document.querySelector(".share-block");
 const toggle = block?.querySelector(".share-toggle");
 const pop = block?.querySelector(".share-pop");
 
-toggle?.addEventListener("click", (e) => {
+const openShareSheet = async () => {
+    const url = toggle.dataset.copyUrl;
+    const text = toggle.dataset.copyText;
+    const title = toggle.dataset.copyTitle || text;
+    if (navigator.share) {
+        try {
+            await navigator.share({ title, text, url });
+            return true;
+        } catch (err) {
+            if (err.name === "AbortError") return true;
+        }
+    }
+    return false;
+};
+
+toggle?.addEventListener("click", async (e) => {
     e.stopPropagation();
-    pop?.classList.toggle("open");
+    const shared = await openShareSheet();
+    if (!shared) {
+        pop?.classList.toggle("open");
+    }
 });
 
 document.addEventListener("click", (e) => {
