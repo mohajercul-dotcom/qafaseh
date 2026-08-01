@@ -1,0 +1,358 @@
+---
+const { searchIndex = [] } = Astro.props;
+---
+
+<div class="search">
+
+    <div class="search-inner">
+
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+
+        <input
+        type="text"
+        placeholder="در قفسه همه‌چیز را بجویید..."
+        autocomplete="off"
+        spellcheck="false"
+        data-search-input
+        />
+
+        <button class="search-clear" data-search-clear title="پاک کردن">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+
+    </div>
+
+    <div class="search-results" data-search-results>
+
+        <p class="results-empty" data-results-empty>چیزی پیدا نشد</p>
+
+        <div class="results-list" data-results-list></div>
+
+    </div>
+
+</div>
+
+<script is:inline define:vars={{ searchIndex }}>
+const INDEX = searchIndex;
+
+const input = document.querySelector("[data-search-input]");
+const list = document.querySelector("[data-results-list]");
+const resultsBox = document.querySelector("[data-search-results]");
+const empty = document.querySelector("[data-results-empty]");
+const clearBtn = document.querySelector("[data-search-clear]");
+const cidAttr = "data-astro-cid-" + (document.querySelector("[data-search-input]")?.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
+
+const normalize = (str = "") =>
+    String(str)
+        .replace(/[يى]/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ة/g, "ه")
+        .replace(/[ًٌٍَُِّْ]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+const splitTokens = (str) => str.split(" ").filter(Boolean);
+
+const levenshtein = (a, b) => {
+    const m = a.length;
+    const n = b.length;
+    if (!m) return n;
+    if (!n) return m;
+    const d = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) d[i][0] = i;
+    for (let j = 0; j <= n; j++) d[0][j] = j;
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            d[i][j] = Math.min(
+                d[i - 1][j] + 1,
+                d[i][j - 1] + 1,
+                d[i - 1][j - 1] + cost
+            );
+            if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+                d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+            }
+        }
+    }
+    return d[m][n];
+};
+
+const fuzzy = (word, text, maxDist) => {
+    if (text.includes(word)) return 0;
+    const tokens = splitTokens(text);
+    let best = Infinity;
+    for (const token of tokens) {
+        const d = levenshtein(word, token);
+        if (d < best) best = d;
+        if (d === 0) return 0;
+    }
+    return best;
+};
+
+const matches = (query) => {
+    const q = normalize(query);
+    if (!q) return [];
+
+    const qTokens = splitTokens(q);
+    const qJoined = q.replace(/\s+/g, "");
+    const scored = [];
+
+    for (const item of INDEX) {
+        const title = normalize(item.title);
+        const author = normalize(item.author);
+        const translator = normalize(item.translator);
+        const description = normalize(item.description);
+        const haystack = `${title} ${author} ${translator} ${description}`;
+        const haystackJoined = haystack.replace(/\s+/g, "");
+
+        let score = 0;
+
+        if (qJoined.length > 1 && haystackJoined.includes(qJoined)) {
+            score += 8;
+        } else if (qJoined.length > 1 && fuzzy(qJoined, haystackJoined, Math.max(1, Math.floor(qJoined.length / 4))) <= Math.max(1, Math.floor(qJoined.length / 4))) {
+            score += 4;
+        }
+
+        let matchedTokens = 0;
+        for (const token of qTokens) {
+            const limit = token.length < 4 ? 0 : Math.max(1, Math.floor(token.length / 4));
+            const dist = fuzzy(token, haystack, limit);
+            if (dist <= limit) {
+                matchedTokens += 1;
+                score += 1;
+                if (title.includes(token)) score += 2;
+                else if (author.includes(token)) score += 1.5;
+                else if (translator.includes(token)) score += 1;
+                else if (description.includes(token)) score += 0.5;
+            }
+        }
+
+        if (matchedTokens === 0 && score === 0) continue;
+
+        if (title === q) score += 6;
+        else if (title.includes(q)) score += 4;
+        else if (author === q) score += 3;
+        else if (author.includes(q)) score += 2;
+
+        scored.push({ item, score });
+    }
+
+    return scored.sort((a, b) => b.score - a.score);
+};
+
+const render = () => {
+    const q = input.value;
+    const results = q.trim() ? matches(q) : [];
+
+    resultsBox.classList.toggle("open", results.length > 0 || (q.trim() && results.length === 0));
+    empty.classList.toggle("show", q.trim() && results.length === 0);
+    clearBtn.classList.toggle("show", q.trim().length > 0);
+
+    list.innerHTML = results
+        .slice(0, 7)
+        .map(
+            ({ item }) => `
+            <a class="result" href="${item.href}" ${cidAttr}>
+                <span class="result-cat" ${cidAttr}>${item.category}</span>
+                <span class="result-title" ${cidAttr}>${item.title}</span>
+                <span class="result-author" ${cidAttr}>${item.author}${item.translator ? " — ترجمه " + item.translator : ""}</span>
+            </a>
+        `
+        )
+        .join("");
+};
+
+input?.addEventListener("input", render);
+input?.addEventListener("focus", render);
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".search")) {
+        resultsBox?.classList.remove("open");
+    }
+});
+
+clearBtn?.addEventListener("click", () => {
+    input.value = "";
+    render();
+    input.focus();
+});
+
+render();
+</script>
+
+<style lang="scss">
+
+.search{
+position:relative;
+width:100%;
+}
+
+.search-inner{
+position:relative;
+
+.search-icon{
+position:absolute;
+right:14px;
+top:50%;
+transform:translateY(-50%);
+width:17px;
+height:17px;
+color:var(--gray);
+pointer-events:none;
+}
+
+input{
+width:100%;
+height:42px;
+border-radius:22px;
+border:1px solid var(--border);
+background:var(--bg);
+color:var(--text);
+padding:0 40px 0 38px;
+outline:none;
+font-size:14px;
+transition:border-color .3s ease, background .6s ease, color .6s ease;
+
+&::placeholder{
+color:var(--gray);
+}
+
+&:focus{
+border-color:var(--accent);
+box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+}
+
+.search-clear{
+position:absolute;
+left:10px;
+top:50%;
+transform:translateY(-50%);
+width:26px;
+height:26px;
+border-radius:50%;
+border:none;
+background:var(--card);
+color:var(--gray);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+opacity:0;
+visibility:hidden;
+transition:opacity .2s ease, visibility .2s, background .3s ease, color .3s ease;
+
+svg{
+width:13px;
+height:13px;
+}
+
+&.show{
+opacity:1;
+visibility:visible;
+}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+}
+}
+}
+
+.search-results{
+position:absolute;
+top:calc(100% + 8px);
+right:0;
+left:0;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:16px;
+box-shadow:0 20px 50px rgba(0,0,0,.2);
+z-index:500;
+overflow:hidden;
+opacity:0;
+visibility:hidden;
+transform:translateY(-8px);
+transition:opacity .25s ease, transform .25s ease, visibility .25s;
+
+&.open{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+}
+
+.results-empty{
+display:none;
+padding:20px;
+text-align:center;
+color:var(--gray);
+font-size:13px;
+
+&.show{
+display:block;
+}
+}
+
+.results-list{
+max-height:360px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+}
+
+.result{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 14px;
+text-decoration:none;
+transition:background .2s ease;
+
+& + .result{
+border-top:1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.result-cat{
+flex-shrink:0;
+font-size:10px;
+padding:4px 10px;
+border-radius:12px;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+
+.result-title{
+flex:0 1 auto;
+min-width:0;
+font-size:14px;
+font-weight:600;
+color:var(--text);
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.result-author{
+flex:1;
+min-width:0;
+font-size:12px;
+color:var(--gray);
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+}
+
+</style>

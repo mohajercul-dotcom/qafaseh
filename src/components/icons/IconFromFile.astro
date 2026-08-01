@@ -1,0 +1,12 @@
+---
+import { readFileSync } from "node:fs";
+
+const { src } = Astro.props;
+
+const svg = readFileSync(
+    new URL(`../../../public/icons/${src}`, import.meta.url),
+    "utf-8"
+);
+---
+
+<Fragment set:html={svg} />

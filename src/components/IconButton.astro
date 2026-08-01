@@ -1,0 +1,115 @@
+---
+import GridIcon from "./icons/GridIcon.astro";
+import InfoIcon from "./icons/InfoIcon.astro";
+import MailIcon from "./icons/MailIcon.astro";
+
+const {
+    icon,
+    title,
+    href
+} = Astro.props;
+
+const icons = {
+    "grid.svg": GridIcon,
+    "info.svg": InfoIcon,
+    "mail.svg": MailIcon
+};
+
+const Icon = icons[icon] ?? GridIcon;
+---
+
+{
+    href ? (
+        <a class="icon-button" href={href} target="_blank" rel="noopener" title={title} data-tip={title}>
+            <Icon />
+        </a>
+    ) : (
+        <div class="icon-button" title={title} data-tip={title}>
+            <Icon />
+        </div>
+    )
+}
+
+<style lang="scss">
+
+.icon-button{
+position:relative;
+width:42px;
+height:42px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--bg);
+border:1px solid var(--border);
+color:var(--gray);
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease, transform .3s ease;
+
+:global(svg){
+width:20px;
+height:20px;
+color:currentColor;
+transition:color .3s ease, transform .3s ease;
+}
+
+&::after{
+content:attr(data-tip);
+position:absolute;
+top:calc(100% + 10px);
+right:50%;
+transform:translateX(50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, transform .25s ease, visibility .25s;
+z-index:50;
+}
+
+&::before{
+content:"";
+position:absolute;
+top:calc(100% + 4px);
+right:50%;
+transform:translateX(50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-bottom-color:var(--text);
+border-top:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
+&:hover{
+background:var(--accent);
+transform:translateY(-2px);
+
+:global(svg){
+color:#fff;
+transform:scale(1.15);
+}
+
+&::after{
+opacity:1;
+visibility:visible;
+}
+
+&::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+
+</style>

@@ -1,0 +1,190 @@
+---
+import SearchBox from "./SearchBox.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import IconButton from "./IconButton.astro";
+import Logo from "./Logo.astro";
+import AboutPopup from "./AboutPopup.astro";
+
+const path = Astro.url.pathname;
+
+const { searchIndex = [] } = Astro.props;
+
+const menuItems = [
+    { href: "/shiite", label: "شیعه", tip: " شیعه‌شناسی" },
+    { href: "/atheism", label: "الحاد", tip: "نقد الحاد " },
+    { href: "/authors", label: "نویسندگان", tip: "نویسندگان و آثارشان" },
+];
+---
+
+<header>
+
+<div class="container nav">
+
+<!-- منوهای راست -->
+
+<nav class="right-menu">
+
+<Logo />
+
+{
+    menuItems.map((item) => (
+        <a
+            class:list={["menu-link", { active: path === item.href || path.startsWith(item.href + "/") }]}
+            href={item.href}
+            data-tip={item.tip}
+        >{item.label}</a>
+    ))
+}
+
+</nav>
+
+<!-- جستجو -->
+
+<SearchBox searchIndex={searchIndex} />
+
+<!-- منوهای چپ -->
+
+<div class="left-menu">
+
+<ThemeToggle />
+
+<IconButton
+icon="grid.svg"
+title="پروژه‌های دیگر"
+href="https://mohajercul.vercel.app/"
+/>
+
+<AboutPopup />
+
+<IconButton
+icon="mail.svg"
+title="تماس با ما"
+/>
+
+</div>
+
+</div>
+
+</header>
+
+<style lang="scss">
+
+header{
+height:80px;
+background:var(--card);
+border-bottom:1px solid var(--border);
+transition:background .6s ease, border-color .6s ease;
+
+.nav{
+height:100%;
+display:grid;
+grid-template-columns:1fr 400px 1fr;
+align-items:center;
+}
+
+    .right-menu{
+    display:flex;
+    gap:6px;
+    list-style:none;
+    justify-content:flex-start;
+    align-items:center;
+
+    :global(.logo){
+    margin-left:4px;
+    }
+
+    .menu-link{
+    position:relative;
+    font-size:16px;
+    color:var(--text);
+    padding:7px 8px;
+    border-radius:12px;
+    border:1px solid transparent;
+    background:transparent;
+    transition:color .2s, background .3s ease, border-color .3s ease;
+
+    &.active{
+    color:var(--accent);
+    font-weight:700;
+    background:color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color:color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    &::after{
+    content:attr(data-tip);
+    position:absolute;
+    top:calc(100% + 10px);
+    right:50%;
+    transform:translateX(50%);
+    background:var(--text);
+    color:var(--bg);
+    font-size:11px;
+    font-weight:500;
+    padding:5px 12px;
+    border-radius:8px;
+    white-space:nowrap;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease, visibility .25s;
+    z-index:50;
+    }
+
+    &::before{
+    content:"";
+    position:absolute;
+    top:calc(100% + 4px);
+    right:50%;
+    transform:translateX(50%);
+    width:0;
+    height:0;
+    border:6px solid transparent;
+    border-bottom-color:var(--text);
+    border-top:none;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .25s ease, visibility .25s;
+    z-index:50;
+    }
+
+    &:hover{
+    color:var(--accent);
+
+    &::after{
+    opacity:1;
+    visibility:visible;
+    }
+
+    &::before{
+    opacity:1;
+    visibility:visible;
+    }
+    }
+    }
+    }
+
+.left-menu{
+display:flex;
+justify-content:flex-end;
+gap:12px;
+}
+
+@media(max-width:900px){
+height:auto;
+padding:20px 0;
+
+.nav{
+grid-template-columns:1fr;
+gap:20px;
+}
+
+.right-menu,
+.left-menu{
+justify-content:center;
+flex-wrap:wrap;
+}
+}
+}
+
+</style>

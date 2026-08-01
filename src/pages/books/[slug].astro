@@ -1,0 +1,429 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import BookCover from "../../components/BookCover.astro";
+import ShareButton from "../../components/ShareButton.astro";
+import TextSizeToggle from "../../components/TextSizeToggle.astro";
+import { getCollection, render } from "astro:content";
+import { slugify, normalizeAuthor, shortCode } from "../../lib/books.js";
+
+export async function getStaticPaths() {
+    const shiiteBooks = await getCollection("shiite");
+    const atheismBooks = await getCollection("atheism");
+
+    const all = [
+        ...shiiteBooks.map((b) => ({ ...b, category: "shiite" })),
+        ...atheismBooks.map((b) => ({ ...b, category: "atheism" })),
+    ];
+
+    return all.flatMap((book) => {
+        const persian = slugify(book.data.title);
+        const code = shortCode(book.id + book.data.title);
+        return [
+            { params: { slug: persian }, props: { book, mode: "page" } },
+            { params: { slug: code }, props: { book, mode: "redirect" } },
+            { params: { slug: book.id }, props: { book, mode: "redirect" } },
+        ];
+    });
+}
+
+const { book, mode = "page" } = Astro.props;
+const category = book.category;
+const canonicalSlug = slugify(book.data.title);
+const canonicalUrl = `/books/${canonicalSlug}`;
+
+const { Content } = await render(book);
+
+const allBooks = [
+    ...(await getCollection("shiite")).map((b) => ({ ...b, category: "shiite" })),
+    ...(await getCollection("atheism")).map((b) => ({ ...b, category: "atheism" })),
+];
+
+const related = allBooks
+    .filter(
+        (b) =>
+            normalizeAuthor(b.data.author) === normalizeAuthor(book.data.author) &&
+            b.id !== book.id
+    )
+    .slice(0, 3);
+---
+
+{
+    mode === "redirect" ? (
+        <html lang="fa" dir="rtl">
+            <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>{book.data.title} — قفسه</title>
+                <link rel="canonical" href={canonicalUrl} />
+                <meta http-equiv="refresh" content={`0; url=${canonicalUrl}`} />
+                <script is:inline data-url={canonicalUrl}>
+                    const el = document.currentScript;
+                    if (el) {
+                        window.location.replace(el.dataset.url);
+                    }
+                </script>
+            </head>
+            <body style="margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#faf7f1;font-family:sans-serif;text-align:center">
+                <div>
+                    <p>در حال انتقال به صفحه کتاب…</p>
+                    <a href={canonicalUrl} style="color:#B0651F">{book.data.title}</a>
+                </div>
+            </body>
+        </html>
+    ) : (
+        <MainLayout>
+
+<div class="book-layout">
+
+    <section class="book-main">
+
+        <div class="title-row">
+            <h1>{book.data.title}</h1>
+            <TextSizeToggle target=".content" />
+        </div>
+
+        <article class="content">
+            <Content />
+        </article>
+
+        <ShareButton title={book.data.title} author={book.data.author} />
+
+    </section>
+
+    <aside class="book-side">
+
+        <BookCover
+            title={book.data.title}
+            author={book.data.author}
+            category={category}
+            cover={book.data.cover}
+        />
+
+        <div class="specs">
+            <div class="spec">
+                <span class="spec-label">نویسنده</span>
+                <span class="spec-value">{book.data.author}</span>
+            </div>
+            {book.data.translator && (
+                <div class="spec">
+                    <span class="spec-label">مترجم</span>
+                    <span class="spec-value">{book.data.translator}</span>
+                </div>
+            )}
+            {book.data.volumes && (
+                <div class="spec">
+                    <span class="spec-label">جلد</span>
+                    <span class="spec-value">{book.data.volumes} جلد</span>
+                </div>
+            )}
+            {book.data.pages && (
+                <div class="spec">
+                    <span class="spec-label">صفحات</span>
+                    <span class="spec-value">{book.data.pages} صفحه</span>
+                </div>
+            )}
+        </div>
+
+        <div class="download-box">
+
+            <a class="download-btn" href={book.data.download || "#"} target="_blank" rel="noopener">
+                <span class="dl-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </span>
+                <span class="dl-text">
+                    <strong>دانلود کتاب</strong>
+                    <small>{book.data.format || "PDF"} — از کانال تلگرام</small>
+                </span>
+            </a>
+
+            {
+                book.data.volumes > 1 && (
+                    <p class="volumes-note">کتاب در {book.data.volumes} جلد</p>
+                )
+            }
+
+        </div>
+
+    </aside>
+
+</div>
+
+{
+    related.length > 0 && (
+        <section class="related">
+            <h2>کتاب‌های دیگر {book.data.author}</h2>
+            <div class="books">
+                {related.map((b) => (
+                    <a class="book-card" href={`/books/${slugify(b.data.title)}`}>
+                        <h3>{b.data.title}</h3>
+                        <p class="desc">{b.data.description}</p>
+                    </a>
+                ))}
+            </div>
+        </section>
+    )
+}
+
+        </MainLayout>
+    )
+}
+
+<script is:inline>
+const syncHeight = () => {
+    const layout = document.querySelector(".book-layout");
+    const side = document.querySelector(".book-side");
+    const content = document.querySelector(".book-main .content");
+    if (!layout || !side || !content) return;
+    if (window.innerWidth <= 1000) {
+        content.style.maxHeight = "";
+        return;
+    }
+    const main = document.querySelector(".book-main");
+    const titleRow = document.querySelector(".book-main .title-row");
+    const shareBlock = document.querySelector(".book-main .share-block");
+    const titleH = titleRow ? titleRow.offsetHeight : 0;
+    const shareH = shareBlock ? shareBlock.offsetHeight + 18 : 0;
+    const sideH = side.offsetHeight;
+    const maxH = sideH - titleH - shareH;
+    content.style.maxHeight = maxH + "px";
+};
+window.addEventListener("load", syncHeight);
+window.addEventListener("resize", syncHeight);
+</script>
+
+<style lang="scss">
+
+.badge{
+display:inline-block;
+padding:6px 18px;
+border-radius:20px;
+font-size:13px;
+margin-bottom:18px;
+
+&.shiite{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+
+&.atheism{
+background:color-mix(in srgb, var(--gray) 18%, transparent);
+color:var(--gray);
+}
+}
+
+.book-layout{
+display:grid;
+grid-template-columns:minmax(0, 620px) 300px;
+gap:28px;
+padding:30px 0 20px;
+align-items:start;
+justify-content:center;
+}
+
+.book-main{
+display:flex;
+flex-direction:column;
+min-width:0;
+
+.title-row{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:16px;
+margin-bottom:18px;
+
+h1{
+font-size:32px;
+font-weight:900;
+line-height:1.5;
+flex:1;
+}
+
+:global(.text-size){
+flex-shrink:0;
+margin-top:6px;
+}
+}
+
+.content{
+min-height:0;
+overflow-y:auto;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:22px;
+padding:28px;
+line-height:2.2;
+font-size:15px;
+text-align:justify;
+text-justify:inter-word;
+transition:background .6s ease, border-color .6s ease;
+}
+
+:global(.share-block){
+margin-top:18px;
+}
+}
+
+.book-side{
+position:sticky;
+top:24px;
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.download-box{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.specs{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:16px;
+padding:6px 18px;
+transition:background .6s ease, border-color .6s ease;
+
+.spec{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:11px 0;
+gap:12px;
+
+&:not(:last-child){
+border-bottom:1px dashed var(--border);
+}
+
+.spec-label{
+font-size:12px;
+color:var(--gray);
+}
+
+.spec-value{
+font-size:13px;
+font-weight:500;
+color:var(--text);
+}
+}
+}
+
+.download-btn{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+width:100%;
+background:var(--accent);
+color:#fff;
+padding:16px 20px;
+border-radius:14px;
+text-decoration:none;
+box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+
+&:hover{
+transform:translateY(-3px);
+box-shadow:0 14px 32px color-mix(in srgb, var(--accent) 45%, transparent);
+filter:brightness(1.05);
+}
+
+.dl-icon svg{
+width:24px;
+height:24px;
+}
+
+.dl-text{
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+line-height:1.4;
+
+strong{
+font-size:15px;
+}
+
+small{
+font-size:11px;
+opacity:.8;
+}
+}
+}
+
+.volumes-note{
+text-align:center;
+color:var(--gray);
+font-size:12px;
+}
+
+.related{
+padding:30px 0 40px;
+
+h2{
+font-size:20px;
+margin-bottom:16px;
+padding-bottom:10px;
+border-bottom:1px solid var(--border);
+}
+
+.books{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+}
+
+.book-card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:20px;
+text-decoration:none;
+transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+
+&:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+h3{
+font-size:15px;
+margin-bottom:8px;
+}
+
+.desc{
+color:var(--gray);
+font-size:12px;
+line-height:1.8;
+}
+}
+}
+
+@media(max-width:1000px){
+
+.book-layout{
+grid-template-columns:1fr;
+}
+
+.book-side{
+position:static;
+max-width:300px;
+}
+}
+
+@media(max-width:900px){
+
+.related .books{
+grid-template-columns:1fr;
+}
+
+.book-main h1{
+font-size:26px;
+}
+}
+
+</style>

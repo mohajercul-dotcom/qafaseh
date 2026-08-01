@@ -1,0 +1,140 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+import { slugify, normalizeAuthor } from "../lib/books.js";
+
+const shiiteBooks = await getCollection("shiite");
+const atheismBooks = await getCollection("atheism");
+
+const authors = new Map();
+
+for (const book of shiiteBooks) {
+    const name = normalizeAuthor(book.data.author);
+    const entry = authors.get(name) || { name, shiite: 0, atheism: 0 };
+    entry.shiite++;
+    authors.set(name, entry);
+}
+
+for (const book of atheismBooks) {
+    const name = normalizeAuthor(book.data.author);
+    const entry = authors.get(name) || { name, shiite: 0, atheism: 0 };
+    entry.atheism++;
+    authors.set(name, entry);
+}
+
+const authorList = [...authors.values()].sort((a, b) =>
+    a.name.localeCompare(b.name, "fa")
+);
+---
+
+<MainLayout>
+
+<section class="page-hero">
+
+    <h1>نویسندگان</h1>
+
+    <p>فهرست نویسندگان و کتاب‌های آن‌ها در هر دو دسته شیعه و الحاد.</p>
+
+</section>
+
+<section class="authors">
+
+    {
+        authorList.map((author) => (
+            <a class="author-card" href={`/authors/${slugify(author.name)}`}>
+
+                <h3>{author.name}</h3>
+
+                <div class="counts">
+                    <span class="count shiite">شیعه: {author.shiite}</span>
+                    <span class="count atheism">الحاد: {author.atheism}</span>
+                    <span class="total">مجموع: {author.shiite + author.atheism}</span>
+                </div>
+
+            </a>
+        ))
+    }
+
+</section>
+
+</MainLayout>
+
+<style lang="scss">
+
+.page-hero{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+}
+
+p{
+margin-top:12px;
+color:var(--gray);
+}
+}
+
+.authors{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+padding:20px 0 40px;
+}
+
+.author-card{
+display:block;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+text-decoration:none;
+transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+
+&:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+h3{
+font-size:17px;
+margin-bottom:14px;
+}
+
+.counts{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+font-size:12px;
+
+.count{
+padding:4px 10px;
+border-radius:20px;
+}
+
+.shiite{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+
+.atheism{
+background:color-mix(in srgb, var(--gray) 18%, transparent);
+color:var(--gray);
+}
+
+.total{
+color:var(--text);
+font-weight:700;
+align-self:center;
+}
+}
+}
+
+@media(max-width:900px){
+.authors{
+grid-template-columns:1fr;
+}
+}
+
+</style>

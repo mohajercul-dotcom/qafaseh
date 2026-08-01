@@ -1,0 +1,142 @@
+---
+const { title, author } = Astro.props;
+
+const pageUrl = Astro.url.href;
+const shareText = `${title} — ${author}`;
+const encodedText = encodeURIComponent(shareText);
+const encodedUrl = encodeURIComponent(pageUrl);
+
+const telegram = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+const whatsapp = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+---
+
+<div class="share-block">
+
+    <button class="share-toggle" data-copy-url={pageUrl} data-copy-text={shareText}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        <span>اشتراک‌گذاری</span>
+    </button>
+
+    <div class="share-pop">
+        <button class="pop-item copy" data-pop-copy>کپی لینک</button>
+        <a class="pop-item" href={telegram} target="_blank" rel="noopener">تلگرام</a>
+        <a class="pop-item" href={whatsapp} target="_blank" rel="noopener">واتس‌اپ</a>
+        <a class="pop-item" href={twitter} target="_blank" rel="noopener">X</a>
+    </div>
+
+</div>
+
+<script>
+const block = document.querySelector(".share-block");
+const toggle = block?.querySelector(".share-toggle");
+const pop = block?.querySelector(".share-pop");
+
+toggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    pop?.classList.toggle("open");
+});
+
+document.addEventListener("click", (e) => {
+    if (block && !block.contains(e.target)) {
+        pop?.classList.remove("open");
+    }
+});
+
+block?.querySelector("[data-pop-copy]")?.addEventListener("click", async () => {
+    const url = toggle.dataset.copyUrl;
+    const text = toggle.dataset.copyText;
+    try {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        const btn = block.querySelector("[data-pop-copy]");
+        btn.textContent = "کپی شد ✓";
+        setTimeout(() => (btn.textContent = "کپی لینک"), 2000);
+    } catch {}
+    pop?.classList.remove("open");
+});
+</script>
+
+<style lang="scss">
+
+.share-block{
+position:relative;
+}
+
+.share-toggle{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:10px 18px;
+border-radius:12px;
+border:1px solid var(--border);
+background:var(--card);
+color:var(--text);
+font-size:13px;
+font-weight:500;
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease, color .3s ease;
+
+svg{
+width:18px;
+height:18px;
+}
+
+&:hover{
+background:var(--accent);
+border-color:var(--accent);
+color:#fff;
+}
+}
+
+.share-pop{
+position:absolute;
+bottom:calc(100% + 8px);
+right:0;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:12px;
+padding:6px;
+display:flex;
+flex-direction:column;
+min-width:140px;
+box-shadow:0 12px 32px rgba(0,0,0,.18);
+opacity:0;
+visibility:hidden;
+transform:translateY(6px);
+transition:opacity .2s ease, transform .2s ease, visibility .2s;
+z-index:60;
+
+&.open{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+
+.pop-item{
+display:block;
+width:100%;
+text-align:right;
+padding:9px 14px;
+border:none;
+border-radius:8px;
+background:transparent;
+color:var(--text);
+font-size:13px;
+text-decoration:none;
+cursor:pointer;
+transition:background .2s ease;
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+}
+}
+
+</style>

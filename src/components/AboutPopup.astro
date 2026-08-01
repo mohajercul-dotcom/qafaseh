@@ -1,0 +1,370 @@
+---
+import IconFromFile from "./icons/IconFromFile.astro";
+---
+
+<div class="about-wrap">
+
+    <button class="icon-button" title="درباره ما" data-tip="درباره ما" data-about-toggle>
+        <IconFromFile src="info.svg" />
+    </button>
+
+    <div class="about-overlay" data-about-overlay>
+
+        <div class="about-modal" data-about-modal role="dialog" aria-modal="true" aria-label="درباره ما">
+
+            <button class="modal-close" data-about-close title="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+
+            <div class="modal-icon">
+                <IconFromFile src="info.svg" />
+            </div>
+
+            <h3>درباره ما</h3>
+
+            <p>کتابخانه‌ای دیجیتال برای معرفی کتاب‌های ناب و اندیشه‌های ماندگار؛ جایی برای خواندن، اندیشیدن و به اشتراک گذاشتن.</p>
+
+            <p>ما تلاش می‌کنیم هر کتاب را با معرفی دقیق، اطلاعات کامل و لینک دانلود در اختیارتان بگذاریم تا دسترسی به دانش آسان‌تر شود.</p>
+
+            <div class="socials">
+
+                <a class="social instagram" href="#" title="اینستاگرام">
+                    <IconFromFile src="instagram.svg" />
+                </a>
+
+                <a class="social telegram" href="#" title="تلگرام">
+                    <IconFromFile src="telegram.svg" />
+                </a>
+
+                <a class="social tiktok" href="#" title="تیک‌تاک">
+                    <IconFromFile src="tiktok.svg" />
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const wrap = document.querySelector(".about-wrap");
+const toggle = wrap?.querySelector("[data-about-toggle]");
+const overlay = wrap?.querySelector("[data-about-overlay]");
+const modal = wrap?.querySelector("[data-about-modal]");
+const close = wrap?.querySelector("[data-about-close]");
+
+const open = () => {
+    overlay?.classList.add("open");
+    document.body.classList.add("modal-open");
+};
+
+const closeModal = () => {
+    overlay?.classList.remove("open");
+    document.body.classList.remove("modal-open");
+};
+
+toggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    open();
+});
+
+close?.addEventListener("click", closeModal);
+
+overlay?.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+        closeModal();
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeModal();
+    }
+});
+</script>
+
+<style lang="scss">
+
+.about-wrap{
+position:relative;
+}
+
+.icon-button{
+position:relative;
+width:42px;
+height:42px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--bg);
+border:1px solid var(--border);
+color:var(--gray);
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease;
+
+:global(svg){
+width:20px;
+height:20px;
+color:currentColor;
+}
+
+&::after{
+content:attr(data-tip);
+position:absolute;
+top:calc(100% + 10px);
+right:50%;
+transform:translateX(50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, transform .25s ease, visibility .25s;
+z-index:60;
+}
+
+&::before{
+content:"";
+position:absolute;
+top:calc(100% + 4px);
+right:50%;
+transform:translateX(50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-bottom-color:var(--text);
+border-top:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:60;
+}
+
+&:hover{
+background:var(--accent);
+
+:global(svg){
+color:#fff;
+}
+
+&::after{
+opacity:1;
+visibility:visible;
+}
+
+&::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+
+.about-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:1000;
+opacity:0;
+visibility:hidden;
+transition:opacity .35s ease, visibility .35s;
+
+&.open{
+opacity:1;
+visibility:visible;
+}
+}
+
+.about-modal{
+position:relative;
+width:420px;
+max-width:calc(100vw - 40px);
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:44px 32px 36px;
+text-align:center;
+box-shadow:0 30px 80px rgba(0,0,0,.4);
+opacity:0;
+transform:translateY(30px) scale(.92);
+transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+
+.about-overlay.open &{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+.modal-close{
+position:absolute;
+top:16px;
+left:16px;
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+background:var(--text);
+color:var(--bg);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:background .3s ease, color .3s ease, transform .3s ease;
+
+svg{
+width:18px;
+height:18px;
+}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+transform:rotate(90deg);
+}
+}
+
+.modal-icon{
+width:64px;
+height:64px;
+margin:0 auto 18px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+animation:icon-pulse 2.4s ease-in-out infinite;
+
+:global(svg){
+width:30px;
+height:30px;
+}
+}
+
+h3{
+font-size:20px;
+font-weight:900;
+margin-bottom:12px;
+}
+
+p{
+font-size:14px;
+line-height:2;
+color:var(--gray);
+margin-bottom:0;
+text-align:justify;
+
+& + p{
+margin-top:14px;
+}
+}
+
+.socials{
+margin-top:24px;
+display:flex;
+justify-content:center;
+gap:12px;
+
+.social{
+width:48px;
+height:48px;
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--bg);
+border:1px solid var(--border);
+color:var(--gray);
+opacity:0;
+transform:translateY(16px) scale(.8);
+transition:transform .35s cubic-bezier(.34,1.56,.64,1), background .3s ease, color .3s ease, border-color .3s ease, opacity .3s ease;
+
+:global(svg){
+width:22px;
+height:22px;
+transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+&:hover{
+transform:translateY(-4px) scale(1.08);
+
+:global(svg){
+transform:rotate(12deg) scale(1.15);
+}
+}
+
+&.instagram:hover{
+background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+border-color:transparent;
+color:#fff;
+}
+
+&.telegram:hover{
+background:#229ED9;
+border-color:transparent;
+color:#fff;
+}
+
+&.tiktok:hover{
+background:#000;
+border-color:transparent;
+color:#25F4EE;
+}
+}
+}
+}
+
+.about-overlay.open .social{
+opacity:1;
+transform:translateY(0) scale(1);
+
+&:nth-child(1){
+transition-delay:.15s;
+}
+
+&:nth-child(2){
+transition-delay:.24s;
+}
+
+&:nth-child(3){
+transition-delay:.33s;
+}
+}
+
+.about-overlay:not(.open) .social{
+transition:opacity .2s ease, transform .2s ease;
+}
+
+@keyframes icon-pulse{
+0%,100%{
+transform:scale(1);
+box-shadow:0 0 0 0 color-mix(in srgb, var(--accent) 25%, transparent);
+}
+50%{
+transform:scale(1.06);
+box-shadow:0 0 0 10px transparent;
+}
+}
+
+</style>
+
+<style is:global>
+body.modal-open{
+overflow:hidden;
+}
+</style>

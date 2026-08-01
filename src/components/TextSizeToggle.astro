@@ -1,0 +1,81 @@
+---
+import IconFromFile from "./icons/IconFromFile.astro";
+const { target } = Astro.props;
+---
+
+<div class="text-size" data-target={target}>
+
+    <button class="size-btn" title="بزرگ‌/کوچک‌کردن متن">
+        <IconFromFile src="font-size.svg" />
+    </button>
+
+</div>
+
+<script>
+const sizeBox = document.querySelector(".text-size");
+const targetSel = sizeBox?.dataset.target;
+const target = targetSel ? document.querySelector(targetSel) : null;
+
+const SIZES = [16, 17, 18, 19];
+
+let current = parseInt(localStorage.getItem("text-size"), 10) || SIZES[0];
+if (!SIZES.includes(current)) {
+    current = SIZES[0];
+}
+
+const apply = () => {
+    if (target) {
+        target.style.fontSize = current + "px";
+    }
+    localStorage.setItem("text-size", String(current));
+};
+
+apply();
+
+sizeBox?.querySelector(".size-btn")?.addEventListener("click", () => {
+    const idx = SIZES.indexOf(current);
+    current = SIZES[(idx + 1) % SIZES.length];
+    apply();
+});
+</script>
+
+<style lang="scss">
+
+.text-size{
+display:inline-flex;
+align-items:center;
+border:1px solid var(--border);
+background:var(--card);
+border-radius:12px;
+padding:6px;
+}
+
+.size-btn{
+width:38px;
+height:38px;
+border-radius:9px;
+border:none;
+background:transparent;
+color:var(--text);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:background .3s ease, color .3s ease;
+
+:global(svg){
+width:24px;
+height:24px;
+color:var(--gray);
+}
+
+&:hover{
+background:var(--accent);
+
+:global(svg){
+color:#fff;
+}
+}
+}
+
+</style>

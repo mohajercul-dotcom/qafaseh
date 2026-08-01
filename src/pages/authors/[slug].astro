@@ -1,0 +1,203 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+import { slugify, normalizeAuthor } from "../../lib/books.js";
+
+export async function getStaticPaths() {
+    const shiiteBooks = await getCollection("shiite");
+    const atheismBooks = await getCollection("atheism");
+
+    const names = new Set();
+    for (const book of [...shiiteBooks, ...atheismBooks]) {
+        names.add(normalizeAuthor(book.data.author));
+    }
+
+    return [...names].map((name) => ({
+        params: { slug: slugify(name) },
+        props: { name },
+    }));
+}
+
+const { slug } = Astro.params;
+const { name } = Astro.props;
+
+const shiiteBooks = (await getCollection("shiite")).filter(
+    (book) => normalizeAuthor(book.data.author) === name
+);
+const atheismBooks = (await getCollection("atheism")).filter(
+    (book) => normalizeAuthor(book.data.author) === name
+);
+---
+
+<MainLayout>
+
+<section class="author-header">
+
+    <h1>{name}</h1>
+
+    <p class="stats">
+        <span class="badge shiite">شیعه: {shiiteBooks.length}</span>
+        <span class="badge atheism">الحاد: {atheismBooks.length}</span>
+        <span class="badge total">مجموع: {shiiteBooks.length + atheismBooks.length} کتاب</span>
+    </p>
+
+</section>
+
+{
+    shiiteBooks.length > 0 && (
+        <section class="group">
+
+            <h2>کتاب‌های شیعه</h2>
+
+            <div class="books">
+                {shiiteBooks.map((book) => (
+                    <a class="book-card" href={`/books/${slugify(book.data.title)}`}>
+
+                        <h3>{book.data.title}</h3>
+
+                        <p class="desc">{book.data.description}</p>
+
+                        <div class="meta">
+                            <span>{book.data.publisher}</span>
+                            <span>{book.data.year}</span>
+                        </div>
+
+                    </a>
+                ))}
+            </div>
+
+        </section>
+    )
+}
+
+{
+    atheismBooks.length > 0 && (
+        <section class="group">
+
+            <h2>کتاب‌های الحاد</h2>
+
+            <div class="books">
+                {atheismBooks.map((book) => (
+                    <a class="book-card" href={`/books/${slugify(book.data.title)}`}>
+
+                        <h3>{book.data.title}</h3>
+
+                        <p class="desc">{book.data.description}</p>
+
+                        <div class="meta">
+                            <span>{book.data.publisher}</span>
+                            <span>{book.data.year}</span>
+                        </div>
+
+                    </a>
+                ))}
+            </div>
+
+        </section>
+    )
+}
+
+</MainLayout>
+
+<style lang="scss">
+
+.author-header{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:12px;
+margin-top:16px;
+flex-wrap:wrap;
+}
+
+.badge{
+padding:6px 14px;
+border-radius:20px;
+font-size:13px;
+}
+
+.shiite{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+
+.atheism{
+background:color-mix(in srgb, var(--gray) 18%, transparent);
+color:var(--gray);
+}
+
+.total{
+background:var(--card);
+border:1px solid var(--border);
+color:var(--text);
+}
+}
+
+.group{
+padding:10px 0 30px;
+
+h2{
+font-size:22px;
+margin-bottom:16px;
+padding-bottom:10px;
+border-bottom:1px solid var(--border);
+}
+}
+
+.books{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+}
+
+.book-card{
+display:block;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+text-decoration:none;
+transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+
+&:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+h3{
+font-size:17px;
+margin-bottom:10px;
+}
+
+.desc{
+color:var(--gray);
+font-size:13px;
+line-height:1.8;
+margin-bottom:14px;
+}
+
+.meta{
+display:flex;
+justify-content:space-between;
+color:var(--gray);
+font-size:12px;
+border-top:1px solid var(--border);
+padding-top:12px;
+}
+}
+
+@media(max-width:900px){
+.books{
+grid-template-columns:1fr;
+}
+}
+
+</style>

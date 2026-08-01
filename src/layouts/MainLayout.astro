@@ -1,0 +1,96 @@
+---
+import "../styles/global.scss";
+import Header from "../components/Header.astro";
+import { getCollection } from "astro:content";
+import { slugify } from "../lib/books.js";
+
+const title = "قفسه";
+const description = "معرفی کتاب‌ها، نویسندگان و اندیشه‌ها";
+
+const shiiteBooks = await getCollection("shiite");
+const atheismBooks = await getCollection("atheism");
+
+const searchIndex = [
+    ...shiiteBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "شیعه",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...atheismBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "الحاد",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+];
+---
+
+<!DOCTYPE html>
+
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>{title}</title>
+
+<meta name="description" content={description} />
+
+</head>
+
+<body>
+
+<Header searchIndex={searchIndex} />
+
+<main class="container">
+
+<slot />
+
+</main>
+
+<script is:inline>
+
+const savedTheme = localStorage.getItem("theme");
+
+if(savedTheme === "dark"){
+document.documentElement.classList.add("dark");
+}
+
+</script>
+
+</body>
+
+</html>
+
+<style lang="scss">
+
+html{
+background:var(--bg);
+}
+
+body{
+min-height:100vh;
+}
+
+main{
+min-height:calc(100vh - 80px);
+padding:30px 0;
+}
+
+@media(max-width:900px){
+main{
+height:auto;
+padding-top:30px;
+padding-bottom:30px;
+}
+}
+
+</style>
