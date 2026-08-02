@@ -322,6 +322,7 @@ align-items:center;
 justify-content:center;
 width:22px;
 height:22px;
+position:relative;
 
 :global(svg){
 width:22px;
@@ -329,8 +330,36 @@ height:22px;
 display:block;
 }
 
-.icon-sun,.icon-moon{display:flex;align-items:center;justify-content:center;}
-.icon-moon{display:none;}
+.icon-sun,.icon-moon{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+
+.icon-sun{
+opacity:0;
+transform:scale(.4) rotate(-90deg);
+
+:global(svg){transform:rotate(-90deg);}
+}
+
+:global(.dark) & .icon-sun{
+opacity:1;
+transform:scale(1) rotate(0);
+color:var(--accent);
+
+:global(svg){transform:rotate(0);}
+}
+
+:global(.dark) & .icon-moon{
+opacity:0;
+transform:scale(.4) rotate(90deg);
+
+:global(svg){transform:rotate(90deg);}
+}
 }
 
 .home-icon{
@@ -653,8 +682,15 @@ transition:color .2s, transform .2s;
 </style>
 
 <style is:global>
-.dark .bottom-link .icon-sun{display:none;}
-.dark .bottom-link .icon-moon{display:flex;}
+.bottom-link.spin .icon-moon,
+.bottom-link.spin .icon-sun{
+animation:mb-theme-spin .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes mb-theme-spin{
+0%{transform:scale(.9) rotate(0deg);}
+50%{transform:scale(1.15) rotate(20deg);}
+100%{transform:scale(1) rotate(0deg);}
+}
 body.modal-open{overflow:hidden;}
 </style>
 <script is:inline>
@@ -793,6 +829,11 @@ link.classList.add("active");
 <script is:inline define:vars={{ searchIndex }}>
 (function(){
 const INDEX = searchIndex;
+const desktopSearch = document.querySelector(".nav .search");
+const cidAttr = desktopSearch ? Array.from(desktopSearch.querySelector("[data-search-input]")?.getAttributeNames() || []).find(n => n.startsWith("data-astro-cid-")) : "";
+const cidVal = cidAttr ? desktopSearch.querySelector("[data-search-input]")?.getAttribute(cidAttr) : "";
+const cid = cidAttr ? `${cidAttr}="${cidVal}"` : "";
+
 const normalize = (s="") => String(s).replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/[ًٌٍَُِّْ]/g,"").replace(/\s+/g," ").trim();
 const splitTokens = (s) => s.split(" ").filter(Boolean);
 const levenshtein = (a,b) => {
@@ -837,7 +878,7 @@ const q=input.value,results=q.trim()?matches(q):[];
 resultsBox.classList.toggle("open",results.length>0||(q.trim()&&results.length===0));
 empty.classList.toggle("show",q.trim()&&results.length===0);
 clearBtn.classList.toggle("show",q.trim().length>0);
-list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}"><span class="result-cat">${item.category}</span><span class="result-title">${item.title}</span><span class="result-author">${item.author}${item.translator?" — ترجمه "+item.translator:""}</span></a>`).join("");
+list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}" ${cid}><span class="result-cat" ${cid}>${item.category}</span><span class="result-title" ${cid}>${item.title}</span><span class="result-author" ${cid}>${item.author}${item.translator?" — ترجمه "+item.translator:""}</span></a>`).join("");
 };
 input.addEventListener("input",render);
 input.addEventListener("focus",render);
