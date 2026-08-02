@@ -84,9 +84,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="mb-popup" id="popupDasteh">
 <div class="mb-popup-grid" data-cols="2">
-<a class="mb-bubble" href="/shiite">شیعه</a>
-<a class="mb-bubble" href="/atheism">الحاد</a>
-<a class="mb-bubble" href="/authors">نویسندگان</a>
+<a class:list={["mb-bubble", { active: path === "/shiite" || path.startsWith("/shiite/") }]} href="/shiite">شیعه</a>
+<a class:list={["mb-bubble", { active: path === "/atheism" || path.startsWith("/atheism/") }]} href="/atheism">الحاد</a>
+<a class:list={["mb-bubble", { active: path === "/authors" || path.startsWith("/authors/") }]} href="/authors">نویسندگان</a>
 </div>
 </div>
 
@@ -510,6 +510,18 @@ border-color:color-mix(in srgb, var(--accent) 40%, transparent);
 color:var(--accent);
 .mb-icon-circle{
 background:color-mix(in srgb, var(--accent) 25%, transparent);
+:global(svg){color:var(--accent);}
+}
+}
+
+&.active{
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+border-color:color-mix(in srgb, var(--accent) 35%, transparent);
+color:var(--accent);
+font-weight:700;
+
+.mb-icon-circle{
+background:color-mix(in srgb, var(--accent) 20%, transparent);
 :global(svg){color:var(--accent);}
 }
 }
