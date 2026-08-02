@@ -41,13 +41,20 @@ const { searchIndex = [] } = Astro.props;
 <script is:inline define:vars={{ searchIndex }}>
 const INDEX = searchIndex;
 
+const input = document.querySelector("[data-search-input]");
+const list = document.querySelector("[data-results-list]");
+const resultsBox = document.querySelector("[data-search-results]");
+const empty = document.querySelector("[data-results-empty]");
+const clearBtn = document.querySelector("[data-search-clear]");
+const cidAttr = "data-astro-cid-" + (document.querySelector("[data-search-input]")?.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
+
 const normalize = (str = "") =>
     String(str)
         .replace(/[يى]/g, "ی")
         .replace(/ك/g, "ک")
         .replace(/[أإآ]/g, "ا")
         .replace(/ة/g, "ه")
-        .replace(/[ًٌٍَُِّْ]/g, "")
+        .replace(/[ًٌٍَُِّْ]/g, "")
         .replace(/\s+/g, " ")
         .trim();
 
@@ -140,37 +147,44 @@ const matches = (query) => {
     return scored.sort((a, b) => b.score - a.score);
 };
 
-document.querySelectorAll(".search").forEach((wrap) => {
-    const input = wrap.querySelector("[data-search-input]");
-    const list = wrap.querySelector("[data-results-list]");
-    const resultsBox = wrap.querySelector("[data-search-results]");
-    const empty = wrap.querySelector("[data-results-empty]");
-    const clearBtn = wrap.querySelector("[data-search-clear]");
-    if (!input || !list || !resultsBox) return;
+const render = () => {
+    const q = input.value;
+    const results = q.trim() ? matches(q) : [];
 
-    const render = () => {
-        const q = input.value;
-        const results = q.trim() ? matches(q) : [];
-        resultsBox.classList.toggle("open", results.length > 0 || (q.trim() && results.length === 0));
-        empty.classList.toggle("show", q.trim() && results.length === 0);
-        clearBtn.classList.toggle("show", q.trim().length > 0);
-        list.innerHTML = results
-            .slice(0, 7)
-            .map(({ item }) => `<a class="result" href="${item.href}"><span class="result-cat">${item.category}</span><span class="result-title">${item.title}</span><span class="result-author">${item.author}${item.translator ? " — ترجمه " + item.translator : ""}</span></a>`)
-            .join("");
-    };
+    resultsBox.classList.toggle("open", results.length > 0 || (q.trim() && results.length === 0));
+    empty.classList.toggle("show", q.trim() && results.length === 0);
+    clearBtn.classList.toggle("show", q.trim().length > 0);
 
-    input.addEventListener("input", render);
-    input.addEventListener("focus", render);
-    clearBtn?.addEventListener("click", () => { input.value = ""; render(); input.focus(); });
-    render();
-});
+    list.innerHTML = results
+        .slice(0, 7)
+        .map(
+            ({ item }) => `
+            <a class="result" href="${item.href}" ${cidAttr}>
+                <span class="result-cat" ${cidAttr}>${item.category}</span>
+                <span class="result-title" ${cidAttr}>${item.title}</span>
+                <span class="result-author" ${cidAttr}>${item.author}${item.translator ? " — ترجمه " + item.translator : ""}</span>
+            </a>
+        `
+        )
+        .join("");
+};
+
+input?.addEventListener("input", render);
+input?.addEventListener("focus", render);
 
 document.addEventListener("click", (e) => {
     if (!e.target.closest(".search")) {
-        document.querySelectorAll(".search-results").forEach((r) => r.classList.remove("open"));
+        resultsBox?.classList.remove("open");
     }
 });
+
+clearBtn?.addEventListener("click", () => {
+    input.value = "";
+    render();
+    input.focus();
+});
+
+render();
 </script>
 
 <style lang="scss">
