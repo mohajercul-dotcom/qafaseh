@@ -10,7 +10,6 @@ const bookSchema = z.object({
     pages: z.number().optional(),
     volumes: z.number().optional(),
     language: z.string().optional(),
-    authorEra: z.string().optional(),
     download: z.string().optional(),
     format: z.string().optional(),
     cover: z.string().optional(),

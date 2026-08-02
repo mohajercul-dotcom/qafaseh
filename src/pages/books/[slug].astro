@@ -125,6 +125,12 @@ const related = allBooks
                     <span class="spec-value">{book.data.pages} صفحه</span>
                 </div>
             )}
+            {book.data.language && (
+                <div class="spec">
+                    <span class="spec-label">زبان</span>
+                    <span class="spec-value">{book.data.language}</span>
+                </div>
+            )}
         </div>
 
         <div class="download-box">
