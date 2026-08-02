@@ -2,12 +2,12 @@
 const { title, author, excerpt, url, shortUrl } = Astro.props;
 
 const pageUrl = shortUrl || url || Astro.url.href;
-const shareText = excerpt ? `${excerpt} — برای ادامه متن کلیک کنید` : `${title} — ${author}`;
+const shareText = excerpt ? `${excerpt}\n\nبرای ادامه مقاله، کلیک کنید` : `${title} — ${author}`;
 const encodedText = encodeURIComponent(shareText);
 const encodedUrl = encodeURIComponent(pageUrl);
 
 const telegram = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
-const whatsapp = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+const whatsapp = `https://wa.me/?text=${encodedText}%0A%0A${encodedUrl}`;
 const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
 ---
 

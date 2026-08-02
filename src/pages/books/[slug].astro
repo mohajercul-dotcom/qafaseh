@@ -31,10 +31,18 @@ const category = book.category;
 const canonicalSlug = slugify(book.data.title);
 const canonicalUrl = `/books/${canonicalSlug}`;
 const shortSlug = shortCode(book.id + book.data.title);
-const shortUrl = new URL(`/books/${shortSlug}`, Astro.url.origin).href;
-const siteUrl = Astro.url.origin + canonicalUrl;
+const siteBase = import.meta.env.SITE || Astro.url.origin;
+const shortUrl = new URL(`/books/${shortSlug}`, siteBase).href;
+const siteUrl = siteBase + canonicalUrl;
 
 const { Content } = await render(book);
+
+const firstParagraph = (() => {
+    if (!book.body) return book.data.description || "";
+    const paragraphs = book.body.split(/\n\n+/).filter(p => p.trim() && !p.trim().startsWith("#") && !p.trim().startsWith("---"));
+    const first = paragraphs[0] || "";
+    return first.replace(/[#*_`~\[\]]/g, "").replace(/\^\d+/g, "").replace(/https?:\/\/[^\s)]+/g, "").trim();
+})();
 
 const allBooks = [
     ...(await getCollection("shiite")).map((b) => ({ ...b, category: "shiite" })),
@@ -89,7 +97,7 @@ const related = allBooks
             <Content />
         </article>
 
-        <ShareButton title={book.data.title} author={book.data.author} excerpt={book.data.description} url={siteUrl} shortUrl={shortUrl} />
+        <ShareButton title={book.data.title} author={book.data.author} excerpt={firstParagraph} url={siteUrl} shortUrl={shortUrl} />
 
     </section>
 
