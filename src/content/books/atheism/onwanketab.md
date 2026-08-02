@@ -7,7 +7,7 @@ publisher: "نام ناشر"
 pages: 210
 volumes: 1
 language: "فارسی"
-cover: "/covers/cover-name.jpg"
+cover: "/covers/456.jpg"
 download: "https://t.me/..."
 format: "PDF"
 description: "توضیح کوتاه"
