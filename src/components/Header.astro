@@ -3,10 +3,10 @@ import SearchBox from "./SearchBox.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import IconButton from "./IconButton.astro";
 import Logo from "./Logo.astro";
-import AboutPopup from "./AboutPopup.astro";
+import IconFromFile from "./icons/IconFromFile.astro";
+import VaraqIcon from "./icons/VaraqIcon.astro";
 
 const path = Astro.url.pathname;
-
 const { searchIndex = [] } = Astro.props;
 
 const menuItems = [
@@ -21,40 +21,24 @@ const menuItems = [
 <div class="container nav">
 
 <nav class="right-menu">
-
 <Logo />
-
-{
-    menuItems.map((item) => (
-        <a
-            class:list={["menu-link", { active: path === item.href || path.startsWith(item.href + "/") }]}
-            href={item.href}
-            data-tip={item.tip}
-        >{item.label}</a>
-    ))
-}
-
+{menuItems.map((item) => (
+<a class:list={["menu-link", { active: path === item.href || path.startsWith(item.href + "/") }]}
+href={item.href} data-tip={item.tip}>{item.label}</a>
+))}
 </nav>
 
 <SearchBox searchIndex={searchIndex} />
 
 <div class="left-menu">
-
 <ThemeToggle />
-
-<IconButton
-icon="grid.svg"
-title="پروژه‌های دیگر"
-href="https://mohajercul.vercel.app/"
-/>
-
-<AboutPopup />
-
-<IconButton
-icon="mail.svg"
-title="تماس با ما"
-/>
-
+<IconButton icon="grid.svg" title="پروژه‌های دیگر" href="https://mohajercul.vercel.app/" />
+<button class="icon-button" title="درباره ما" data-tip="درباره ما" id="btnAboutDesktop">
+<IconFromFile src="info.svg" />
+</button>
+<button class="icon-button" title="تماس با ما" data-tip="تماس با ما" id="btnContactDesktop">
+<IconFromFile src="mail.svg" />
+</button>
 </div>
 
 </div>
@@ -62,46 +46,116 @@ title="تماس با ما"
 <nav class="bottom-nav" aria-label="منوی پایین">
 
 <a class="bottom-link" href="/" data-tip="خانه">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M3 12l9-9 9 9"/><rect x="5" y="10" width="14" height="12" rx="2"/><line x1="9" y1="22" x2="9" y2="15"/><line x1="15" y1="22" x2="15" y2="15"/></svg>
+<span class="bottom-icon home-icon"><VaraqIcon /></span>
 <span>خانه</span>
 </a>
 
-<div class="bottom-dropdown">
-<button class="bottom-link" data-tip="دسته‌ها">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+<button class="bottom-link" id="btnDasteh" data-tip="دسته‌ها">
+<span class="bottom-icon">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg>
+</span>
 <span>دسته</span>
 </button>
-<div class="dropdown-menu">
-{menuItems.map((item) => (
-    <a class="dropdown-item" href={item.href} data-tip={item.tip}>{item.label}</a>
-))}
-</div>
-</div>
 
 <button class="bottom-link" id="themeToggleBottom" title="تم" data-tip="تم شب و روز">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" class="icon-sun"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" class="icon-moon" style="display:none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<span class="bottom-icon">
+<span class="icon-sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+<span class="icon-moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span>
+</span>
 <span>تم</span>
 </button>
 
-<a class="bottom-link" href="https://mohajercul.vercel.app/" target="_blank" rel="noopener" data-tip="پروژه‌های دیگر">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="14" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/></svg>
-<span>پروژه‌ها</span>
-</a>
-
-<button class="bottom-link" id="aboutBtnBottom" title="درباره ما" data-tip="درباره ما">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-<span>درباره ما</span>
+<button class="bottom-link" id="btnBisher" data-tip="بیشتر">
+<span class="bottom-icon">
+<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+</span>
+<span>بیشتر</span>
 </button>
-
-<a class="bottom-link" href="mailto:info@example.com" data-tip="تماس با ما">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-<span>تماس</span>
-</a>
 
 </nav>
 
+<div class="mobile-search">
+<SearchBox searchIndex={searchIndex} />
+</div>
+
 </header>
+
+<div class="mb-overlay" id="mbOverlay"></div>
+
+<div class="mb-popup" id="popupDasteh">
+<div class="mb-popup-grid" data-cols="2">
+<a class="mb-bubble" href="/shiite">شیعه</a>
+<a class="mb-bubble" href="/atheism">الحاد</a>
+<a class="mb-bubble" href="/authors">نویسندگان</a>
+</div>
+</div>
+
+<div class="mb-popup" id="popupBisher">
+<div class="mb-popup-grid" data-cols="1">
+<a class="mb-bubble" href="https://mohajercul.vercel.app/" target="_blank" rel="noopener">
+<span class="mb-icon-circle"><IconFromFile src="grid.svg" /></span>
+پروژه‌های دیگر
+</a>
+<button class="mb-bubble" id="btnAboutMobile">
+<span class="mb-icon-circle"><IconFromFile src="info.svg" /></span>
+درباره ما
+</button>
+<button class="mb-bubble" id="btnContactMobile">
+<span class="mb-icon-circle"><IconFromFile src="mail.svg" /></span>
+تماس با ما
+</button>
+</div>
+</div>
+
+<div class="about-overlay" id="aboutOverlay">
+<div class="about-modal" role="dialog" aria-modal="true" aria-label="درباره ما">
+<button class="modal-close" id="aboutClose" title="بستن">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="modal-icon"><IconFromFile src="info.svg" /></div>
+<h3>درباره ما</h3>
+<p>کتابخانه‌ای دیجیتال برای معرفی کتاب‌های ناب و اندیشه‌های ماندگار؛ جایی برای خواندن، اندیشیدن و به اشتراک گذاشتن.</p>
+<p>ما تلاش می‌کنیم هر کتاب را با معرفی دقیق، اطلاعات کامل و لینک دانلود در اختیارتان بگذاریم تا دسترسی به دانش آسان‌تر شود.</p>
+<div class="socials">
+<a class="social instagram" href="#" title="اینستاگرام"><IconFromFile src="instagram.svg" /></a>
+<a class="social telegram" href="#" title="تلگرام"><IconFromFile src="telegram.svg" /></a>
+<a class="social tiktok" href="#" title="تیک‌تاک"><IconFromFile src="tiktok.svg" /></a>
+</div>
+</div>
+</div>
+
+<div class="contact-overlay" id="contactOverlay">
+<div class="contact-modal" role="dialog" aria-modal="true" aria-label="تماس با ما">
+<button class="modal-close" id="contactClose" title="بستن">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="modal-icon"><IconFromFile src="mail.svg" /></div>
+<h3>تماس با ما</h3>
+<p style="font-size:14px;color:var(--gray);margin-bottom:24px;">از طریق تلگرام با تیم ما در ارتباط باشید</p>
+<div class="contact-list">
+<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
+<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
+<span class="contact-text"><span class="contact-label">ارتباط با بخش فنی</span></span>
+<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
+</a>
+<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
+<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
+<span class="contact-text"><span class="contact-label">ارتباط با مدیر</span></span>
+<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
+</a>
+<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
+<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
+<span class="contact-text"><span class="contact-label">ارتباط با مسئول سایت</span></span>
+<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
+</a>
+<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
+<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
+<span class="contact-text"><span class="contact-label">درخواست ثبت کتاب</span></span>
+<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
+</a>
+</div>
+</div>
+</div>
 
 <style lang="scss">
 
@@ -230,11 +284,7 @@ padding:6px 4px 8px;
 justify-content:space-around;
 align-items:center;
 gap:2px;
-overflow-x:auto;
--webkit-overflow-scrolling:touch;
-scrollbar-width:none;
-
-&::-webkit-scrollbar{display:none;}
+overflow:visible;
 }
 
 .bottom-link{
@@ -266,9 +316,32 @@ background:color-mix(in srgb, var(--accent) 10%, transparent);
 color:var(--accent);
 }
 
-svg{
+.bottom-icon{
+display:flex;
+align-items:center;
+justify-content:center;
 width:22px;
 height:22px;
+
+:global(svg){
+width:22px;
+height:22px;
+display:block;
+}
+
+.icon-sun,.icon-moon{display:flex;align-items:center;justify-content:center;}
+.icon-moon{display:none;}
+}
+
+.home-icon{
+width:32px;
+height:32px;
+border-radius:9px;
+background:var(--logo-bg);
+color:var(--logo-text);
+box-shadow:0 2px 8px color-mix(in srgb, var(--logo-bg) 30%, transparent);
+transition:background .6s ease, box-shadow .6s ease, color .6s ease;
+:global(svg){width:20px;height:20px;}
 }
 
 span{
@@ -277,121 +350,438 @@ line-height:1.2;
 }
 }
 
-.bottom-dropdown{
-position:relative;
-
-.dropdown-menu{
-position:absolute;
-bottom:calc(100% + 8px);
-right:0;
-background:var(--card);
-border:1px solid var(--border);
-border-radius:14px;
-padding:8px 0;
-box-shadow:0 -4px 20px rgba(0,0,0,.12);
-z-index:60;
+.mobile-search{
 display:none;
-flex-direction:column;
-min-width:140px;
-
-&.open{
-display:flex;
-}
-}
-
-.dropdown-item{
-display:block;
-padding:10px 18px;
-color:var(--text);
-text-decoration:none;
-font-size:14px;
-border-radius:8px;
-margin:0 4px;
-transition:background .2s, color .2s;
-
-&:hover{
-background:color-mix(in srgb, var(--accent) 10%, transparent);
-color:var(--accent);
-}
-
-&.active{
-color:var(--accent);
-font-weight:700;
-background:color-mix(in srgb, var(--accent) 12%, transparent);
-}
-}
+padding:12px 16px;
+background:var(--card);
+border-bottom:1px solid var(--border);
 }
 
 @media(max-width:900px){
 height:auto;
 padding:0;
-
-.nav{
-display:none;
+.nav{display:none;}
+.mobile-search{display:block;}
+.bottom-nav{display:flex;}
+}
 }
 
-.bottom-nav{
+.mb-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.4);
+backdrop-filter:blur(4px);
+-webkit-backdrop-filter:blur(4px);
+z-index:55;
+opacity:0;
+visibility:hidden;
+transition:opacity .25s, visibility .25s;
+pointer-events:none;
+
+&.open{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+}
+
+.mb-popup{
+position:fixed;
+bottom:72px;
+left:50%;
+transform:translateX(-50%) translateY(12px);
+z-index:60;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s, visibility .25s;
+width:calc(100% - 32px);
+max-width:300px;
+
+&.open{
+transform:translateX(-50%) translateY(0);
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+
+&#popupBisher{
+width:220px;
+
+&.open{
+transform:translateX(0) translateY(0);
+}
+}
+}
+
+.mb-popup-grid{
+display:grid;
+gap:10px;
+padding:16px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:20px;
+box-shadow:0 -4px 24px rgba(0,0,0,.12);
+backdrop-filter:none;
+-webkit-backdrop-filter:none;
+
+&[data-cols="2"]{
+grid-template-columns:1fr 1fr;
+}
+
+&[data-cols="1"]{
+grid-template-columns:1fr;
+}
+}
+
+.mb-bubble{
 display:flex;
+align-items:center;
+direction:rtl;
+justify-content:flex-start;
+gap:10px;
+padding:14px 12px;
+background:color-mix(in srgb, var(--accent) 8%, transparent);
+border:1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+border-radius:16px;
+color:var(--text);
+font-size:14px;
+font-weight:500;
+text-decoration:none;
+font-family:inherit;
+cursor:pointer;
+transition:background .2s, color .2s, border-color .2s;
+width:100%;
+box-sizing:border-box;
+
+.mb-icon-circle{
+display:flex;
+align-items:center;
+justify-content:center;
+width:40px;
+height:40px;
+border-radius:50%;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+flex-shrink:0;
+
+:global(svg){
+width:20px;
+height:20px;
+color:var(--gray);
+transition:color .2s;
 }
 }
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+border-color:color-mix(in srgb, var(--accent) 40%, transparent);
+color:var(--accent);
+.mb-icon-circle{
+background:color-mix(in srgb, var(--accent) 25%, transparent);
+:global(svg){color:var(--accent);}
+}
+}
+
+}
+
+.icon-button{
+position:relative;
+width:42px;
+height:42px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--bg);
+border:1px solid var(--border);
+color:var(--gray);
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease;
+
+:global(svg){
+width:20px;
+height:20px;
+color:currentColor;
+}
+
+&:hover{
+background:var(--accent);
+:global(svg){color:#fff;}
+}
+}
+
+.about-overlay,.contact-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:1000;
+opacity:0;
+visibility:hidden;
+transition:opacity .35s ease, visibility .35s;
+
+&.open{
+opacity:1;
+visibility:visible;
+}
+}
+
+.about-modal,.contact-modal{
+position:relative;
+width:420px;
+max-width:calc(100vw - 40px);
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:44px 32px 36px;
+text-align:center;
+box-shadow:0 30px 80px rgba(0,0,0,.4);
+opacity:0;
+transform:translateY(30px) scale(.92);
+transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+
+.about-overlay.open &, .contact-overlay.open &{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+.modal-close{
+position:absolute;
+top:16px;
+left:16px;
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+background:var(--text);
+color:var(--bg);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:background .3s ease, color .3s ease, transform .3s ease;
+
+svg{width:18px;height:18px;}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+transform:rotate(90deg);
+}
+}
+
+.modal-icon{
+width:64px;
+height:64px;
+margin:0 auto 18px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+
+:global(svg){width:30px;height:30px;}
+}
+
+h3{font-size:20px;font-weight:900;margin-bottom:12px;}
+p{font-size:14px;line-height:2;color:var(--gray);margin-bottom:0;text-align:justify;& + p{margin-top:14px;}}
+}
+
+.socials{
+margin-top:24px;
+display:flex;
+justify-content:center;
+gap:12px;
+
+.social{
+width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+background:var(--bg);border:1px solid var(--border);color:var(--gray);
+transition:transform .35s cubic-bezier(.34,1.56,.64,1), background .3s ease, color .3s ease, border-color .3s ease;
+
+:global(svg){width:22px;height:22px;}
+
+&:hover{transform:translateY(-4px) scale(1.08);}
+&.instagram:hover{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-color:transparent;color:#fff;}
+&.telegram:hover{background:#229ED9;border-color:transparent;color:#fff;}
+&.tiktok:hover{background:#000;border-color:transparent;color:#25F4EE;}
+}
+}
+
+.contact-list{
+display:flex;flex-direction:column;gap:10px;text-align:right;
+}
+
+.contact-item{
+display:flex;align-items:center;gap:12px;padding:14px 16px;
+background:var(--bg);border:1px solid var(--border);border-radius:16px;
+color:var(--text);text-decoration:none;
+transition:background .2s, border-color .2s, transform .2s;
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 8%, transparent);
+border-color:color-mix(in srgb, var(--accent) 30%, transparent);
+transform:translateX(-4px);
+}
+}
+
+.contact-icon{
+display:flex;align-items:center;justify-content:center;
+width:40px;height:40px;border-radius:50%;
+background:color-mix(in srgb, var(--accent) 12%, transparent);color:var(--accent);flex-shrink:0;
+
+:global(svg){width:20px;height:20px;}
+}
+
+.contact-text{flex:1;}
+.contact-label{font-size:14px;font-weight:600;}
+
+.contact-arrow{
+color:var(--gray);flex-shrink:0;
+transition:color .2s, transform .2s;
+
+.contact-item:hover &{color:var(--accent);transform:translateX(-4px);}
 }
 
 </style>
 
+<style is:global>
+.dark .bottom-link .icon-sun{display:none;}
+.dark .bottom-link .icon-moon{display:flex;}
+body.modal-open{overflow:hidden;}
+</style>
 <script is:inline>
 document.addEventListener("DOMContentLoaded", () => {
-const dropdownBtn = document.querySelector(".bottom-dropdown > .bottom-link");
-const dropdownMenu = document.querySelector(".dropdown-menu");
-const aboutBtn = document.getElementById("aboutBtnBottom");
+const overlay = document.getElementById("mbOverlay");
+const popupDasteh = document.getElementById("popupDasteh");
+const popupBisher = document.getElementById("popupBisher");
+const btnDasteh = document.getElementById("btnDasteh");
+const btnBisher = document.getElementById("btnBisher");
 const themeBtn = document.getElementById("themeToggleBottom");
+const btnAbout = document.getElementById("btnAboutMobile");
+const btnContact = document.getElementById("btnContactMobile");
 
-if(dropdownBtn && dropdownMenu){
-dropdownBtn.addEventListener("click", (e) => {
+function closeAll(){
+popupDasteh?.classList.remove("open");
+popupBisher?.classList.remove("open");
+overlay?.classList.remove("open");
+}
+
+btnDasteh?.addEventListener("click", (e) => {
 e.stopPropagation();
-dropdownMenu.classList.toggle("open");
-});
-document.addEventListener("click", (e) => {
-if(!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)){
-dropdownMenu.classList.remove("open");
+const wasOpen = popupDasteh.classList.contains("open");
+closeAll();
+if(!wasOpen){
+popupDasteh.classList.add("open");
+overlay.classList.add("open");
 }
 });
+
+btnBisher?.addEventListener("click", (e) => {
+e.stopPropagation();
+const wasOpen = popupBisher.classList.contains("open");
+closeAll();
+if(!wasOpen){
+const rect = btnBisher.getBoundingClientRect();
+const popupW = 220;
+const center = rect.left + rect.width / 2;
+let left = center - popupW / 2;
+left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+popupBisher.style.left = left + "px";
+popupBisher.style.right = "auto";
+popupBisher.classList.add("open");
+overlay.classList.add("open");
+}
+});
+
+overlay?.addEventListener("click", closeAll);
+
+document.querySelectorAll(".mb-bubble[href]").forEach((item) => {
+item.addEventListener("click", closeAll);
+});
+
+btnAbout?.addEventListener("click", () => {
+closeAll();
+const aboutOverlay = document.getElementById("aboutOverlay");
+if(aboutOverlay){
+aboutOverlay.classList.add("open");
+document.body.classList.add("modal-open");
+}
+});
+
+btnContact?.addEventListener("click", () => {
+closeAll();
+const contactOverlay = document.getElementById("contactOverlay");
+if(contactOverlay){
+contactOverlay.classList.add("open");
+document.body.classList.add("modal-open");
+}
+});
+
+const btnAboutDesktop = document.getElementById("btnAboutDesktop");
+const btnContactDesktop = document.getElementById("btnContactDesktop");
+const aboutClose = document.getElementById("aboutClose");
+const contactClose = document.getElementById("contactClose");
+const aboutOverlay = document.getElementById("aboutOverlay");
+const contactOverlay = document.getElementById("contactOverlay");
+
+btnAboutDesktop?.addEventListener("click", () => {
+aboutOverlay?.classList.add("open");
+document.body.classList.add("modal-open");
+});
+
+btnContactDesktop?.addEventListener("click", () => {
+contactOverlay?.classList.add("open");
+document.body.classList.add("modal-open");
+});
+
+function closeModal(id){
+const el = document.getElementById(id);
+el?.classList.remove("open");
+document.body.classList.remove("modal-open");
 }
 
-if(aboutBtn){
-aboutBtn.addEventListener("click", () => {
-const overlay = document.querySelector("[data-about-overlay]");
-if(overlay) overlay.classList.toggle("open");
-});
-}
+aboutClose?.addEventListener("click", () => closeModal("aboutOverlay"));
+contactClose?.addEventListener("click", () => closeModal("contactOverlay"));
 
-if(themeBtn){
-themeBtn.addEventListener("click", () => {
+aboutOverlay?.addEventListener("click", (e) => {
+if(e.target === aboutOverlay) closeModal("aboutOverlay");
+});
+
+contactOverlay?.addEventListener("click", (e) => {
+if(e.target === contactOverlay) closeModal("contactOverlay");
+});
+
+document.addEventListener("keydown", (e) => {
+if(e.key === "Escape"){
+closeModal("aboutOverlay");
+closeModal("contactOverlay");
+}
+});
+
+themeBtn?.addEventListener("click", () => {
 const html = document.documentElement;
 html.classList.add("theme-anim");
-const btn = themeBtn;
-btn.classList.remove("spin");
-void btn.offsetWidth;
-btn.classList.add("spin");
+themeBtn.classList.remove("spin");
+void themeBtn.offsetWidth;
+themeBtn.classList.add("spin");
 const isDark = html.classList.toggle("dark");
 localStorage.setItem("theme", isDark ? "dark" : "light");
 window.setTimeout(() => {
 html.classList.remove("theme-anim");
-btn.classList.remove("spin");
+themeBtn.classList.remove("spin");
 }, 650);
 });
-}
 
-const path = window.location.pathname;
+const currentPath = window.location.pathname;
 document.querySelectorAll(".bottom-link").forEach((link) => {
 const href = link.getAttribute("href");
-if(href === "/" || href === path){
+if(href && (href === "/" ? currentPath === "/" : currentPath.startsWith(href))){
 link.classList.add("active");
-}
-});
-document.querySelectorAll(".dropdown-item").forEach((item) => {
-const href = item.getAttribute("href");
-if(href && path.startsWith(href)){
-item.classList.add("active");
 }
 });
 });

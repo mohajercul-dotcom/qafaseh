@@ -342,11 +342,14 @@ font-size:32px;
 }
 
 .widgets{
-grid-template-columns:1fr;
+grid-template-columns:1fr 1fr;
 
-.card,
+.card{
+grid-column:span 2;
+}
+
 .stat{
-grid-column:auto;
+grid-column:span 1;
 }
 }
 }
