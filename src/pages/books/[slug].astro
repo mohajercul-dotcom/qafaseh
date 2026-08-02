@@ -5,6 +5,7 @@ import ShareButton from "../../components/ShareButton.astro";
 import TextSizeToggle from "../../components/TextSizeToggle.astro";
 import { getCollection, render } from "astro:content";
 import { slugify, normalizeAuthor, shortCode } from "../../lib/books.js";
+import { toPersian } from "../../lib/number.ts";
 
 export async function getStaticPaths() {
     const shiiteBooks = await getCollection("shiite");
@@ -124,13 +125,13 @@ const related = allBooks
             {book.data.volumes && (
                 <div class="spec">
                     <span class="spec-label">جلد</span>
-                    <span class="spec-value">{book.data.volumes} جلد</span>
+                    <span class="spec-value">{toPersian(book.data.volumes)} جلد</span>
                 </div>
             )}
             {book.data.pages && (
                 <div class="spec">
                     <span class="spec-label">صفحات</span>
-                    <span class="spec-value">{book.data.pages} صفحه</span>
+                    <span class="spec-value">{toPersian(book.data.pages)} صفحه</span>
                 </div>
             )}
             {book.data.language && (
