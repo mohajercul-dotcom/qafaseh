@@ -12,6 +12,11 @@ const { searchIndex = [] } = Astro.props;
 const menuItems = [
     { href: "/shiite", label: "شیعه", tip: "شیعه‌شناسی" },
     { href: "/atheism", label: "الحاد", tip: "نقد الحاد" },
+    { href: "/aqeedah", label: "عقیده", tip: "عقاید دینی" },
+    { href: "/adyan", label: "ادیان", tip: "ادیان و مذاهب" },
+    { href: "/maqabeh", label: "مکاتب فکری", tip: "مکاتب فکری و فلسفی" },
+    { href: "/fraq", label: "فرق", tip: "فرق و گروه‌ها" },
+    { href: "/daavat", label: "دعوت", tip: "تبلیغ و دعوت" },
     { href: "/authors", label: "نویسندگان", tip: "نویسندگان و آثارشان" },
 ];
 ---
@@ -86,6 +91,11 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <div class="mb-popup-grid" data-cols="2">
 <a class:list={["mb-bubble", { active: path === "/shiite" || path.startsWith("/shiite/") }]} href="/shiite">شیعه</a>
 <a class:list={["mb-bubble", { active: path === "/atheism" || path.startsWith("/atheism/") }]} href="/atheism">الحاد</a>
+<a class:list={["mb-bubble", { active: path === "/aqeedah" || path.startsWith("/aqeedah/") }]} href="/aqeedah">عقیده</a>
+<a class:list={["mb-bubble", { active: path === "/adyan" || path.startsWith("/adyan/") }]} href="/adyan">ادیان</a>
+<a class:list={["mb-bubble", { active: path === "/maqabeh" || path.startsWith("/maqabeh/") }]} href="/maqabeh">مکاتب فکری</a>
+<a class:list={["mb-bubble", { active: path === "/fraq" || path.startsWith("/fraq/") }]} href="/fraq">فرق</a>
+<a class:list={["mb-bubble", { active: path === "/daavat" || path.startsWith("/daavat/") }]} href="/daavat">دعوت</a>
 <a class:list={["mb-bubble", { active: path === "/authors" || path.startsWith("/authors/") }]} href="/authors">نویسندگان</a>
 </div>
 </div>

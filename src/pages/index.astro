@@ -8,9 +8,20 @@ import { toPersian } from "../lib/number.ts";
 
 const shiiteBooks = await getCollection("shiite");
 const atheismBooks = await getCollection("atheism");
+const aqeedahBooks = await getCollection("aqeedah");
+const adyanBooks = await getCollection("adyan");
+const maqabehBooks = await getCollection("maqabeh");
+const fraqBooks = await getCollection("fraq");
+const daavatBooks = await getCollection("daavat");
+
 const allBooks = [
     ...shiiteBooks.map((b) => ({ ...b, category: "shiite" })),
     ...atheismBooks.map((b) => ({ ...b, category: "atheism" })),
+    ...aqeedahBooks.map((b) => ({ ...b, category: "aqeedah" })),
+    ...adyanBooks.map((b) => ({ ...b, category: "adyan" })),
+    ...maqabehBooks.map((b) => ({ ...b, category: "maqabeh" })),
+    ...fraqBooks.map((b) => ({ ...b, category: "fraq" })),
+    ...daavatBooks.map((b) => ({ ...b, category: "daavat" })),
 ];
 
 const totalBooks = allBooks.length;
@@ -18,6 +29,11 @@ const authorNames = new Set(allBooks.map((b) => normalizeAuthor(b.data.author)))
 const totalAuthors = authorNames.size;
 const shiiteCount = shiiteBooks.length;
 const atheismCount = atheismBooks.length;
+const aqeedahCount = aqeedahBooks.length;
+const adyanCount = adyanBooks.length;
+const maqabehCount = maqabehBooks.length;
+const fraqCount = fraqBooks.length;
+const daavatCount = daavatBooks.length;
 
 const newest = [...allBooks].sort((a, b) => {
     const ta = a.data.pubDate || (a.filePath ? statSync(a.filePath).mtime : 0);
@@ -153,6 +169,66 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
         <strong>
             {toPersian(atheismCount)}
+        </strong>
+
+    </div>
+
+    <div class="card stat">
+
+        <h3>
+            کتاب عقیده
+        </h3>
+
+        <strong>
+            {toPersian(aqeedahCount)}
+        </strong>
+
+    </div>
+
+    <div class="card stat">
+
+        <h3>
+            کتاب ادیان
+        </h3>
+
+        <strong>
+            {toPersian(adyanCount)}
+        </strong>
+
+    </div>
+
+    <div class="card stat">
+
+        <h3>
+            کتاب مکاتب فکری
+        </h3>
+
+        <strong>
+            {toPersian(maqabehCount)}
+        </strong>
+
+    </div>
+
+    <div class="card stat">
+
+        <h3>
+            کتاب فرق
+        </h3>
+
+        <strong>
+            {toPersian(fraqCount)}
+        </strong>
+
+    </div>
+
+    <div class="card stat">
+
+        <h3>
+            کتاب دعوت
+        </h3>
+
+        <strong>
+            {toPersian(daavatCount)}
         </strong>
 
     </div>

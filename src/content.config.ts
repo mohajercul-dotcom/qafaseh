@@ -30,4 +30,29 @@ const atheism = defineCollection({
     schema: bookSchema,
 });
 
-export const collections = { shiite, atheism };
+const aqeedah = defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./src/content/books/aqeedah" }),
+    schema: bookSchema,
+});
+
+const adyan = defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./src/content/books/adyan" }),
+    schema: bookSchema,
+});
+
+const maqabeh = defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./src/content/books/maqabeh" }),
+    schema: bookSchema,
+});
+
+const fraq = defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./src/content/books/fraq" }),
+    schema: bookSchema,
+});
+
+const daavat = defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./src/content/books/daavat" }),
+    schema: bookSchema,
+});
+
+export const collections = { shiite, atheism, aqeedah, adyan, maqabeh, fraq, daavat };

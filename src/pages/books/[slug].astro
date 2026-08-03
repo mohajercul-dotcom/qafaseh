@@ -10,10 +10,20 @@ import { toPersian } from "../../lib/number.ts";
 export async function getStaticPaths() {
     const shiiteBooks = await getCollection("shiite");
     const atheismBooks = await getCollection("atheism");
+    const aqeedahBooks = await getCollection("aqeedah");
+    const adyanBooks = await getCollection("adyan");
+    const maqabehBooks = await getCollection("maqabeh");
+    const fraqBooks = await getCollection("fraq");
+    const daavatBooks = await getCollection("daavat");
 
     const all = [
         ...shiiteBooks.map((b) => ({ ...b, category: "shiite" })),
         ...atheismBooks.map((b) => ({ ...b, category: "atheism" })),
+        ...aqeedahBooks.map((b) => ({ ...b, category: "aqeedah" })),
+        ...adyanBooks.map((b) => ({ ...b, category: "adyan" })),
+        ...maqabehBooks.map((b) => ({ ...b, category: "maqabeh" })),
+        ...fraqBooks.map((b) => ({ ...b, category: "fraq" })),
+        ...daavatBooks.map((b) => ({ ...b, category: "daavat" })),
     ];
 
     return all.flatMap((book) => {
@@ -85,15 +95,17 @@ const firstParagraph = (() => {
             <Content />
         </article>
 
-        <ShareButton title={book.data.title} author={book.data.author} excerpt={firstParagraph} url={siteUrl} shortUrl={shortUrl} />
+        <div class="actions-row">
+            <ShareButton title={book.data.title} author={book.data.author} excerpt={firstParagraph} url={siteUrl} shortUrl={shortUrl} />
 
-        <a class="author-btn" href={`/authors/${slugify(book.data.author)}`}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <span>کتاب‌های دیگر {book.data.author}</span>
-        </a>
+            <a class="author-btn" href={`/authors/${slugify(book.data.author)}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>کتاب‌های دیگر {book.data.author}</span>
+            </a>
+        </div>
 
     </section>
 
@@ -587,6 +599,13 @@ opacity:.8;
 text-align:center;
 color:var(--gray);
 font-size:12px;
+}
+
+.actions-row{
+display:flex;
+align-items:center;
+gap:12px;
+margin-top:12px;
 }
 
 .author-btn{

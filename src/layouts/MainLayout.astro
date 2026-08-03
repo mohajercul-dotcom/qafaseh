@@ -9,6 +9,11 @@ const description = "معرفی کتاب‌ها، نویسندگان و اندی
 
 const shiiteBooks = await getCollection("shiite");
 const atheismBooks = await getCollection("atheism");
+const aqeedahBooks = await getCollection("aqeedah");
+const adyanBooks = await getCollection("adyan");
+const maqabehBooks = await getCollection("maqabeh");
+const fraqBooks = await getCollection("fraq");
+const daavatBooks = await getCollection("daavat");
 
 const searchIndex = [
     ...shiiteBooks.map((b) => ({
@@ -25,6 +30,46 @@ const searchIndex = [
         translator: b.data.translator || "",
         description: b.data.description || "",
         category: "الحاد",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...aqeedahBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "عقیده",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...adyanBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "ادیان",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...maqabehBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "مکاتب فکری",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...fraqBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "فرق",
+        href: `/books/${slugify(b.data.title)}`,
+    })),
+    ...daavatBooks.map((b) => ({
+        title: b.data.title,
+        author: b.data.author,
+        translator: b.data.translator || "",
+        description: b.data.description || "",
+        category: "دعوت",
         href: `/books/${slugify(b.data.title)}`,
     })),
 ];
