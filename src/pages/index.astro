@@ -182,8 +182,9 @@ font-size:18px;
 display:grid;
 grid-template-columns:repeat(12,1fr);
 gap:16px;
+}
 
-.card{
+.widgets .card{
 background:var(--card);
 border:1px solid var(--border);
 border-radius:22px;
@@ -205,6 +206,7 @@ border-radius:12px;
 border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 font-size:14px;
 font-weight:700;
+}
 }
 
 .card-list{
@@ -245,7 +247,6 @@ min-width:34px;
 text-align:center;
 padding:3px 6px;
 border-radius:8px;
-}
 }
 }
 }
@@ -308,8 +309,9 @@ display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:16px;
 margin-top:16px;
+}
 
-.card{
+.stats-row .card{
 background:var(--card);
 border:1px solid var(--border);
 border-radius:22px;
@@ -336,7 +338,6 @@ font-size:40px;
 color:var(--accent);
 }
 }
-}
 
 @media(max-width:900px){
 .hero{
@@ -349,10 +350,10 @@ font-size:32px;
 }
 
 .widgets{
-grid-template-columns:1fr 1fr;
+grid-template-columns:1fr;
 
 .card{
-grid-column:span 2;
+grid-column:span 1;
 }
 }
 
