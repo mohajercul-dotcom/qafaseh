@@ -182,12 +182,18 @@ border-radius:20px;
 font-size:12px;
 font-weight:600;
 text-decoration:none;
-transition:background .2s, transform .2s;
+transition:background .2s, transform .2s, color .2s;
 flex-shrink:0;
 
 &:hover{
-background:color-mix(in srgb, var(--accent) 22%, transparent);
-transform:translateY(-1px);
+background:var(--accent);
+color:#fff;
+}
+
+&:active{
+background:var(--accent);
+opacity:.7;
+transform:scale(.95);
 }
 }
 
