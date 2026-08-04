@@ -48,6 +48,10 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
 <section class="hero">
 
+         <div class="hero-description">
+        مرجعی تخصصی برای معرفی کتاب‌ها در حوزه اسلام، ادیان و مکاتب فکری؛ با هدف تسهیل پژوهش و دسترسی به منابع معتبر اهل سنت
+    </div>
+
     <div class="hero-text">
         <img class="site-logo logo-light" src="/icons/Light.svg" alt="کتاب‌شناسی" />
         <img class="site-logo logo-dark" src="/icons/Dark.svg" alt="کتاب‌شناسی" />
@@ -171,10 +175,11 @@ font-display:swap;
 }
 
 .hero{
-height:200px;
 display:flex;
+flex-direction:row;
 justify-content:flex-start;
 align-items:center;
+gap:20px;
 padding:10px 0;
 box-sizing:border-box;
 }
@@ -225,6 +230,32 @@ padding:8px 0;
 .hero-text{
 width:min(45vw,170px);
 }
+}
+
+.hero-description{
+flex:1;
+text-align:right;
+direction:rtl;
+font-size:16px;
+line-height:1.9;
+color:var(--gray);
+}
+
+.hero-text{
+    flex-shrink:0;
+}
+
+@media(max-width:900px){
+    .hero{
+        flex-direction:column;
+        text-align:center;
+        gap:20px;
+    }
+
+    .hero-description{
+        text-align:right;
+        font-size:18px;
+    }
 }
 
 .widgets{
