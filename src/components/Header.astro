@@ -562,6 +562,7 @@ background:color-mix(in srgb, var(--accent) 20%, transparent);
 fill:var(--gray);
 width:22px;
 height:22px;
+transition:fill .3s ease;
 }
 
 .icon-button{
@@ -625,6 +626,8 @@ z-index:50;
 &:hover{
 background:var(--accent);
 :global(svg){color:#fff;}
+#btnFaqDesktop :global(svg),
+#btnFaqMobile :global(svg){fill:#fff;}
 
 &::after{
 opacity:1;
