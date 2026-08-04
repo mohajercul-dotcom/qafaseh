@@ -881,6 +881,18 @@ contactOverlay?.classList.add("open");
 document.body.classList.add("modal-open");
 });
 
+const btnFaqDesktop = document.getElementById("btnFaqDesktop");
+const btnFaqMobile = document.getElementById("btnFaqMobile");
+
+btnFaqDesktop?.addEventListener("click", () => {
+window.location.href = "/faq";
+});
+
+btnFaqMobile?.addEventListener("click", () => {
+closeAll();
+window.location.href = "/faq";
+});
+
 function closeModal(id){
 const el = document.getElementById(id);
 el?.classList.remove("open");
