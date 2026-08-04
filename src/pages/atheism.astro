@@ -19,7 +19,7 @@ const books = (await getCollection("atheism")).sort((a, b) =>
 
 </section>
 
-<div class="books" id="books-grid" data-cols="3">
+<div class="books" id="books-atheism" data-cols="3">
     {books.map((book) => (
         <div class="book-item">
             <BookCard
@@ -36,32 +36,9 @@ const books = (await getCollection("atheism")).sort((a, b) =>
 </div>
 
 <script>
-function layoutBooks() {
-const grid = document.getElementById("books-grid");
-if (!grid) return;
-
-const items = Array.from(grid.querySelectorAll(".book-item"));
-const w = window.innerWidth;
-const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
-
-grid.innerHTML = "";
-
-const columns = [];
-for (let i = 0; i < cols; i++) {
-const col = document.createElement("div");
-col.className = "book-col";
-columns.push(col);
-}
-
-items.forEach((item, i) => {
-columns[i % cols].appendChild(item);
-});
-
-columns.forEach(col => grid.appendChild(col));
-}
-
-layoutBooks();
-window.addEventListener("resize", layoutBooks);
+import { initAllGrids } from "../lib/bookGrid.js";
+initAllGrids();
+window.addEventListener("resize", initAllGrids);
 </script>
 
 </MainLayout>
@@ -83,7 +60,7 @@ color:var(--gray);
 }
 }
 
-#books-grid{
+.books{
 display:flex;
 gap:16px;
 padding:20px 0 40px;
@@ -97,7 +74,7 @@ gap:16px;
 }
 
 @media(max-width:900px){
-#books-grid{
+.books{
 flex-direction:column;
 }
 }
