@@ -2,43 +2,70 @@
 const { title, author, description, publisher, year, language, href } = Astro.props;
 ---
 
-<a class="book-card" href={href}>
+<div class="book-card">
 
-    <div class="card-top">
+    <div class="card-main">
+
         <div class="card-info">
             <h3>{title}</h3>
             <p class="author">{author}</p>
         </div>
-        {language && (
-            <span class:list={["lang-badge", language === "فارسی" ? "fa" : "ar"]}>
-                {language}
-            </span>
-        )}
+
+        <div class="card-right">
+            {language && (
+                <span class:list={["lang-badge", language === "فارسی" ? "fa" : "ar"]}>
+                    {language}
+                </span>
+            )}
+            {description && (
+                <button class="toggle-btn" aria-label="بازشدن">
+                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+            )}
+        </div>
+
     </div>
 
     {description && (
-        <details class="accordion">
-            <summary>توضیحات</summary>
+        <div class="accordion-body">
             <p class="desc">{description}</p>
-        </details>
+            <div class="meta">
+                {publisher && <span>{publisher}</span>}
+                {year && <span>{year}</span>}
+            </div>
+            <a class="enter-btn" href={href}>ورود</a>
+        </div>
     )}
 
-    <div class="meta">
-        {publisher && <span>{publisher}</span>}
-        {year && <span>{year}</span>}
-    </div>
+</div>
 
-</a>
+<script>
+document.querySelectorAll(".toggle-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        const card = btn.closest(".book-card");
+        const body = card.querySelector(".accordion-body");
+        const isOpen = body.classList.contains("open");
+
+        if (isOpen) {
+            body.classList.remove("open");
+            body.style.maxHeight = "0";
+            btn.classList.remove("open");
+        } else {
+            body.classList.add("open");
+            body.style.maxHeight = body.scrollHeight + "px";
+            btn.classList.add("open");
+        }
+    });
+});
+</script>
 
 <style lang="scss">
 
 .book-card{
-display:block;
 background:var(--card);
 border:1px solid var(--border);
 border-radius:18px;
 padding:22px;
-text-decoration:none;
 transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
 
 &:hover{
@@ -47,7 +74,7 @@ box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 }
 
-.card-top{
+.card-main{
 display:flex;
 justify-content:space-between;
 align-items:flex-start;
@@ -70,8 +97,14 @@ font-size:13px;
 margin-bottom:0;
 }
 
-.lang-badge{
+.card-right{
+display:flex;
+align-items:center;
+gap:8px;
 flex-shrink:0;
+}
+
+.lang-badge{
 font-size:11px;
 font-weight:700;
 padding:4px 10px;
@@ -99,33 +132,42 @@ background:color-mix(in srgb, #fb923c 18%, transparent);
 color:#fb923c;
 }
 
-.accordion{
-margin-top:12px;
-
-summary{
-font-size:13px;
+.toggle-btn{
+display:flex;
+align-items:center;
+justify-content:center;
+width:28px;
+height:28px;
+border:none;
+background:color-mix(in srgb, var(--accent) 10%, transparent);
 color:var(--gray);
+border-radius:50%;
 cursor:pointer;
-padding:6px 0;
-list-style:none;
+transition:background .2s, color .2s, transform .3s ease;
 
-&::before{
-content:"▸ ";
+svg{
+transition:transform .3s ease;
 }
 
-&::-webkit-details-marker{
-display:none;
-}
-}
-
-&[open] summary{
+&.open{
+background:color-mix(in srgb, var(--accent) 18%, transparent);
 color:var(--accent);
-margin-bottom:6px;
 
-&::before{
-content:"▾ ";
+svg{
+transform:rotate(180deg);
 }
 }
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 20%, transparent);
+color:var(--accent);
+}
+}
+
+.accordion-body{
+max-height:0;
+overflow:hidden;
+transition:max-height .35s ease;
 }
 
 .desc{
@@ -133,6 +175,7 @@ color:var(--gray);
 font-size:13px;
 line-height:1.8;
 margin:0;
+padding-top:14px;
 }
 
 .meta{
@@ -143,6 +186,24 @@ font-size:12px;
 border-top:1px solid var(--border);
 padding-top:12px;
 margin-top:12px;
+}
+
+.enter-btn{
+display:inline-block;
+margin-top:14px;
+padding:8px 20px;
+background:var(--accent);
+color:#fff;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+text-decoration:none;
+transition:opacity .2s, transform .2s;
+
+&:hover{
+opacity:.85;
+transform:translateY(-2px);
+}
 }
 
 </style>
