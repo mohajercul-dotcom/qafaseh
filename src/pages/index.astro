@@ -175,7 +175,6 @@ height:200px;
 display:flex;
 align-items:center;
 padding:10px 0;
-overflow:hidden;
 
 .hero-text{
 position:relative;
@@ -217,6 +216,11 @@ transform:scale(1);
 .hero{
 height:auto;
 padding:7px 16px;
+}
+
+.hero-text{
+width:min(92vw,320px);
+}
 
 .hero-text .site-logo{
 width:clamp(100px, 55vw, 160px);
@@ -386,15 +390,6 @@ color:var(--accent);
 }
 
 @media(max-width:900px){
-.hero{
-height:auto;
-padding:7px 16px;
-
-.hero-text h1{
-font-size:32px;
-}
-}
-
 .widgets{
 grid-template-columns:1fr;
 
