@@ -22,10 +22,12 @@ export function initBookGrid(gridId) {
     });
 
     columns.forEach(col => grid.appendChild(col));
+    grid.classList.add("ready");
 }
 
 export function initAllGrids() {
     document.querySelectorAll("[id^='books-']").forEach(grid => {
+        grid.classList.remove("ready");
         initBookGrid(grid.id);
     });
 }

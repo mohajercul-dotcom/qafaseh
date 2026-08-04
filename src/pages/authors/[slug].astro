@@ -160,6 +160,12 @@ border-bottom:1px solid var(--border);
 .books{
 display:flex;
 gap:16px;
+opacity:0;
+transition:opacity .2s;
+
+&.ready{
+opacity:1;
+}
 }
 
 :global(.book-col){
