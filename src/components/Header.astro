@@ -567,6 +567,7 @@ transition:fill .3s ease;
 
 .icon-button{
 position:relative;
+position:relative;
 width:42px;
 height:42px;
 border-radius:50%;
@@ -626,8 +627,6 @@ z-index:50;
 &:hover{
 background:var(--accent);
 :global(svg){color:#fff;}
-#btnFaqDesktop :global(svg),
-#btnFaqMobile :global(svg){fill:#fff;}
 
 &::after{
 opacity:1;
@@ -639,6 +638,11 @@ opacity:1;
 visibility:visible;
 }
 }
+}
+
+#btnFaqDesktop:hover :global(svg),
+#btnFaqMobile:hover :global(svg){
+fill:#fff;
 }
 
 .about-overlay,.contact-overlay{
