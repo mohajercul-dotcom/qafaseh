@@ -19,10 +19,9 @@ const books = (await getCollection("atheism")).sort((a, b) =>
 
 </section>
 
-<section class="books">
-
-    {
-        books.map((book) => (
+<div class="books" id="books-grid" data-cols="3">
+    {books.map((book) => (
+        <div class="book-item">
             <BookCard
                 title={book.data.title}
                 author={book.data.author}
@@ -32,10 +31,38 @@ const books = (await getCollection("atheism")).sort((a, b) =>
                 language={book.data.language}
                 href={`/books/${slugify(book.data.title)}`}
             />
-        ))
-    }
+        </div>
+    ))}
+</div>
 
-</section>
+<script>
+function layoutBooks() {
+const grid = document.getElementById("books-grid");
+if (!grid) return;
+
+const items = Array.from(grid.querySelectorAll(".book-item"));
+const w = window.innerWidth;
+const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
+
+grid.innerHTML = "";
+
+const columns = [];
+for (let i = 0; i < cols; i++) {
+const col = document.createElement("div");
+col.className = "book-col";
+columns.push(col);
+}
+
+items.forEach((item, i) => {
+columns[i % cols].appendChild(item);
+});
+
+columns.forEach(col => grid.appendChild(col));
+}
+
+layoutBooks();
+window.addEventListener("resize", layoutBooks);
+</script>
 
 </MainLayout>
 
@@ -56,20 +83,22 @@ color:var(--gray);
 }
 }
 
-.books{
-column-count:3;
-column-gap:16px;
+#books-grid{
+display:flex;
+gap:16px;
 padding:20px 0 40px;
-
-:global(.book-card){
-break-inside:avoid;
-margin-bottom:16px;
 }
+
+:global(.book-col){
+flex:1;
+display:flex;
+flex-direction:column;
+gap:16px;
 }
 
 @media(max-width:900px){
-.books{
-grid-template-columns:1fr;
+#books-grid{
+flex-direction:column;
 }
 }
 

@@ -50,17 +50,19 @@ const atheismBooks = (await getCollection("atheism")).filter(
 
             <h2>کتاب‌های شیعه</h2>
 
-            <div class="books">
+            <div class="books" id="books-shiite" data-cols="3">
                 {shiiteBooks.map((book) => (
-                    <BookCard
-                        title={book.data.title}
-                        author={book.data.author}
-                        description={book.data.description}
-                        publisher={book.data.publisher}
-                        year={book.data.year}
-                        language={book.data.language}
-                        href={`/books/${slugify(book.data.title)}`}
-                    />
+                    <div class="book-item">
+                        <BookCard
+                            title={book.data.title}
+                            author={book.data.author}
+                            description={book.data.description}
+                            publisher={book.data.publisher}
+                            year={book.data.year}
+                            language={book.data.language}
+                            href={`/books/${slugify(book.data.title)}`}
+                        />
+                    </div>
                 ))}
             </div>
 
@@ -74,23 +76,61 @@ const atheismBooks = (await getCollection("atheism")).filter(
 
             <h2>کتاب‌های الحاد</h2>
 
-            <div class="books">
+            <div class="books" id="books-atheism" data-cols="3">
                 {atheismBooks.map((book) => (
-                    <BookCard
-                        title={book.data.title}
-                        author={book.data.author}
-                        description={book.data.description}
-                        publisher={book.data.publisher}
-                        year={book.data.year}
-                        language={book.data.language}
-                        href={`/books/${slugify(book.data.title)}`}
-                    />
+                    <div class="book-item">
+                        <BookCard
+                            title={book.data.title}
+                            author={book.data.author}
+                            description={book.data.description}
+                            publisher={book.data.publisher}
+                            year={book.data.year}
+                            language={book.data.language}
+                            href={`/books/${slugify(book.data.title)}`}
+                        />
+                    </div>
                 ))}
             </div>
 
         </section>
     )
 }
+
+<script>
+function layoutGrid(gridId) {
+const grid = document.getElementById(gridId);
+if (!grid) return;
+
+const items = Array.from(grid.querySelectorAll(".book-item"));
+if (items.length === 0) return;
+
+const w = window.innerWidth;
+const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
+
+grid.innerHTML = "";
+
+const columns = [];
+for (let i = 0; i < cols; i++) {
+const col = document.createElement("div");
+col.className = "book-col";
+columns.push(col);
+}
+
+items.forEach((item, i) => {
+columns[i % cols].appendChild(item);
+});
+
+columns.forEach(col => grid.appendChild(col));
+}
+
+function layoutAll() {
+layoutGrid("books-shiite");
+layoutGrid("books-atheism");
+}
+
+layoutAll();
+window.addEventListener("resize", layoutAll);
+</script>
 
 </MainLayout>
 
@@ -148,18 +188,20 @@ border-bottom:1px solid var(--border);
 }
 
 .books{
-column-count:3;
-column-gap:16px;
-
-:global(.book-card){
-break-inside:avoid;
-margin-bottom:16px;
+display:flex;
+gap:16px;
 }
+
+:global(.book-col){
+flex:1;
+display:flex;
+flex-direction:column;
+gap:16px;
 }
 
 @media(max-width:900px){
 .books{
-grid-template-columns:1fr;
+flex-direction:column;
 }
 }
 
