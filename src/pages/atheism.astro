@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import BookCard from "../components/BookCard.astro";
 import { getCollection } from "astro:content";
 import { slugify } from "../lib/books.js";
 
@@ -22,20 +23,15 @@ const books = (await getCollection("atheism")).sort((a, b) =>
 
     {
         books.map((book) => (
-            <a class="book-card" href={`/books/${slugify(book.data.title)}`}>
-
-                <h3>{book.data.title}</h3>
-
-                <p class="author">نویسنده: {book.data.author}</p>
-
-                <p class="desc">{book.data.description}</p>
-
-                <div class="meta">
-                    <span>{book.data.publisher}</span>
-                    <span>{book.data.year}</span>
-                </div>
-
-            </a>
+            <BookCard
+                title={book.data.title}
+                author={book.data.author}
+                description={book.data.description}
+                publisher={book.data.publisher}
+                year={book.data.year}
+                language={book.data.language}
+                href={`/books/${slugify(book.data.title)}`}
+            />
         ))
     }
 
@@ -65,48 +61,6 @@ display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:16px;
 padding:20px 0 40px;
-}
-
-.book-card{
-display:block;
-background:var(--card);
-border:1px solid var(--border);
-border-radius:18px;
-padding:22px;
-text-decoration:none;
-transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
-
-&:hover{
-transform:translateY(-4px);
-box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
-}
-
-h3{
-font-size:17px;
-margin-bottom:10px;
-}
-
-.author{
-color:var(--accent);
-font-size:13px;
-margin-bottom:8px;
-}
-
-.desc{
-color:var(--gray);
-font-size:13px;
-line-height:1.8;
-margin-bottom:14px;
-}
-
-.meta{
-display:flex;
-justify-content:space-between;
-color:var(--gray);
-font-size:12px;
-border-top:1px solid var(--border);
-padding-top:12px;
-}
 }
 
 @media(max-width:900px){
