@@ -38,10 +38,10 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <div class="left-menu">
 <ThemeToggle />
 <IconButton icon="grid.svg" title="پروژه‌های دیگر" href="https://mohajercul.vercel.app/" />
-<button class="icon-button" title="درباره ما" data-tip="درباره ما" id="btnAboutDesktop">
+<button class="icon-button" data-tip="درباره ما" id="btnAboutDesktop">
 <IconFromFile src="info.svg" />
 </button>
-<button class="icon-button" title="تماس با ما" data-tip="تماس با ما" id="btnContactDesktop">
+<button class="icon-button" data-tip="تماس با ما" id="btnContactDesktop">
 <IconFromFile src="mail.svg" />
 </button>
 </div>
@@ -561,9 +561,57 @@ height:20px;
 color:currentColor;
 }
 
+&::after{
+content:attr(data-tip);
+position:absolute;
+top:calc(100% + 10px);
+left:50%;
+transform:translateX(-50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
+&::before{
+content:"";
+position:absolute;
+top:calc(100% + 4px);
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-bottom-color:var(--text);
+border-top:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
 &:hover{
 background:var(--accent);
 :global(svg){color:#fff;}
+
+&::after{
+opacity:1;
+visibility:visible;
+}
+
+&::before{
+opacity:1;
+visibility:visible;
+}
 }
 }
 
