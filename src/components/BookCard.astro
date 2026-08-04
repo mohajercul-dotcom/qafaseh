@@ -1,5 +1,5 @@
 ---
-const { title, author, description, publisher, year, language, href } = Astro.props;
+const { title, author, description, language, href } = Astro.props;
 ---
 
 <a class="book-card" href={href}>
@@ -18,15 +18,12 @@ const { title, author, description, publisher, year, language, href } = Astro.pr
 
     {description && (
         <details class="accordion">
-            <summary>توضیحات</summary>
+            <summary>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
             <p class="desc">{description}</p>
         </details>
     )}
-
-    <div class="meta">
-        {publisher && <span>{publisher}</span>}
-        {year && <span>{year}</span>}
-    </div>
 
 </a>
 
@@ -100,21 +97,28 @@ color:#fb923c;
 }
 
 .accordion{
-margin-top:12px;
+margin-top:4px;
 
 summary{
-font-size:13px;
-color:var(--gray);
+display:flex;
+align-items:center;
+justify-content:flex-end;
 cursor:pointer;
-padding:6px 0;
+padding:2px 0;
 list-style:none;
+color:var(--gray);
+transition:color .2s;
 
 &::before{
-content:"▸ ";
+display:none;
 }
 
 &::-webkit-details-marker{
 display:none;
+}
+
+&:hover{
+color:var(--accent);
 }
 }
 
@@ -122,9 +126,13 @@ display:none;
 color:var(--accent);
 margin-bottom:6px;
 
-&::before{
-content:"▾ ";
+svg{
+transform:rotate(180deg);
 }
+}
+
+svg{
+transition:transform .3s ease;
 }
 }
 
@@ -133,16 +141,6 @@ color:var(--gray);
 font-size:13px;
 line-height:1.8;
 margin:0;
-}
-
-.meta{
-display:flex;
-justify-content:space-between;
-color:var(--gray);
-font-size:12px;
-border-top:1px solid var(--border);
-padding-top:12px;
-margin-top:12px;
 }
 
 </style>
