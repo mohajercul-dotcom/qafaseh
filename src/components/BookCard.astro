@@ -27,13 +27,14 @@ const { title, author, description, publisher, year, language, href } = Astro.pr
     {description && (
         <div class="accordion-body">
             <p class="desc">{description}</p>
-            <div class="meta-line">
-                <a class="more-btn" href={href}>بیشتر</a>
+            <div class="desc-row">
                 <div class="meta-info">
                     {publisher && <span>{publisher}</span>}
                     {year && <span>{year}</span>}
                 </div>
+                <a class="more-btn" href={href}>بیشتر</a>
             </div>
+            <div class="meta-line"></div>
         </div>
     )}
 
@@ -168,17 +169,15 @@ margin:0;
 padding-top:14px;
 }
 
-.meta-line{
+.desc-row{
 display:flex;
 justify-content:space-between;
-align-items:center;
-border-top:1px solid var(--border);
-padding-top:12px;
-margin-top:12px;
+align-items:flex-start;
+margin-top:8px;
 }
 
 .more-btn{
-padding:6px 16px;
+padding:5px 14px;
 background:color-mix(in srgb, var(--accent) 12%, transparent);
 color:var(--accent);
 border-radius:20px;
@@ -192,6 +191,15 @@ flex-shrink:0;
 background:color-mix(in srgb, var(--accent) 22%, transparent);
 transform:translateY(-1px);
 }
+}
+
+.meta-line{
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-top:1px solid var(--border);
+padding-top:12px;
+margin-top:12px;
 }
 
 .meta-info{
