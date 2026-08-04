@@ -125,112 +125,28 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
     </div>
 
+</section>
+
+<section class="stats-row">
+
     <div class="card stat">
-
-        <h3>
-            کل کتاب‌ها
-        </h3>
-
-        <strong>
-            {toPersian(totalBooks)}
-        </strong>
-
+        <h3>کل کتاب‌ها</h3>
+        <strong>{toPersian(totalBooks)}</strong>
     </div>
 
     <div class="card stat">
-
-        <h3>
-            نویسندگان
-        </h3>
-
-        <strong>
-            {toPersian(totalAuthors)}
-        </strong>
-
+        <h3>نویسندگان</h3>
+        <strong>{toPersian(totalAuthors)}</strong>
     </div>
 
     <div class="card stat">
-
-        <h3>
-            کتاب شیعه
-        </h3>
-
-        <strong>
-            {toPersian(shiiteCount)}
-        </strong>
-
+        <h3>کتاب شیعه</h3>
+        <strong>{toPersian(shiiteCount)}</strong>
     </div>
 
     <div class="card stat">
-
-        <h3>
-            کتاب الحاد
-        </h3>
-
-        <strong>
-            {toPersian(atheismCount)}
-        </strong>
-
-    </div>
-
-    <div class="card stat">
-
-        <h3>
-            کتاب عقیده
-        </h3>
-
-        <strong>
-            {toPersian(aqeedahCount)}
-        </strong>
-
-    </div>
-
-    <div class="card stat">
-
-        <h3>
-            کتاب ادیان
-        </h3>
-
-        <strong>
-            {toPersian(adyanCount)}
-        </strong>
-
-    </div>
-
-    <div class="card stat">
-
-        <h3>
-            کتاب مکاتب فکری
-        </h3>
-
-        <strong>
-            {toPersian(maqabehCount)}
-        </strong>
-
-    </div>
-
-    <div class="card stat">
-
-        <h3>
-            کتاب فرق
-        </h3>
-
-        <strong>
-            {toPersian(fraqCount)}
-        </strong>
-
-    </div>
-
-    <div class="card stat">
-
-        <h3>
-            کتاب دعوت
-        </h3>
-
-        <strong>
-            {toPersian(daavatCount)}
-        </strong>
-
+        <h3>کتاب الحاد</h3>
+        <strong>{toPersian(atheismCount)}</strong>
     </div>
 
 </section>
@@ -407,6 +323,41 @@ color:var(--accent);
 }
 }
 
+.stats-row{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-top:16px;
+
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:22px;
+padding:25px;
+text-align:center;
+
+&:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+h3{
+background:transparent;
+border:none;
+padding:0;
+border-radius:0;
+font-size:13px;
+margin-bottom:10px;
+color:var(--text);
+}
+
+strong{
+font-size:40px;
+color:var(--accent);
+}
+}
+}
+
 @media(max-width:900px){
 .hero{
 height:auto;
@@ -423,9 +374,22 @@ grid-template-columns:1fr 1fr;
 .card{
 grid-column:span 2;
 }
+}
 
-.stat{
-grid-column:span 1;
+.stats-row{
+grid-template-columns:repeat(4,1fr);
+gap:8px;
+
+.card{
+padding:15px;
+
+strong{
+font-size:20px;
+}
+
+h3{
+font-size:10px;
+}
 }
 }
 }
