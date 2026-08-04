@@ -49,13 +49,8 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 <section class="hero">
 
     <div class="hero-text">
-
-        <h1 class="site-title">کتاب‌شناسی</h1>
-
-        <p>
-            اسلام، ادیان و مکاتب فکری
-        </p>
-
+        <img class="site-logo logo-light" src="/icons/Light.svg" alt="کتاب‌شناسی" />
+        <img class="site-logo logo-dark" src="/icons/Dark.svg" alt="کتاب‌شناسی" />
     </div>
 
 </section>
@@ -181,18 +176,21 @@ display:flex;
 align-items:center;
 
 .hero-text{
-.site-title{
-font-family:"Adobe Arabic", serif;
-font-size:clamp(50px, 6vw, 85px);
-font-weight:700;
-color:var(--accent);
+.site-logo{
+width:clamp(200px, 40vw, 500px);
+height:auto;
 }
 
-p{
-margin-top:10px;
-color:#3E2F23;
-font-size:21px;
-font-family:"Alexandria", sans-serif;
+.logo-dark{
+display:none;
+}
+
+:global(.dark) & .logo-light{
+display:none;
+}
+
+:global(.dark) & .logo-dark{
+display:block;
 }
 }
 }
@@ -206,8 +204,8 @@ color:#e8d5c4;
 height:auto;
 padding:30px 0;
 
-.hero-text p{
-font-size:15px;
+.hero-text .site-logo{
+width:clamp(160px, 60vw, 300px);
 }
 }
 }
