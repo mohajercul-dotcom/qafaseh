@@ -101,6 +101,10 @@ const searchIndex = [
 
 <slot />
 
+<div class="disclaimer">
+معرفی آثار به‌معنای تأیید محتوای آن‌ها نیست.
+</div>
+
 </main>
 
  <script is:inline>
@@ -155,6 +159,18 @@ height:auto;
 padding-top:30px;
 padding-bottom:80px;
 }
+}
+
+.disclaimer{
+margin-top:60px;
+padding:16px 24px;
+background:color-mix(in srgb, var(--accent) 8%, var(--card) 90%, transparent);
+border:1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+border-radius:14px;
+text-align:center;
+font-size:13px;
+color:var(--gray);
+line-height:1.8;
 }
 
 </style>
