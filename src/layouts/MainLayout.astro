@@ -117,7 +117,7 @@ const setHeaderOffset = () => {
     if (header && main) {
         const isMobile = window.innerWidth <= 900;
         const bottomNavHeight = isMobile ? 90 : 0;
-        main.style.paddingTop = (header.offsetHeight + 20) + "px";
+        main.style.paddingTop = (header.offsetHeight + 10) + "px";
         main.style.paddingBottom = bottomNavHeight + "px";
     }
 };
