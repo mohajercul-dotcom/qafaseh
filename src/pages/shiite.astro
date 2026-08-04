@@ -1,6 +1,5 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import BookCard from "../components/BookCard.astro";
 import { getCollection } from "astro:content";
 import { slugify } from "../lib/books.js";
 
@@ -19,23 +18,94 @@ const books = (await getCollection("shiite")).sort((a, b) =>
 
 </section>
 
-<section class="books">
+<div class="books" id="books-grid">
+    {books.map((book) => (
+        <div class="book-item" data-title={book.data.title} data-author={book.data.author} data-desc={book.data.description} data-publisher={book.data.publisher} data-year={book.data.year} data-lang={book.data.language} data-href={`/books/${slugify(book.data.title)}`}></div>
+    ))}
+</div>
 
-    {
-        books.map((book) => (
-            <BookCard
-                title={book.data.title}
-                author={book.data.author}
-                description={book.data.description}
-                publisher={book.data.publisher}
-                year={book.data.year}
-                language={book.data.language}
-                href={`/books/${slugify(book.data.title)}`}
-            />
-        ))
-    }
+<script>
+function createCard(d) {
+const lang = d.dataset.lang;
+const desc = d.dataset.desc;
+const href = d.dataset.href;
+const hasDesc = desc && desc !== "undefined";
 
-</section>
+return `
+<article class="book-card" data-accordion>
+<div class="card-main">
+<div class="card-info">
+<h3>${d.dataset.title}</h3>
+<p class="author">${d.dataset.author}</p>
+</div>
+<div class="card-right">
+${lang ? `<span class="lang-badge ${lang === "فارسی" ? "fa" : "ar"}">${lang}</span>` : ""}
+${hasDesc ? `<svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>` : ""}
+</div>
+</div>
+${hasDesc ? `
+<div class="accordion-body">
+<p class="desc">${desc}</p>
+<div class="desc-row">
+<a class="more-btn" href="${href}">بیشتر</a>
+</div>
+<div class="meta-line">
+<span class="year">${d.dataset.year || ""}</span>
+</div>
+</div>` : ""}
+</article>`;
+}
+
+function layoutBooks() {
+const grid = document.getElementById("books-grid");
+if (!grid) return;
+
+const items = grid.querySelectorAll(".book-item");
+const w = window.innerWidth;
+const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
+
+grid.innerHTML = "";
+
+const columns = Array.from({ length: cols }, () => {
+const col = document.createElement("div");
+col.className = "book-col";
+return col;
+});
+
+items.forEach((item, i) => {
+columns[i % cols].innerHTML += createCard(item);
+});
+
+columns.forEach(col => grid.appendChild(col));
+
+grid.querySelectorAll("[data-accordion]").forEach((card) => {
+card.addEventListener("click", (e) => {
+if (e.target.closest(".more-btn")) return;
+const body = card.querySelector(".accordion-body");
+if (!body) return;
+
+const isOpen = card.classList.contains("open");
+document.querySelectorAll("[data-accordion].open").forEach((other) => {
+if (other !== card) {
+other.classList.remove("open");
+other.querySelector(".accordion-body").style.maxHeight = "0";
+}
+});
+
+if (isOpen) {
+card.classList.remove("open");
+body.style.maxHeight = "0";
+} else {
+card.classList.add("open");
+body.style.maxHeight = body.scrollHeight + "px";
+}
+});
+});
+}
+
+layoutBooks();
+window.addEventListener("resize", layoutBooks);
+</script>
 
 </MainLayout>
 
@@ -56,20 +126,22 @@ color:var(--gray);
 }
 }
 
-.books{
-column-count:3;
-column-gap:16px;
+#books-grid{
+display:flex;
+gap:16px;
 padding:20px 0 40px;
-
-:global(.book-card){
-break-inside:avoid;
-margin-bottom:16px;
 }
+
+:global(.book-col){
+flex:1;
+display:flex;
+flex-direction:column;
+gap:16px;
 }
 
 @media(max-width:900px){
-.books{
-grid-template-columns:1fr;
+#books-grid{
+flex-direction:column;
 }
 }
 
