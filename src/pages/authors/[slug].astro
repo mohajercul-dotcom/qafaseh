@@ -148,13 +148,9 @@ border-bottom:1px solid var(--border);
 }
 
 .books{
-column-count:3;
-column-gap:16px;
-
-:global(.book-card){
-break-inside:avoid;
-margin-bottom:16px;
-}
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
 }
 
 @media(max-width:900px){

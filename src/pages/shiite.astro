@@ -57,14 +57,10 @@ color:var(--gray);
 }
 
 .books{
-column-count:3;
-column-gap:16px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
 padding:20px 0 40px;
-
-:global(.book-card){
-break-inside:avoid;
-margin-bottom:16px;
-}
 }
 
 @media(max-width:900px){
