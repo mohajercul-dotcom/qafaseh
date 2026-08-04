@@ -37,6 +37,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="left-menu">
 <ThemeToggle />
+<button class="icon-button" data-tip="سوالات متداول" id="btnFaqDesktop">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
 <IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" />
 <button class="icon-button" data-tip="درباره ما" id="btnAboutDesktop">
 <IconFromFile src="info.svg" />
@@ -81,6 +84,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="mobile-search">
 <SearchBox searchIndex={searchIndex} />
+<button class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
 </div>
 
 </header>
@@ -399,6 +405,13 @@ background:var(--card);
 border-bottom:1px solid var(--border);
 position:relative;
 z-index:51;
+display:flex;
+align-items:center;
+gap:10px;
+
+.mobile-faq{
+flex-shrink:0;
+}
 }
 
 @media(max-width:900px){
