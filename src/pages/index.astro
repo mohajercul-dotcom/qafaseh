@@ -50,10 +50,7 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
     <div class="hero-text">
 
-        <h1>
-            جهان کتاب‌ها،
-            <span>کشف کنید</span>
-        </h1>
+        <h1 class="site-title">کتاب‌شناسی</h1>
 
         <p>
             معرفی کوتاه و حرفه‌ای کتاب‌ها،
@@ -155,19 +152,25 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
 <style lang="scss">
 
+@font-face{
+font-family:"Adobe Arabic";
+src:url("/fonts/Adobe arabic shin.woff2") format("woff2");
+font-weight:700;
+font-style:normal;
+font-display:swap;
+}
+
 .hero{
 height:260px;
 display:flex;
 align-items:center;
 
 .hero-text{
-h1{
-font-size:55px;
-font-weight:900;
-
-span{
+.site-title{
+font-family:"Adobe Arabic", serif;
+font-size:60px;
+font-weight:700;
 color:var(--accent);
-}
 }
 
 p{
