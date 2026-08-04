@@ -28,13 +28,11 @@ const { title, author, description, publisher, year, language, href } = Astro.pr
         <div class="accordion-body">
             <p class="desc">{description}</p>
             <div class="desc-row">
-                <div class="meta-info">
-                    {publisher && <span>{publisher}</span>}
-                    {year && <span>{year}</span>}
-                </div>
                 <a class="more-btn" href={href}>بیشتر</a>
             </div>
-            <div class="meta-line"></div>
+            <div class="meta-line">
+                <span class="year">{year}</span>
+            </div>
         </div>
     )}
 
@@ -200,6 +198,11 @@ align-items:center;
 border-top:1px solid var(--border);
 padding-top:12px;
 margin-top:12px;
+}
+
+.year{
+color:var(--gray);
+font-size:12px;
 }
 
 .meta-info{
