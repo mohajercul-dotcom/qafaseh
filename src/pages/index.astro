@@ -50,7 +50,7 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
     <div class="hero-text">
 
-        <h1 class="site-title">کتاب‌شناسی</h1>
+        <h1 class="site-title">کتاب‌شـــــــــــناسی</h1>
 
         <p>
             معرفی کوتاه و حرفه‌ای کتاب‌ها،
@@ -168,7 +168,7 @@ align-items:center;
 .hero-text{
 .site-title{
 font-family:"Adobe Arabic", serif;
-font-size:60px;
+font-size:clamp(36px, 6vw, 72px);
 font-weight:700;
 color:var(--accent);
 }
@@ -177,6 +177,17 @@ p{
 margin-top:20px;
 color:var(--gray);
 font-size:18px;
+}
+}
+}
+
+@media(max-width:900px){
+.hero{
+height:auto;
+padding:30px 0;
+
+.hero-text p{
+font-size:15px;
 }
 }
 }
