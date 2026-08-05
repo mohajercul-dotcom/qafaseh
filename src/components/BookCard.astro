@@ -40,7 +40,8 @@ const { title, author, description, publisher, year, language, href } = Astro.pr
 
 <script>
 document.querySelectorAll("[data-accordion]").forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (e) => {
+        if (e.target.closest(".more-btn")) return;
         const body = card.querySelector(".accordion-body");
         if (!body) return;
 
