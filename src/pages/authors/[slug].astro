@@ -1,16 +1,50 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import BookCard from "../../components/BookCard.astro";
+import TagFilter from "../../components/TagFilter.astro";
 import { getCollection } from "astro:content";
 import { slugify, normalizeAuthor } from "../../lib/books.js";
 
+const collections = [
+    { name: "shiite", label: "شیعه" },
+    { name: "atheism", label: "الحاد" },
+    { name: "aqeedah", label: "عقیده" },
+    { name: "adyan", label: "ادیان" },
+    { name: "maqabeh", label: "مکاتب فکری" },
+    { name: "fraq", label: "فرقه‌ها" },
+    { name: "daavat", label: "دعوت" },
+];
+
+const allBooks = await Promise.all(
+    collections.map(async (c) => ({ label: c.label, books: await getCollection(c.name) }))
+);
+
+const names = new Set();
+for (const { books } of allBooks) {
+    for (const book of books) {
+        names.add(normalizeAuthor(book.data.author));
+    }
+}
+
 export async function getStaticPaths() {
-    const shiiteBooks = await getCollection("shiite");
-    const atheismBooks = await getCollection("atheism");
+    const collections = [
+        { name: "shiite", label: "شیعه" },
+        { name: "atheism", label: "الحاد" },
+        { name: "aqeedah", label: "عقیده" },
+        { name: "adyan", label: "ادیان" },
+        { name: "maqabeh", label: "مکاتب فکری" },
+        { name: "fraq", label: "فرقه‌ها" },
+        { name: "daavat", label: "دعوت" },
+    ];
 
     const names = new Set();
-    for (const book of [...shiiteBooks, ...atheismBooks]) {
-        names.add(normalizeAuthor(book.data.author));
+    const allBooks = await Promise.all(
+        collections.map(async (c) => ({ label: c.label, books: await getCollection(c.name) }))
+    );
+    for (const { books } of allBooks) {
+        for (const book of books) {
+            names.add(normalizeAuthor(book.data.author));
+        }
     }
 
     return [...names].map((name) => ({
@@ -19,15 +53,19 @@ export async function getStaticPaths() {
     }));
 }
 
-const { slug } = Astro.params;
 const { name } = Astro.props;
 
-const shiiteBooks = (await getCollection("shiite")).filter(
-    (book) => normalizeAuthor(book.data.author) === name
+const groups = allBooks
+    .map(({ label, books }) => ({
+        label,
+        books: books.filter((book) => normalizeAuthor(book.data.author) === name),
+    }))
+    .filter((group) => group.books.length > 0);
+
+const allBooksForAuthor = groups.flatMap((group) =>
+    group.books.map((book) => ({ ...book, category: group.label }))
 );
-const atheismBooks = (await getCollection("atheism")).filter(
-    (book) => normalizeAuthor(book.data.author) === name
-);
+const total = allBooksForAuthor.length;
 ---
 
 <MainLayout>
@@ -37,68 +75,37 @@ const atheismBooks = (await getCollection("atheism")).filter(
     <h1>{name}</h1>
 
     <p class="stats">
-        <span class="badge shiite">شیعه: {shiiteBooks.length}</span>
-        <span class="badge atheism">الحاد: {atheismBooks.length}</span>
-        <span class="badge total">مجموع: {shiiteBooks.length + atheismBooks.length} کتاب</span>
+        {groups.map((group) => (
+            <span class="badge">{group.label}: {group.books.length}</span>
+        ))}
+        <span class="badge total">مجموع: {total} کتاب</span>
     </p>
 
 </section>
 
-{
-    shiiteBooks.length > 0 && (
-        <section class="group">
-
-            <h2>کتاب‌های شیعه</h2>
-
-            <div class="books" id="books-shiite" data-cols="3">
-                {shiiteBooks.map((book) => (
-                    <div class="book-item">
-                        <BookCard
-                            title={book.data.title}
-                            author={book.data.author}
-                            description={book.data.description}
-                            publisher={book.data.publisher}
-                            year={book.data.year}
-                            language={book.data.language}
-                            href={`/books/${slugify(book.data.title)}`}
-                        />
-                    </div>
-                ))}
-            </div>
-
-        </section>
-    )
-}
-
-{
-    atheismBooks.length > 0 && (
-        <section class="group">
-
-            <h2>کتاب‌های الحاد</h2>
-
-            <div class="books" id="books-atheism" data-cols="3">
-                {atheismBooks.map((book) => (
-                    <div class="book-item">
-                        <BookCard
-                            title={book.data.title}
-                            author={book.data.author}
-                            description={book.data.description}
-                            publisher={book.data.publisher}
-                            year={book.data.year}
-                            language={book.data.language}
-                            href={`/books/${slugify(book.data.title)}`}
-                        />
-                    </div>
-                ))}
-            </div>
-
-        </section>
-    )
-}
+<TagFilter tags={collections.map((c) => c.label)} gridId="books-author" byCategory />
+<div class="books" id="books-author" data-cols="3">
+    {allBooksForAuthor.map((book) => (
+        <div class="book-item" data-cat={book.category}>
+            <BookCard
+                title={book.data.title}
+                author={book.data.author}
+                description={book.data.description}
+                publisher={book.data.publisher}
+                year={book.data.year}
+                language={book.data.language}
+                href={`/books/${slugify(book.data.title)}`}
+                tags={book.data.tags || []}
+            />
+        </div>
+    ))}
+</div>
 
 <script>
 import { initAllGrids } from "../../lib/bookGrid.js";
+import { initBookFilter } from "../../lib/bookFilter.js";
 initAllGrids();
+initBookFilter();
 window.addEventListener("resize", initAllGrids);
 </script>
 
@@ -127,39 +134,21 @@ flex-wrap:wrap;
 padding:6px 14px;
 border-radius:20px;
 font-size:13px;
-}
-
-.shiite{
 background:color-mix(in srgb, var(--accent) 15%, transparent);
 color:var(--accent);
 }
 
-.atheism{
-background:color-mix(in srgb, var(--gray) 18%, transparent);
-color:var(--gray);
-}
-
-.total{
+.badge.total{
 background:var(--card);
 border:1px solid var(--border);
 color:var(--text);
 }
 }
 
-.group{
-padding:10px 0 30px;
-
-h2{
-font-size:22px;
-margin-bottom:16px;
-padding-bottom:10px;
-border-bottom:1px solid var(--border);
-}
-}
-
 .books{
 display:flex;
 gap:16px;
+padding:20px 0 40px;
 opacity:0;
 transition:opacity .2s;
 

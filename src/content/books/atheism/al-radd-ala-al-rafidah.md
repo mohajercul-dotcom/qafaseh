@@ -9,6 +9,7 @@ language: "عربی"
 download: "https://t.me/"
 format: "PDF"
 description: "رساله‌ای در رد عقاید روافض و دفاع از اهل سنت"
+tags: ["رد روافض", "دفاع از صحابه"]
 featured: false
 reads: 300
 pubDate: 2025-06-15T10:00:00

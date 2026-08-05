@@ -17,6 +17,7 @@ const bookSchema = z.object({
     featured: z.boolean().optional(),
     caption: z.string().optional(),
     description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     pubDate: z.coerce.date().optional(),
 });
 

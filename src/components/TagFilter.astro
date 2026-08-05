@@ -1,0 +1,192 @@
+---
+const { tags, gridId, byCategory = false } = Astro.props;
+---
+
+{tags.length > 0 && (
+    <div class="filter-wrap" data-filter-bar data-grid={gridId}>
+
+        <button class="filter-arrow arrow-right" type="button" aria-label="فیلتر بعدی">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+
+        <div class="filter-bar">
+            {byCategory ? (
+                <button class="filter-chip active" data-cat="">همه</button>
+            ) : (
+                <button class="filter-chip active" data-tag="">همه</button>
+            )}
+            {tags.map((tag) => (
+                byCategory ? (
+                    <button class="filter-chip" data-cat={tag}>{tag}</button>
+                ) : (
+                    <button class="filter-chip" data-tag={tag}>{tag}</button>
+                )
+            ))}
+        </div>
+
+        <button class="filter-arrow arrow-left" type="button" aria-label="فیلتر قبلی">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+        </button>
+
+    </div>
+)}
+
+<script>
+const wrap = document.querySelector("[data-filter-bar]");
+const bar = wrap?.querySelector(".filter-bar");
+const arrowR = wrap?.querySelector(".arrow-right");
+const arrowL = wrap?.querySelector(".arrow-left");
+
+const update = () => {
+    if (!wrap || !bar) return;
+    const overflow = bar.scrollWidth > bar.clientWidth + 2;
+    wrap.classList.toggle("overflow", overflow);
+    bar.classList.toggle("overflow", overflow);
+    wrap.classList.toggle("show-arrows", overflow);
+
+    const max = Math.max(0, bar.scrollWidth - bar.clientWidth);
+    arrowL.classList.toggle("disabled", !overflow || bar.scrollLeft <= 2);
+    arrowR.classList.toggle("disabled", !overflow || bar.scrollLeft >= max - 2);
+};
+
+const step = () => {
+    const chip = bar.querySelector(".filter-chip");
+    return chip ? (chip.offsetWidth + 8) * 3 : bar.clientWidth * 0.4;
+};
+
+arrowR?.addEventListener("click", () => bar.scrollBy({ left: step(), behavior: "smooth" }));
+arrowL?.addEventListener("click", () => bar.scrollBy({ left: -step(), behavior: "smooth" }));
+
+bar?.addEventListener("click", (e) => {
+    const chip = e.target.closest(".filter-chip");
+    if (!chip) return;
+    if (bar.scrollWidth > bar.clientWidth + 2) {
+        chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    }
+});
+
+bar?.addEventListener("scroll", update, { passive: true });
+window.addEventListener("resize", update);
+window.addEventListener("load", update);
+update();
+setTimeout(update, 300);
+setTimeout(update, 1000);
+</script>
+
+<style lang="scss">
+
+.filter-wrap{
+position:relative;
+padding:10px 0 2px;
+}
+
+.filter-bar{
+display:flex;
+flex-wrap:nowrap;
+gap:8px;
+justify-content:center;
+overflow-x:auto;
+scrollbar-width:none;
+-ms-overflow-style:none;
+padding:4px 0;
+scroll-behavior:smooth;
+
+&::-webkit-scrollbar{
+display:none;
+}
+
+&.overflow{
+justify-content:flex-start;
+padding:4px 46px;
+mask-image:linear-gradient(to left, transparent 0, #000 18px, #000 calc(100% - 48px), transparent calc(100% - 34px), transparent 100%);
+-webkit-mask-image:linear-gradient(to left, transparent 0, #000 18px, #000 calc(100% - 48px), transparent calc(100% - 34px), transparent 100%);
+}
+}
+
+.filter-chip{
+flex-shrink:0;
+border:1px solid var(--border);
+background:var(--card);
+color:var(--gray);
+padding:6px 16px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+transition:background .2s ease, color .2s ease, border-color .2s ease;
+
+&:hover{
+border-color:var(--accent);
+color:var(--accent);
+}
+
+&.active{
+background:var(--accent);
+border-color:var(--accent);
+color:#fff;
+}
+}
+
+.filter-arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:34px;
+height:34px;
+border-radius:50%;
+border:1px solid var(--border);
+background:var(--card);
+color:var(--accent);
+display:none;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 4px 14px rgba(0,0,0,.12);
+transition:background .2s ease, color .2s ease, opacity .2s ease;
+z-index:2;
+
+.filter-wrap.show-arrows &{
+display:flex;
+}
+
+svg{
+width:18px;
+height:18px;
+}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+}
+
+&.disabled{
+pointer-events:none;
+}
+}
+
+.arrow-right{
+right:2px;
+}
+
+.arrow-left{
+left:2px;
+}
+
+@media(max-width:900px){
+.filter-bar{
+padding:4px 0;
+}
+
+.filter-bar.overflow{
+padding:4px 38px;
+mask-image:linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 40px), transparent calc(100% - 30px), transparent 100%);
+-webkit-mask-image:linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 40px), transparent calc(100% - 30px), transparent 100%);
+}
+
+.filter-arrow{
+width:30px;
+height:30px;
+}
+}
+
+</style>

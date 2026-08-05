@@ -1,12 +1,16 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import BookCard from "../components/BookCard.astro";
+import TagFilter from "../components/TagFilter.astro";
 import { getCollection } from "astro:content";
 import { slugify } from "../lib/books.js";
+import { buildTagFilters } from "../lib/buildTagFilters.js";
 
 const books = (await getCollection("shiite")).sort((a, b) =>
     a.data.title.localeCompare(b.data.title, "fa")
 );
+
+const allTags = buildTagFilters(books);
 ---
 
 <MainLayout>
@@ -22,6 +26,8 @@ const books = (await getCollection("shiite")).sort((a, b) =>
 
 </section>
 
+<TagFilter tags={allTags} gridId="books-shiite" />
+
 <div class="books" id="books-shiite" data-cols="3">
     {books.map((book) => (
         <div class="book-item">
@@ -33,6 +39,7 @@ const books = (await getCollection("shiite")).sort((a, b) =>
                 year={book.data.year}
                 language={book.data.language}
                 href={`/books/${slugify(book.data.title)}`}
+                tags={book.data.tags || []}
             />
         </div>
     ))}
@@ -40,7 +47,9 @@ const books = (await getCollection("shiite")).sort((a, b) =>
 
 <script>
 import { initAllGrids } from "../lib/bookGrid.js";
+import { initBookFilter } from "../lib/bookFilter.js";
 initAllGrids();
+initBookFilter();
 window.addEventListener("resize", initAllGrids);
 </script>
 

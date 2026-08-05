@@ -1,8 +1,8 @@
 ---
-const { title, author, description, publisher, year, language, href } = Astro.props;
+const { title, author, description, publisher, year, language, href, tags = [] } = Astro.props;
 ---
 
-<div class="book-card" data-accordion>
+<div class="book-card" data-accordion data-tags={tags.join(",")}>
 
     <div class="card-main">
 
@@ -30,9 +30,13 @@ const { title, author, description, publisher, year, language, href } = Astro.pr
             <div class="desc-row">
                 <a class="more-btn" href={href}>بیشتر</a>
             </div>
-            <div class="meta-line">
-                <span class="year">{year}</span>
-            </div>
+            {tags.length > 0 && (
+                <div class="tags-line">
+                    {tags.map((tag) => (
+                        <span class="tag-chip">#{tag}</span>
+                    ))}
+                </div>
+            )}
         </div>
     )}
 
@@ -198,25 +202,22 @@ transform:scale(.95);
 }
 }
 
-.meta-line{
+.tags-line{
 display:flex;
-justify-content:space-between;
-align-items:center;
+flex-wrap:wrap;
+gap:6px;
 border-top:1px solid var(--border);
 padding-top:12px;
 margin-top:12px;
 }
 
-.year{
-color:var(--gray);
-font-size:12px;
-}
-
-.meta-info{
-display:flex;
-gap:12px;
-color:var(--gray);
-font-size:12px;
+.tag-chip{
+padding:3px 12px;
+border-radius:20px;
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+color:var(--accent);
+font-size:11px;
+font-weight:600;
 }
 
 </style>

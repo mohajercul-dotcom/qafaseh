@@ -1,25 +1,33 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import TagFilter from "../components/TagFilter.astro";
 import { getCollection } from "astro:content";
 import { slugify, normalizeAuthor } from "../lib/books.js";
 
-const shiiteBooks = await getCollection("shiite");
-const atheismBooks = await getCollection("atheism");
+const collections = [
+    { name: "shiite", label: "شیعه" },
+    { name: "atheism", label: "الحاد" },
+    { name: "aqeedah", label: "عقیده" },
+    { name: "adyan", label: "ادیان" },
+    { name: "maqabeh", label: "مکاتب فکری" },
+    { name: "fraq", label: "فرقه‌ها" },
+    { name: "daavat", label: "دعوت" },
+];
+
+const allBooks = await Promise.all(
+    collections.map(async (c) => ({ label: c.label, books: await getCollection(c.name) }))
+);
 
 const authors = new Map();
 
-for (const book of shiiteBooks) {
-    const name = normalizeAuthor(book.data.author);
-    const entry = authors.get(name) || { name, shiite: 0, atheism: 0 };
-    entry.shiite++;
-    authors.set(name, entry);
-}
-
-for (const book of atheismBooks) {
-    const name = normalizeAuthor(book.data.author);
-    const entry = authors.get(name) || { name, shiite: 0, atheism: 0 };
-    entry.atheism++;
-    authors.set(name, entry);
+for (const { label, books } of allBooks) {
+    for (const book of books) {
+        const name = normalizeAuthor(book.data.author);
+        const entry = authors.get(name) || { name, counts: {}, total: 0 };
+        entry.counts[label] = (entry.counts[label] || 0) + 1;
+        entry.total++;
+        authors.set(name, entry);
+    }
 }
 
 const authorList = [...authors.values()].sort((a, b) =>
@@ -40,18 +48,25 @@ const authorList = [...authors.values()].sort((a, b) =>
 
 </section>
 
-<section class="authors">
+<TagFilter tags={collections.map((c) => c.label)} gridId="authors-grid" byCategory />
+
+<section class="authors" id="authors-grid">
 
     {
         authorList.map((author) => (
-            <a class="author-card" href={`/authors/${slugify(author.name)}`}>
+            <a
+                class="author-card"
+                href={`/authors/${slugify(author.name)}`}
+                data-cat={Object.keys(author.counts).filter((label) => author.counts[label] > 0).join(",")}
+            >
 
                 <h3>{author.name}</h3>
 
                 <div class="counts">
-                    <span class="count shiite">شیعه: {author.shiite}</span>
-                    <span class="count atheism">الحاد: {author.atheism}</span>
-                    <span class="total">مجموع: {author.shiite + author.atheism}</span>
+                    {Object.entries(author.counts).filter(([, count]) => count > 0).map(([label, count]) => (
+                        <span class="count">{label}: {count}</span>
+                    ))}
+                    <span class="total">مجموع: {author.total}</span>
                 </div>
 
             </a>
@@ -59,6 +74,11 @@ const authorList = [...authors.values()].sort((a, b) =>
     }
 
 </section>
+
+<script>
+import { initBookFilter } from "../lib/bookFilter.js";
+initBookFilter();
+</script>
 
 </MainLayout>
 
@@ -151,16 +171,8 @@ font-size:12px;
 .count{
 padding:4px 10px;
 border-radius:20px;
-}
-
-.shiite{
 background:color-mix(in srgb, var(--accent) 15%, transparent);
 color:var(--accent);
-}
-
-.atheism{
-background:color-mix(in srgb, var(--gray) 18%, transparent);
-color:var(--gray);
 }
 
 .total{

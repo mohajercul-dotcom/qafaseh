@@ -2,8 +2,10 @@ export function initBookGrid(gridId) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
 
-    const items = Array.from(grid.querySelectorAll(".book-item"));
-    if (items.length === 0) return;
+    const allItems = Array.from(grid.querySelectorAll(".book-item"));
+    if (allItems.length === 0) return;
+
+    const visible = allItems.filter((item) => item.style.display !== "none");
 
     const w = window.innerWidth;
     const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
@@ -17,8 +19,13 @@ export function initBookGrid(gridId) {
         columns.push(col);
     }
 
-    items.forEach((item, i) => {
+    visible.forEach((item, i) => {
         columns[i % cols].appendChild(item);
+    });
+
+    const hidden = allItems.filter((item) => item.style.display === "none");
+    hidden.forEach((item) => {
+        columns[columns.length - 1].appendChild(item);
     });
 
     columns.forEach(col => grid.appendChild(col));
