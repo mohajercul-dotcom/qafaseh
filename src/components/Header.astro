@@ -36,6 +36,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <SearchBox searchIndex={searchIndex} />
 
 <div class="left-menu">
+<button class="icon-button" data-tip="زبان" id="btnLangDesktop">
+<IconFromFile src="lang.svg" />
+</button>
 <ThemeToggle />
 <button class="icon-button" data-tip="سوالات متداول" id="btnFaqDesktop">
 <IconFromFile src="faq.svg" />
@@ -73,17 +76,20 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <span>تم</span>
 </button>
 
-<button class="bottom-link" id="btnBisher" data-tip="بیشتر">
+<button class="bottom-link" id="btnLangBottom" data-tip="زبان">
 <span class="bottom-icon">
-<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+<IconFromFile src="lang.svg" />
 </span>
-<span>بیشتر</span>
+<span>زبان</span>
 </button>
 
 </nav>
 
 <div class="mobile-search">
 <SearchBox searchIndex={searchIndex} />
+<button class="icon-button mobile-bisher" data-tip="بیشتر" id="btnBisher">
+<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+</button>
 <button class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile">
 <IconFromFile src="faq.svg" />
 </button>
@@ -170,6 +176,14 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
 </a>
 </div>
+</div>
+</div>
+
+<div class="mb-popup" id="popupLang">
+<div class="mb-popup-grid" data-cols="1">
+<button class="mb-bubble lang-opt active">فارسی</button>
+<button class="mb-bubble lang-opt">العربیة</button>
+<button class="mb-bubble lang-opt">اردو</button>
 </div>
 </div>
 
@@ -468,10 +482,22 @@ pointer-events:auto;
 
 &#popupBisher{
 width:220px;
+bottom:auto;
+top:70px;
+transform:translateX(0) translateY(-12px);
 
 &.open{
 transform:translateX(0) translateY(0);
 }
+}
+
+&#popupLang{
+width:220px;
+}
+
+#popupLang .mb-bubble{
+justify-content:center;
+font-size:15px;
 }
 }
 
@@ -641,11 +667,12 @@ visibility:visible;
 }
 
 #btnFaqDesktop:hover :global(svg),
-#btnFaqMobile:hover :global(svg){
+#btnFaqMobile:hover :global(svg),
+#btnLangDesktop:hover :global(svg){
 fill:#fff;
 }
 
-.about-overlay,.contact-overlay{
+.about-overlay,.contact-overlay,.lang-overlay{
 position:fixed;
 inset:0;
 background:rgba(0,0,0,.55);
@@ -665,7 +692,7 @@ visibility:visible;
 }
 }
 
-.about-modal,.contact-modal{
+.about-modal,.contact-modal,.lang-modal{
 position:relative;
 width:420px;
 max-width:calc(100vw - 40px);
@@ -679,7 +706,7 @@ opacity:0;
 transform:translateY(30px) scale(.92);
 transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
 
-.about-overlay.open &, .contact-overlay.open &{
+.about-overlay.open &, .contact-overlay.open &, .lang-overlay.open &{
 opacity:1;
 transform:translateY(0) scale(1);
 }
@@ -774,12 +801,37 @@ background:color-mix(in srgb, var(--accent) 12%, transparent);color:var(--accent
 
 .contact-text{flex:1;}
 .contact-label{font-size:14px;font-weight:600;}
-
 .contact-arrow{
 color:var(--gray);flex-shrink:0;
+
 transition:color .2s, transform .2s;
 
 .contact-item:hover &{color:var(--accent);transform:translateX(-4px);}
+}
+
+#btnLangDesktop :global(svg){
+fill:var(--gray);
+width:20px;
+height:20px;
+}
+
+#btnLangBottom :global(svg){
+fill:var(--gray);
+width:22px;
+height:22px;
+transition:fill .2s;
+}
+
+#btnLangBottom:hover :global(svg){
+fill:var(--accent);
+}
+
+.mobile-faq,.mobile-bisher{
+flex-shrink:0;
+
+&::after,&::before{
+display:none !important;
+}
 }
 
 </style>
@@ -810,7 +862,9 @@ const btnContact = document.getElementById("btnContactMobile");
 function closeAll(){
 popupDasteh?.classList.remove("open");
 popupBisher?.classList.remove("open");
+popupLang?.classList.remove("open");
 overlay?.classList.remove("open");
+document.body.classList.remove("modal-open");
 }
 
 btnDasteh?.addEventListener("click", (e) => {
@@ -820,6 +874,7 @@ closeAll();
 if(!wasOpen){
 popupDasteh.classList.add("open");
 overlay.classList.add("open");
+document.body.classList.add("modal-open");
 }
 });
 
@@ -835,8 +890,10 @@ let left = center - popupW / 2;
 left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
 popupBisher.style.left = left + "px";
 popupBisher.style.right = "auto";
+popupBisher.style.top = (rect.bottom + 8) + "px";
 popupBisher.classList.add("open");
 overlay.classList.add("open");
+document.body.classList.add("modal-open");
 }
 });
 
@@ -891,6 +948,49 @@ window.location.href = "/faq";
 btnFaqMobile?.addEventListener("click", () => {
 closeAll();
 window.location.href = "/faq";
+});
+
+const btnLangDesktop = document.getElementById("btnLangDesktop");
+const btnLangBottom = document.getElementById("btnLangBottom");
+const popupLang = document.getElementById("popupLang");
+
+function openLangPopup(btn){
+closeAll();
+const popupW = 220;
+const rect = btn.getBoundingClientRect();
+const fromBottom = rect.top > window.innerHeight * 0.6;
+const center = rect.left + rect.width / 2;
+let left = center - popupW / 2;
+left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+if(fromBottom){
+popupLang.style.top = "auto";
+popupLang.style.bottom = "72px";
+popupLang.style.right = "auto";
+popupLang.style.left = left + "px";
+popupLang.style.transform = "translateX(0) translateY(12px)";
+}else{
+popupLang.style.bottom = "auto";
+popupLang.style.top = (rect.bottom + 8) + "px";
+popupLang.style.right = "auto";
+popupLang.style.left = left + "px";
+popupLang.style.transform = "translateX(0) translateY(-12px)";
+}
+popupLang.classList.add("open");
+requestAnimationFrame(() => {
+popupLang.style.transform = "translateX(0) translateY(0)";
+});
+overlay.classList.add("open");
+document.body.classList.add("modal-open");
+}
+
+btnLangDesktop?.addEventListener("click", () => openLangPopup(btnLangDesktop));
+btnLangBottom?.addEventListener("click", () => openLangPopup(btnLangBottom));
+
+document.querySelectorAll(".lang-opt").forEach((item) => {
+item.addEventListener("click", () => {
+document.querySelectorAll(".lang-opt").forEach((i) => i.classList.remove("active"));
+item.classList.add("active");
+});
 });
 
 function closeModal(id){
