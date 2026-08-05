@@ -104,7 +104,7 @@ const searchIndex = [
 
 </main>
 
-<button class="back-to-top" id="backToTop" data-tip="پرش به بالا" aria-label="پرش به بالا">
+<button class:list={["back-to-top", { "is-home": Astro.url.pathname === "/" }]} id="backToTop" data-tip="پرش به بالا" aria-label="پرش به بالا">
 <IconFromFile src="scroll-top.svg" />
 </button>
 
@@ -267,6 +267,10 @@ left:16px;
 width:44px;
 height:44px;
 }
+}
+
+.back-to-top.is-home{
+display:none;
 }
 
 </style>

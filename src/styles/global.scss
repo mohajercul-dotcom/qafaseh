@@ -43,7 +43,7 @@ html.theme-anim,
 html.theme-anim *,
 html.theme-anim *::before,
 html.theme-anim *::after{
-transition:background-color .6s ease, background .6s ease, border-color .6s ease, color .6s ease, fill .6s ease, stroke .6s ease !important;
+transition:background-color .6s ease, background .6s ease, border-color .6s ease, color .6s ease, fill .6s ease, stroke .6s ease, opacity .6s ease, transform .6s ease !important;
 }
 
 *{
