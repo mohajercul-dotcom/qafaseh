@@ -1,6 +1,7 @@
 ---
 import "../styles/global.scss";
 import Header from "../components/Header.astro";
+import IconFromFile from "../components/icons/IconFromFile.astro";
 import { getCollection } from "astro:content";
 import { slugify } from "../lib/books.js";
 
@@ -103,6 +104,10 @@ const searchIndex = [
 
 </main>
 
+<button class="back-to-top" id="backToTop" data-tip="پرش به بالا" aria-label="پرش به بالا">
+<IconFromFile src="scroll-top.svg" />
+</button>
+
  <script is:inline>
 
 const savedTheme = localStorage.getItem("theme");
@@ -131,6 +136,21 @@ window.addEventListener("resize", setHeaderOffset);
 
 </script>
 
+<script is:inline>
+(function(){
+const btn = document.getElementById("backToTop");
+if(!btn) return;
+const onScroll = () => {
+btn.classList.toggle("show", window.scrollY > 400);
+};
+onScroll();
+window.addEventListener("scroll", onScroll, {passive:true});
+btn.addEventListener("click", () => {
+window.scrollTo({top:0, behavior:"smooth"});
+});
+})();
+</script>
+
 </body>
 
 </html>
@@ -155,6 +175,97 @@ main{
 height:auto;
 padding-top:7px;
 padding-bottom:80px;
+}
+}
+
+.back-to-top{
+position:fixed;
+bottom:24px;
+left:24px;
+z-index:70;
+width:48px;
+height:48px;
+border-radius:14px;
+border:1px solid var(--border);
+background:var(--card);
+color:var(--gray);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+opacity:0;
+visibility:hidden;
+transform:translateY(16px);
+transition:opacity .3s ease, visibility .3s, transform .3s cubic-bezier(.34,1.56,.64,1), background .3s ease, border-color .3s ease, color .3s ease;
+
+:global(svg){
+width:22px;
+height:22px;
+}
+
+&.show{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+
+&:hover{
+background:var(--accent);
+border-color:transparent;
+color:#fff;
+}
+
+@media(min-width:901px){
+&::after{
+content:attr(data-tip);
+position:absolute;
+bottom:calc(100% + 10px);
+left:50%;
+transform:translateX(-50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+}
+
+&::before{
+content:"";
+position:absolute;
+bottom:calc(100% + 4px);
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-top-color:var(--text);
+border-bottom:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+}
+
+&:hover::after,
+&:hover::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+
+@media(max-width:900px){
+.back-to-top{
+bottom:100px;
+left:16px;
+width:44px;
+height:44px;
 }
 }
 
