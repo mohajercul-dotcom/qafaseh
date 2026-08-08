@@ -92,7 +92,8 @@ const todayPanels = todayQueues.map((c) =>
     </div>
 
     <div class="hero-description">
-        مرجعی تخصصی برای معرفی کتاب‌ها در حوزه اسلام، ادیان و مکاتب فکری؛ با هدف تسهیل پژوهش و دسترسی به منابع معتبر اهل سنت
+        <p class="hero-desc-desktop"><strong>مرجعی تخصصی</strong> برای معرفی و دسترسی به کتاب‌ها و منابع ارزشمند در حوزه اسلام، ادیان و مکاتب فکری است؛ بستری برای آن‌که پژوهشگران، دانشجویان و علاقه‌مندان بتوانند در میان آثار و منابع معتبر، به‌ویژه کتاب‌های اهل سنت، مسیر مطالعه و پژوهش خود را آگاهانه‌تر و آسان‌تر پیدا کنند و هر کتاب، دریچه‌ای باشد به سوی دانشی تازه و نگاهی عمیق‌تر.</p>
+        <p class="hero-desc-mobile"><strong>مرجعی تخصصی</strong> برای معرفی کتاب‌ها و منابع معتبر در حوزه اسلام، ادیان و مکاتب فکری؛ با هدف آسان‌تر کردن مسیر مطالعه، پژوهش و دسترسی به منابع ارزشمند آثار اهل سنت.</p>
     </div>
 
     <div class="hero-library">
@@ -215,6 +216,22 @@ if (todayCard && queueEl) {
 }
 </script>
 
+<script>
+window.addEventListener("load", () => {
+    document.fonts.ready.then(() => setTimeout(() => {
+        const hero = document.querySelector(".hero");
+        const stats = document.querySelector(".stats-row");
+        const r = s => s ? s.getBoundingClientRect() : null;
+        const her = r(hero), sr = r(stats);
+        document.title = JSON.stringify({
+            innerH: window.innerHeight,
+            heroTop: her ? Math.round(her.top) : null,
+            gapBottom: sr ? Math.round(window.innerHeight - sr.bottom) : null
+        });
+    }, 800));
+});
+</script>
+
 <style lang="scss">
 
 @font-face{
@@ -302,11 +319,20 @@ width:min(45vw,170px);
 .hero-description{
 flex:1;
 max-width:30%;
+align-self:center;
 text-align:justify;
 direction:rtl;
-font-size:16px;
+font-size:17px;
 line-height:1.9;
 color:var(--gray);
+
+.hero-desc-mobile{
+display:none;
+}
+
+p{
+margin:0;
+}
 }
 
 .hero-text{
@@ -357,10 +383,18 @@ color:var(--gray);
 
     .hero-description{
         text-align:justify;
-        font-size:13px;
+        font-size:14px;
         max-width:none;
-        margin:8px 14px;
+        margin:7px 10px;
         padding:0 6px;
+
+        .hero-desc-desktop{
+            display:none;
+        }
+
+        .hero-desc-mobile{
+            display:block;
+        }
     }
 
     .hero-library{
@@ -455,7 +489,7 @@ display:block;
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:16px;
-margin-top:30px;
+margin-top:15px;
 }
 
 .stats-row .card{

@@ -87,11 +87,11 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="mobile-search">
 <SearchBox searchIndex={searchIndex} />
-<button class="icon-button mobile-bisher" data-tip="بیشتر" id="btnBisher">
-<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-</button>
 <button class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile">
 <IconFromFile src="faq.svg" />
+</button>
+<button class="icon-button mobile-bisher" data-tip="بیشتر" id="btnBisher">
+<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
 </button>
 </div>
 
@@ -1049,7 +1049,7 @@ const cidAttr = desktopSearch ? Array.from(desktopSearch.querySelector("[data-se
 const cidVal = cidAttr ? desktopSearch.querySelector("[data-search-input]")?.getAttribute(cidAttr) : "";
 const cid = cidAttr ? `${cidAttr}="${cidVal}"` : "";
 
-const normalize = (s="") => String(s).replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/[ًٌٍَُِّْ]/g,"").replace(/\s+/g," ").trim();
+const normalize = (s="") => String(s).replace(/[يى]/g,"ی").replace(/ے/g,"ی").replace(/ك/g,"ک").replace(/[أإآ]/g,"ا").replace(/[ةۃ]/g,"ه").replace(/ٹ/g,"ت").replace(/ڈ/g,"د").replace(/ڑ/g,"ر").replace(/ں/g,"ن").replace(/[ھہ]/g,"ه").replace(/[ءۂ]/g,"").replace(/[ًٌٍَُِّْٰ]/g,"").replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/\s+/g," ").trim();
 const splitTokens = (s) => s.split(" ").filter(Boolean);
 const levenshtein = (a,b) => {
 const m=a.length,n=b.length;if(!m)return n;if(!n)return m;
@@ -1069,12 +1069,12 @@ const matches = (query) => {
 const q=normalize(query);if(!q)return[];
 const qT=splitTokens(q),qJ=q.replace(/\s+/g,""),scored=[];
 for(const item of INDEX){
-const title=normalize(item.title),author=normalize(item.author),translator=normalize(item.translator),description=normalize(item.description);
-const h=`${title} ${author} ${translator} ${description}`.replace(/\s+/g,"");
+const title=normalize(item.title),author=normalize(item.author),translator=normalize(item.translator),language=normalize(item.language),category=normalize(item.category);
+const h=`${title} ${author} ${translator} ${language} ${category}`.replace(/\s+/g,"");
 let score=0;
 if(qJ.length>1&&h.includes(qJ))score+=8;
 else if(qJ.length>1&&fuzzy(qJ,h)<=Math.max(1,Math.floor(qJ.length/4)))score+=4;
-let mt=0;for(const tok of qT){const lim=tok.length<4?0:Math.max(1,Math.floor(tok.length/4));if(fuzzy(tok,h)<=lim){mt++;score+=1;if(title.includes(tok))score+=2;else if(author.includes(tok))score+=1.5;else if(translator.includes(tok))score+=1;else if(description.includes(tok))score+=0.5;}}
+let mt=0;for(const tok of qT){const lim=tok.length<4?0:Math.max(1,Math.floor(tok.length/4));if(fuzzy(tok,h)<=lim){mt++;score+=1;if(title.includes(tok))score+=2;else if(author.includes(tok))score+=1.5;else if(translator.includes(tok))score+=1;else if(language.includes(tok))score+=0.5;else if(category.includes(tok))score+=0.5;}}
 if(mt===0&&score===0)continue;
 if(title===q)score+=6;else if(title.includes(q))score+=4;else if(author===q)score+=3;else if(author.includes(q))score+=2;
 scored.push({item,score});
@@ -1088,12 +1088,13 @@ const resultsBox=wrap.querySelector("[data-search-results]");
 const empty=wrap.querySelector("[data-results-empty]");
 const clearBtn=wrap.querySelector("[data-search-clear]");
 if(!input||!list||!resultsBox)return;
+const langClass=(l)=>{l=String(l||"");if(l.includes("فارسی"))return "fa";if(l.includes("اردو"))return "ur";if(l.includes("عربی"))return "ar";return "";};
 const render=()=>{
 const q=input.value,results=q.trim()?matches(q):[];
 resultsBox.classList.toggle("open",results.length>0||(q.trim()&&results.length===0));
 empty.classList.toggle("show",q.trim()&&results.length===0);
 clearBtn.classList.toggle("show",q.trim().length>0);
-list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}" ${cid}><span class="result-cat" ${cid}>${item.category}</span><span class="result-title" ${cid}>${item.title}</span><span class="result-author" ${cid}>${item.author}${item.translator?" — ترجمه "+item.translator:""}</span></a>`).join("");
+list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}" ${cid}><span class="result-cat" ${cid}>${item.category}</span><span class="result-title" ${cid}>${item.title}</span><span class="result-author" ${cid}>${item.author}${item.translator?" — ترجمه "+item.translator:""}</span>${item.language?`<span class="result-lang ${langClass(item.language)}" ${cid}>${item.language}</span>`:""}</a>`).join("");
 };
 input.addEventListener("input",render);
 input.addEventListener("focus",render);

@@ -21,7 +21,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "شیعه",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -29,7 +29,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "الحاد",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -37,7 +37,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "عقیده",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -45,7 +45,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "ادیان",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -53,7 +53,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "مکاتب فکری",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -61,7 +61,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "فرق",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -69,7 +69,7 @@ const searchIndex = [
         title: b.data.title,
         author: b.data.author,
         translator: b.data.translator || "",
-        description: b.data.description || "",
+        language: b.data.language || "",
         category: "دعوت",
         href: `/books/${slugify(b.data.title)}`,
     })),
@@ -121,10 +121,10 @@ const setHeaderOffset = () => {
     const main = document.querySelector("main");
     if (header && main) {
         const isMobile = window.innerWidth <= 900;
-        const extra = isMobile ? 5 : 10;
-        const bottomNavHeight = isMobile ? 90 : 0;
+        const extra = isMobile ? 5 : 0;
+        const bottomPad = isMobile ? 90 : 50;
         main.style.paddingTop = (header.offsetHeight + extra) + "px";
-        main.style.paddingBottom = bottomNavHeight + "px";
+        main.style.paddingBottom = bottomPad + "px";
     }
 };
 if (document.readyState === "loading") {
@@ -161,13 +161,8 @@ html{
 background:var(--bg);
 }
 
-body{
-min-height:100vh;
-}
-
 main{
-min-height:100vh;
-padding:10px 0;
+padding:10px 0 60px;
 }
 
 @media(max-width:900px){

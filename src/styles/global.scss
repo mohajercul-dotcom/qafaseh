@@ -62,7 +62,6 @@ font-family:Vazirmatn,sans-serif;
 background:var(--bg);
 color:var(--text);
 transition:background .6s ease, color .6s ease;
-min-height:100vh;
 }
 
 a{
@@ -82,7 +81,7 @@ outline:none;
 
 *{
 scrollbar-width:thin;
-scrollbar-color:color-mix(in srgb, var(--accent) 30%, transparent) transparent;
+scrollbar-color:color-mix(in srgb, var(--accent) 20%, transparent) transparent;
 
 &::-webkit-scrollbar{
 width:3px;
@@ -94,18 +93,17 @@ background:transparent;
 }
 
 &::-webkit-scrollbar-thumb{
-background:color-mix(in srgb, var(--accent) 30%, transparent);
+background:color-mix(in srgb, var(--accent) 20%, transparent);
 border-radius:10px;
 
 &:hover{
-background:color-mix(in srgb, var(--accent) 55%, transparent);
+background:color-mix(in srgb, var(--accent) 45%, transparent);
 }
 }
 }
 
 .container{
-width:calc(100% - 80px);
-max-width:1400px;
+width:calc(100% - 200px);
 margin:0 auto;
 }
 

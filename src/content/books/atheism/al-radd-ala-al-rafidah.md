@@ -8,7 +8,7 @@ volumes: 1
 language: "عربی"
 download: "https://t.me/"
 format: "PDF"
-description: "رساله‌ای در رد عقاید روافض و دفاع از اهل سنت"
+description: "رسالةٌ في الردِّ على عقائد الروافض والدفاعِ عن أهل السنة."
 tags: ["رد روافض", "دفاع از صحابه"]
 featured: false
 today: true
