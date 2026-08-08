@@ -1,6 +1,5 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import BookCover from "../components/BookCover.astro";
 import { getCollection } from "astro:content";
 import { statSync } from "node:fs";
 import { slugify, normalizeAuthor } from "../lib/books.js";
@@ -41,7 +40,46 @@ const newest = [...allBooks].sort((a, b) => {
     return new Date(tb) - new Date(ta);
 }).slice(0, 5);
 const mostRead = [...allBooks].sort((a, b) => (b.data.reads || 0) - (a.data.reads || 0)).slice(0, 5);
-const today = allBooks.find((b) => b.data.featured) || newest[0];
+
+const categoryDefs = [
+    { key: "shiite", label: "شیعه" },
+    { key: "atheism", label: "الحاد" },
+    { key: "aqeedah", label: "عقیده" },
+    { key: "adyan", label: "ادیان" },
+    { key: "maqabeh", label: "مکاتب فکری" },
+    { key: "fraq", label: "فرقه‌ها" },
+    { key: "daavat", label: "دعوت" },
+];
+
+const escHtml = (s) =>
+    String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+const bookTime = (b) => {
+    if (b.data.pubDate) return new Date(b.data.pubDate).getTime();
+    return b.filePath ? statSync(b.filePath).mtimeMs : 0;
+};
+
+const todayQueues = categoryDefs
+    .map((c) => ({
+        key: c.key,
+        label: c.label,
+        books: allBooks
+            .filter((b) => b.category === c.key && b.data.today)
+            .sort((a, b) => bookTime(a) - bookTime(b)),
+    }))
+    .filter((c) => c.books.length > 0);
+
+const catLabel = (key) => (categoryDefs.find((c) => c.key === key) || {}).label || key;
+
+const todayPanels = todayQueues.map((c) =>
+    c.books.map((b) => {
+        const desc = b.data.caption || b.data.description;
+        const cover = b.data.cover
+            ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}">`
+            : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(c.label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">مترجم: ${escHtml(b.data.author)}</span></div></div></div>`;
+        return `<a class="today-link" href="/books/${slugify(b.data.title)}"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><span class="today-cta">مشاهده کتاب</span></div></div>${cover}</a>`;
+    })
+);
 ---
 
 <MainLayout>
@@ -66,31 +104,31 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 
 <section class="widgets">
 
-    {
-        today && (
-            <div class="card today-card">
+{
+    todayQueues.length > 0 && (
+        <div class="card today-card" data-today-card>
 
-                <h3>کتاب امروز</h3>
+            <h3>کتاب پیشنهادی</h3>
 
-                <a class="today-link" href={`/books/${slugify(today.data.title)}`}>
-                    <div class="today-info">
-                        <h2>{today.data.title}</h2>
-                        <p class="today-author">{today.data.author}</p>
-                        {(today.data.caption || today.data.description) && (
-                            <p class="today-desc">{today.data.caption || today.data.description}</p>
-                        )}
-                    </div>
-                    <BookCover
-                        title={today.data.title}
-                        author={today.data.author}
-                        category={today.category}
-                        cover={today.data.cover}
-                    />
-                </a>
+            <div
+                class="today-panel"
+                data-today-panel
+                set:html={todayPanels[0][0]}
+            />
 
-            </div>
-        )
-    }
+        </div>
+    )
+}
+
+{
+    todayQueues.length > 0 && (
+        <script
+            type="application/json"
+            id="today-queue"
+            set:html={JSON.stringify({ count: todayQueues.length, panels: todayPanels })}
+        />
+    )
+}
 
     <div class="card">
 
@@ -152,6 +190,30 @@ const today = allBooks.find((b) => b.data.featured) || newest[0];
 </section>
 
 </MainLayout>
+
+<script>
+const todayCard = document.querySelector("[data-today-card]");
+const queueEl = document.getElementById("today-queue");
+if (todayCard && queueEl) {
+    const queue = JSON.parse(queueEl.textContent);
+    const panel = todayCard.querySelector("[data-today-panel]");
+    const render = () => {
+        if (!panel) return;
+        const now = new Date();
+        const localDay = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+        const catIdx = localDay % queue.count;
+        const cycle = Math.floor(localDay / queue.count);
+        const list = queue.panels[catIdx];
+        if (Array.isArray(list) && list.length) {
+            panel.innerHTML = list[cycle % list.length];
+        }
+    };
+    render();
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    setTimeout(render, nextMidnight - now);
+}
+</script>
 
 <style lang="scss">
 
@@ -382,53 +444,10 @@ border-radius:8px;
 .today-card{
 display:flex;
 flex-direction:column;
+overflow:hidden;
 
-.today-link{
-display:flex;
-gap:22px;
-text-decoration:none;
-align-items:stretch;
-flex:1;
-
-:global(.cover-photo),
-:global(.cover-img){
-width:130px;
-flex-shrink:0;
-order:2;
-align-self:flex-start;
-}
-
-.today-info{
-flex:1;
-min-width:0;
-display:flex;
-flex-direction:column;
-order:1;
-
-h2{
-font-size:20px;
-font-weight:800;
-color:var(--text);
-line-height:1.6;
-margin-bottom:6px;
-}
-
-.today-author{
-color:var(--accent);
-font-size:13px;
-font-weight:600;
-margin:0 0 10px;
-}
-
-.today-desc{
-flex:1;
-color:var(--gray);
-font-size:13px;
-line-height:1.9;
-margin:0;
-text-align:justify;
-}
-}
+.today-panel{
+display:block;
 }
 }
 
@@ -490,6 +509,155 @@ font-size:20px;
 h3{
 font-size:10px;
 }
+}
+}
+}
+
+</style>
+
+<style is:global lang="scss">
+
+.today-link{
+position:relative;
+z-index:2;
+background:var(--card);
+display:flex;
+gap:22px;
+text-decoration:none;
+align-items:stretch;
+flex:1;
+
+.cover-photo,
+.cover-img{
+width:130px;
+flex-shrink:0;
+order:2;
+align-self:flex-start;
+}
+
+.today-info{
+flex:1;
+min-width:0;
+display:flex;
+flex-direction:column;
+order:1;
+
+h2{
+font-size:20px;
+font-weight:800;
+color:var(--text);
+line-height:1.6;
+margin-bottom:6px;
+}
+
+.today-author{
+color:var(--accent);
+font-size:13px;
+font-weight:600;
+margin:0 0 10px;
+}
+
+.today-desc{
+flex:1;
+color:var(--gray);
+font-size:13px;
+line-height:1.9;
+margin:0 0 14px;
+text-align:justify;
+}
+
+.today-actions{
+display:flex;
+align-items:center;
+gap:14px;
+margin-top:auto;
+}
+
+.today-cta{
+display:inline-block;
+background:var(--accent);
+color:#fff;
+font-size:13px;
+font-weight:700;
+padding:8px 22px;
+border-radius:20px;
+transition:transform .2s ease, box-shadow .2s ease;
+}
+}
+}
+
+.cover-img{
+width:100%;
+border-radius:14px;
+box-shadow:0 20px 40px rgba(0,0,0,.2);
+}
+
+.cover-photo{
+aspect-ratio:2/3;
+border-radius:14px;
+padding:10px;
+box-shadow:0 20px 40px rgba(0,0,0,.22);
+transition:transform .4s ease;
+
+&.shiite{ background:linear-gradient(160deg,#1D6A96,#0d3b58); }
+&.atheism{ background:linear-gradient(160deg,#2b2f36,#101318); }
+&.aqeedah{ background:linear-gradient(160deg,#6b4f1d,#3a2a0d); }
+&.adyan{ background:linear-gradient(160deg,#4a5d3a,#23301c); }
+&.maqabeh{ background:linear-gradient(160deg,#5b3a6b,#2c1a36); }
+&.fraq{ background:linear-gradient(160deg,#6b1d3a,#380d1e); }
+&.daavat{ background:linear-gradient(160deg,#1d6b55,#0d382c); }
+
+.cover-inner{
+height:100%;
+border:1px solid rgba(255,255,255,.25);
+border-radius:8px;
+padding:18px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:space-between;
+text-align:center;
+color:#fff;
+overflow:hidden;
+position:relative;
+}
+
+.cover-cat{
+font-size:11px;
+letter-spacing:.5px;
+opacity:.85;
+background:rgba(255,255,255,.15);
+padding:5px 12px;
+border-radius:20px;
+}
+
+.cover-inner h2{
+font-size:17px;
+font-weight:700;
+line-height:1.6;
+padding:0 6px;
+}
+
+.cover-footer{
+width:100%;
+
+.cover-author{
+display:block;
+font-size:12px;
+opacity:.9;
+border-top:1px solid rgba(255,255,255,.3);
+padding-top:10px;
+}
+}
+}
+
+@media(max-width:900px){
+.today-link{
+gap:14px;
+
+.cover-photo,
+.cover-img{
+width:100px;
 }
 }
 }

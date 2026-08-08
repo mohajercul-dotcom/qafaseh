@@ -15,6 +15,7 @@ const bookSchema = z.object({
     cover: z.string().optional(),
     reads: z.number().optional(),
     featured: z.boolean().optional(),
+    today: z.boolean().optional(),
     caption: z.string().optional(),
     description: z.string().optional(),
     tags: z.array(z.string()).optional(),

@@ -11,6 +11,7 @@ volumes: 1
 pubDate: "2025-05-10"
 cover: "/covers/sham-awarez.jpg"
 featured: true
+today: true
 caption: "رساله‌ای از ملا علی قاری در دفاع از فضایل صحابه و نقد عقاید روافض؛ از مهم‌ترین منابع کلامی اهل سنت در رد تشیع."
 reads: 540
 ---
