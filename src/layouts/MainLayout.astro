@@ -135,10 +135,22 @@ const setHeaderOffset = () => {
     }
 };
 setHeaderOffset();
+
+const resetScrollIfNeeded = () => {
+    const restoring = !!(history.state && (history.state.scrollY > 0 || history.state.scrollX > 0));
+    if (!restoring) {
+        window.scrollTo(0, 0);
+    }
+};
+
 if (!window.__headerOffsetBound) {
 window.__headerOffsetBound = true;
 window.addEventListener("resize", setHeaderOffset);
-document.addEventListener("astro:after-swap", setHeaderOffset);
+document.addEventListener("astro:after-swap", () => {
+    resetScrollIfNeeded();
+    setHeaderOffset();
+});
+document.addEventListener("astro:page-load", resetScrollIfNeeded);
 }
 
 if (!window.__pageLoadCleanupBound) {
