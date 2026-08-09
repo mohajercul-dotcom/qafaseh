@@ -138,6 +138,7 @@ setHeaderOffset();
 if (!window.__headerOffsetBound) {
 window.__headerOffsetBound = true;
 window.addEventListener("resize", setHeaderOffset);
+document.addEventListener("astro:after-swap", setHeaderOffset);
 }
 
 if (!window.__pageLoadCleanupBound) {

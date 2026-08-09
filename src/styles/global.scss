@@ -59,6 +59,7 @@ box-sizing:border-box;
 html{
 background:var(--bg);
 scrollbar-gutter:stable;
+overflow-anchor:none;
 }
 
 body{
@@ -66,6 +67,7 @@ font-family:Vazirmatn,sans-serif;
 background:var(--bg);
 color:var(--text);
 transition:background .6s ease, color .6s ease;
+overflow-anchor:none;
 }
 
 a{
