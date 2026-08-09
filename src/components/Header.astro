@@ -40,9 +40,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <IconFromFile src="lang.svg" />
 </button>
 <ThemeToggle />
-<button class="icon-button" data-tip="سوالات متداول" id="btnFaqDesktop">
+<a class="icon-button" data-tip="سوالات متداول" id="btnFaqDesktop" href="/faq">
 <IconFromFile src="faq.svg" />
-</button>
+</a>
 <IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" title="پروژه‌های دیگر" />
 <button class="icon-button" data-tip="درباره ما" id="btnAboutDesktop">
 <IconFromFile src="info.svg" />
@@ -87,9 +87,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="mobile-search">
 <SearchBox searchIndex={searchIndex} />
-<button class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile">
+<a class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile" href="/faq">
 <IconFromFile src="faq.svg" />
-</button>
+</a>
 <button class="icon-button mobile-bisher" data-tip="بیشتر" id="btnBisher">
 <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
 </button>
@@ -235,12 +235,11 @@ border:1px solid transparent;
 background:transparent;
 transition:color .2s, background .3s ease, border-color .3s ease;
 
-&.active{
-color:var(--accent);
-font-weight:700;
-background:color-mix(in srgb, var(--accent) 12%, transparent);
-border-color:color-mix(in srgb, var(--accent) 30%, transparent);
-}
+        &.active{
+        color:var(--accent);
+        background:color-mix(in srgb, var(--accent) 12%, transparent);
+        border-color:color-mix(in srgb, var(--accent) 30%, transparent);
+        }
 
 &::after{
 content:attr(data-tip);
@@ -849,7 +848,10 @@ animation:mb-theme-spin .6s cubic-bezier(.34,1.56,.64,1);
 body.modal-open{overflow:hidden;}
 </style>
 <script is:inline>
-document.addEventListener("DOMContentLoaded", () => {
+const initHeader = () => {
+const headerEl = document.querySelector("header");
+if (!headerEl || headerEl.dataset.bound) return;
+headerEl.dataset.bound = "1";
 const overlay = document.getElementById("mbOverlay");
 const popupDasteh = document.getElementById("popupDasteh");
 const popupBisher = document.getElementById("popupBisher");
@@ -938,17 +940,9 @@ contactOverlay?.classList.add("open");
 document.body.classList.add("modal-open");
 });
 
-const btnFaqDesktop = document.getElementById("btnFaqDesktop");
 const btnFaqMobile = document.getElementById("btnFaqMobile");
 
-btnFaqDesktop?.addEventListener("click", () => {
-window.location.href = "/faq";
-});
-
-btnFaqMobile?.addEventListener("click", () => {
-closeAll();
-window.location.href = "/faq";
-});
+btnFaqMobile?.addEventListener("click", closeAll);
 
 const btnLangDesktop = document.getElementById("btnLangDesktop");
 const btnLangBottom = document.getElementById("btnLangBottom");
@@ -1010,12 +1004,15 @@ contactOverlay?.addEventListener("click", (e) => {
 if(e.target === contactOverlay) closeModal("contactOverlay");
 });
 
+if(!window.__headerKeyBound){
+window.__headerKeyBound = true;
 document.addEventListener("keydown", (e) => {
 if(e.key === "Escape"){
 closeModal("aboutOverlay");
 closeModal("contactOverlay");
 }
 });
+}
 
 themeBtn?.addEventListener("click", () => {
 const html = document.documentElement;
@@ -1038,7 +1035,13 @@ if(href && (href === "/" ? currentPath === "/" : currentPath.startsWith(href))){
 link.classList.add("active");
 }
 });
-});
+};
+if (document.readyState === "loading") {
+document.addEventListener("DOMContentLoaded", initHeader);
+} else {
+initHeader();
+}
+document.addEventListener("astro:page-load", initHeader);
 </script>
 
 <script is:inline define:vars={{ searchIndex }}>

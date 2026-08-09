@@ -195,8 +195,16 @@ const syncHeight = () => {
     const maxH = sideH - titleH - shareH;
     content.style.maxHeight = maxH + "px";
 };
+if (!window.__syncHeightBound) {
+window.__syncHeightBound = true;
 window.addEventListener("load", syncHeight);
 window.addEventListener("resize", syncHeight);
+document.addEventListener("astro:page-load", () => {
+    syncHeight();
+    setTimeout(syncHeight, 300);
+});
+}
+syncHeight();
 </script>
 
 <script is:inline>
@@ -301,19 +309,28 @@ const setupFootnotes = () => {
         });
     };
 
-    document.addEventListener("click", (e) => {
-        if (!e.target.closest(".fn-tooltip") && !e.target.closest("[data-footnote-ref]")) {
-            hideTooltip();
-            activeRef = null;
-        }
-    });
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            hideTooltip();
-            activeRef = null;
-        }
-    });
-    window.addEventListener("scroll", hideTooltip, true);
+    const hideFn = () => {
+        document.querySelector(".fn-tooltip")?.classList.remove("show");
+        document.querySelectorAll("[data-footnote-ref].active").forEach((r) => r.classList.remove("active"));
+    };
+
+    if (!window.__fnDocBound) {
+        window.__fnDocBound = true;
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".fn-tooltip") && !e.target.closest("[data-footnote-ref]")) {
+                hideFn();
+            }
+        });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                hideFn();
+            }
+        });
+    }
+    if (!window.__fnScrollBound) {
+        window.__fnScrollBound = true;
+        window.addEventListener("scroll", hideFn, true);
+    }
 };
 
 if (document.readyState === "loading") {

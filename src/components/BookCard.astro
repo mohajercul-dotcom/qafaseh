@@ -43,30 +43,36 @@ const { title, author, description, publisher, year, language, href, tags = [] }
 </div>
 
 <script>
+const initAccordions = () => {
 document.querySelectorAll("[data-accordion]").forEach((card) => {
-    card.addEventListener("click", (e) => {
-        if (e.target.closest(".more-btn")) return;
-        const body = card.querySelector(".accordion-body");
-        if (!body) return;
+if (card.dataset.bound) return;
+card.dataset.bound = "1";
+card.addEventListener("click", (e) => {
+if (e.target.closest(".more-btn")) return;
+const body = card.querySelector(".accordion-body");
+if (!body) return;
 
-        const isOpen = card.classList.contains("open");
+const isOpen = card.classList.contains("open");
 
-        document.querySelectorAll("[data-accordion].open").forEach((other) => {
-            if (other !== card) {
-                other.classList.remove("open");
-                other.querySelector(".accordion-body").style.maxHeight = "0";
-            }
-        });
-
-        if (isOpen) {
-            card.classList.remove("open");
-            body.style.maxHeight = "0";
-        } else {
-            card.classList.add("open");
-            body.style.maxHeight = body.scrollHeight + "px";
-        }
-    });
+document.querySelectorAll("[data-accordion].open").forEach((other) => {
+if (other !== card) {
+other.classList.remove("open");
+other.querySelector(".accordion-body").style.maxHeight = "0";
+}
 });
+
+if (isOpen) {
+card.classList.remove("open");
+body.style.maxHeight = "0";
+} else {
+card.classList.add("open");
+body.style.maxHeight = body.scrollHeight + "px";
+}
+});
+});
+};
+initAccordions();
+document.addEventListener("astro:page-load", initAccordions);
 </script>
 
 <style lang="scss">

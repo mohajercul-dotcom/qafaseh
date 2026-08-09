@@ -193,43 +193,32 @@ const todayPanels = todayQueues.map((c) =>
 </MainLayout>
 
 <script>
+const initToday = () => {
 const todayCard = document.querySelector("[data-today-card]");
+if (!todayCard || todayCard.dataset.bound) return;
+todayCard.dataset.bound = "1";
 const queueEl = document.getElementById("today-queue");
-if (todayCard && queueEl) {
-    const queue = JSON.parse(queueEl.textContent);
-    const panel = todayCard.querySelector("[data-today-panel]");
-    const render = () => {
-        if (!panel) return;
-        const now = new Date();
-        const localDay = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
-        const catIdx = localDay % queue.count;
-        const cycle = Math.floor(localDay / queue.count);
-        const list = queue.panels[catIdx];
-        if (Array.isArray(list) && list.length) {
-            panel.innerHTML = list[cycle % list.length];
-        }
-    };
-    render();
-    const now = new Date();
-    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    setTimeout(render, nextMidnight - now);
+if (!queueEl) return;
+const queue = JSON.parse(queueEl.textContent);
+const panel = todayCard.querySelector("[data-today-panel]");
+const render = () => {
+if (!panel) return;
+const now = new Date();
+const localDay = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+const catIdx = localDay % queue.count;
+const cycle = Math.floor(localDay / queue.count);
+const list = queue.panels[catIdx];
+if (Array.isArray(list) && list.length) {
+panel.innerHTML = list[cycle % list.length];
 }
-</script>
-
-<script>
-window.addEventListener("load", () => {
-    document.fonts.ready.then(() => setTimeout(() => {
-        const hero = document.querySelector(".hero");
-        const stats = document.querySelector(".stats-row");
-        const r = s => s ? s.getBoundingClientRect() : null;
-        const her = r(hero), sr = r(stats);
-        document.title = JSON.stringify({
-            innerH: window.innerHeight,
-            heroTop: her ? Math.round(her.top) : null,
-            gapBottom: sr ? Math.round(window.innerHeight - sr.bottom) : null
-        });
-    }, 800));
-});
+};
+render();
+const now = new Date();
+const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+setTimeout(render, nextMidnight - now);
+};
+initToday();
+document.addEventListener("astro:page-load", initToday);
 </script>
 
 <style lang="scss">

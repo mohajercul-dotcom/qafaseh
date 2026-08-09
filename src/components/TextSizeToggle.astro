@@ -12,7 +12,10 @@ const { target } = Astro.props;
 </div>
 
 <script>
+const initTextSize = () => {
 const sizeBox = document.querySelector(".text-size");
+if (!sizeBox || sizeBox.dataset.bound) return;
+sizeBox.dataset.bound = "1";
 const targetSel = sizeBox?.dataset.target;
 const target = targetSel ? document.querySelector(targetSel) : null;
 
@@ -20,23 +23,26 @@ const SIZES = [15, 16, 17];
 
 let current = parseInt(localStorage.getItem("text-size"), 10) || SIZES[0];
 if (!SIZES.includes(current)) {
-    current = SIZES[0];
+current = SIZES[0];
 }
 
 const apply = () => {
-    if (target) {
-        target.style.fontSize = current + "px";
-    }
-    localStorage.setItem("text-size", String(current));
+if (target) {
+target.style.fontSize = current + "px";
+}
+localStorage.setItem("text-size", String(current));
 };
 
 apply();
 
 sizeBox?.querySelector(".size-btn")?.addEventListener("click", () => {
-    const idx = SIZES.indexOf(current);
-    current = SIZES[(idx + 1) % SIZES.length];
-    apply();
+const idx = SIZES.indexOf(current);
+current = SIZES[(idx + 1) % SIZES.length];
+apply();
 });
+};
+initTextSize();
+document.addEventListener("astro:page-load", initTextSize);
 </script>
 
 <style lang="scss">

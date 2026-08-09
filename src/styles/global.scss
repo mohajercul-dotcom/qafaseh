@@ -1,18 +1,21 @@
 @font-face{
 font-family:Vazirmatn;
 src:url("/fonts/Vazirmatn-Regular.woff2");
+font-display:swap;
 font-weight:400;
 }
 
 @font-face{
 font-family:Vazirmatn;
 src:url("/fonts/Vazirmatn-Medium.woff2");
+font-display:swap;
 font-weight:500;
 }
 
 @font-face{
 font-family:Vazirmatn;
 src:url("/fonts/Vazirmatn-Bold.woff2");
+font-display:swap;
 font-weight:700;
 }
 
@@ -55,6 +58,7 @@ box-sizing:border-box;
 
 html{
 background:var(--bg);
+scrollbar-gutter:stable;
 }
 
 body{
@@ -167,5 +171,62 @@ font-size:22px;
 .menu-link{
 font-size:13px;
 padding:5px 6px;
+}
+}
+
+// ===== انتقال نرم بین صفحات (View Transitions) =====
+
+::view-transition-old(root),
+::view-transition-new(root){
+mix-blend-mode:normal;
+animation-duration:.42s;
+animation-timing-function:cubic-bezier(.33,1,.68,1);
+}
+
+::view-transition-old(root){
+animation-name:vt-out;
+}
+
+::view-transition-new(root){
+animation-name:vt-in;
+}
+
+html[data-astro-transition="backward"]::view-transition-old(root){
+animation-name:vt-out-back;
+}
+
+html[data-astro-transition="backward"]::view-transition-new(root){
+animation-name:vt-in-back;
+}
+
+@keyframes vt-out{
+from{ transform:none; opacity:1; }
+to{ transform:translateX(-3.5%); opacity:0; }
+}
+
+@keyframes vt-in{
+from{ transform:translateX(3.5%); opacity:0; }
+to{ transform:none; opacity:1; }
+}
+
+@keyframes vt-out-back{
+from{ transform:none; opacity:1; }
+to{ transform:translateX(3.5%); opacity:0; }
+}
+
+@keyframes vt-in-back{
+from{ transform:translateX(-3.5%); opacity:0; }
+to{ transform:none; opacity:1; }
+}
+
+header{
+view-transition-name:header;
+}
+
+@media (prefers-reduced-motion: reduce){
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*){
+animation:none !important;
 }
 }

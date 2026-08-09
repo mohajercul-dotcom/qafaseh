@@ -42,30 +42,35 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${enco
 </div>
 
 <script>
+const initShareCopy = () => {
 const copyBtn = document.querySelector(".share-copy");
+if (!copyBtn || copyBtn.dataset.bound) return;
+copyBtn.dataset.bound = "1";
+copyBtn.addEventListener("click", async () => {
+const url = copyBtn.dataset.copyUrl;
+const text = copyBtn.dataset.copyText;
+const payload = `${text}\n${url}`;
 
-copyBtn?.addEventListener("click", async () => {
-    const url = copyBtn.dataset.copyUrl;
-    const text = copyBtn.dataset.copyText;
-    const payload = `${text}\n${url}`;
-
-    try {
-        await navigator.clipboard.writeText(payload);
-        const label = copyBtn.querySelector("svg");
-        const old = copyBtn.innerHTML;
-        copyBtn.innerHTML = "لینک کپی شد ✓";
-        copyBtn.classList.add("copied");
-        setTimeout(() => {
-            copyBtn.innerHTML = old;
-            copyBtn.classList.remove("copied");
-        }, 2000);
-    } catch {
-        copyBtn.innerHTML = "خطا";
-        setTimeout(() => {
-            copyBtn.innerHTML = old;
-        }, 2000);
-    }
+try {
+await navigator.clipboard.writeText(payload);
+const label = copyBtn.querySelector("svg");
+const old = copyBtn.innerHTML;
+copyBtn.innerHTML = "لینک کپی شد ✓";
+copyBtn.classList.add("copied");
+setTimeout(() => {
+copyBtn.innerHTML = old;
+copyBtn.classList.remove("copied");
+}, 2000);
+} catch {
+copyBtn.innerHTML = "خطا";
+setTimeout(() => {
+copyBtn.innerHTML = old;
+}, 2000);
+}
 });
+};
+initShareCopy();
+document.addEventListener("astro:page-load", initShareCopy);
 </script>
 
 <style lang="scss">

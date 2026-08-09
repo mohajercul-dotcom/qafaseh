@@ -1,5 +1,6 @@
 ---
 import "../styles/global.scss";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import IconFromFile from "../components/icons/IconFromFile.astro";
 import { getCollection } from "astro:content";
@@ -88,6 +89,12 @@ const searchIndex = [
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Regular.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Medium.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Bold.woff2" crossorigin />
+
+<ClientRouter />
+
 <title>{title}</title>
 
 <meta name="description" content={description} />
@@ -127,24 +134,38 @@ const setHeaderOffset = () => {
         main.style.paddingBottom = bottomPad + "px";
     }
 };
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setHeaderOffset);
-} else {
-    setHeaderOffset();
-}
+setHeaderOffset();
+if (!window.__headerOffsetBound) {
+window.__headerOffsetBound = true;
 window.addEventListener("resize", setHeaderOffset);
+}
+
+if (!window.__pageLoadCleanupBound) {
+window.__pageLoadCleanupBound = true;
+document.addEventListener("astro:page-load", () => {
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("theme-anim");
+    document.querySelectorAll(".mb-popup.open, .mb-overlay.open").forEach((el) => el.classList.remove("open"));
+});
+}
 
 </script>
 
 <script is:inline>
 (function(){
 const btn = document.getElementById("backToTop");
-if(!btn) return;
+if(!btn || btn.dataset.bound) return;
+btn.dataset.bound = "1";
+window.__bttBtn = btn;
 const onScroll = () => {
-btn.classList.toggle("show", window.scrollY > 400);
+const b = window.__bttBtn;
+if (b) b.classList.toggle("show", window.scrollY > 400);
 };
 onScroll();
+if(!window.__bttScrollBound){
+window.__bttScrollBound = true;
 window.addEventListener("scroll", onScroll, {passive:true});
+}
 btn.addEventListener("click", () => {
 window.scrollTo({top:0, behavior:"smooth"});
 });
@@ -162,7 +183,7 @@ background:var(--bg);
 }
 
 main{
-padding:10px 0 60px;
+padding:80px 0 50px;
 }
 
 @media(max-width:900px){

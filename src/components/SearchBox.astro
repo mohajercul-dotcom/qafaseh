@@ -192,11 +192,14 @@ const render = () => {
 input?.addEventListener("input", render);
 input?.addEventListener("focus", render);
 
-document.addEventListener("click", (e) => {
-    if (!e.target.closest(".search")) {
-        resultsBox?.classList.remove("open");
-    }
-});
+if (!window.__searchDocBound) {
+    window.__searchDocBound = true;
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".search")) {
+            document.querySelector("[data-search-results]")?.classList.remove("open");
+        }
+    });
+}
 
 clearBtn?.addEventListener("click", () => {
     input.value = "";

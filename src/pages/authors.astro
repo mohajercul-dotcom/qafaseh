@@ -44,7 +44,7 @@ const authorList = [...authors.values()].sort((a, b) =>
         <img class="icon-dark" src="/icons/nevisande-d.svg" alt="نویسندگان" />
     </div>
 
-    <p>فهرست نویسندگان و کتاب‌های آن‌ها در هر دو دسته شیعه و الحاد.</p>
+    <p>این بخش به معرفی نویسندگانی اختصاص دارد که آثارشان در موضوعات هفت‌گانه قفسه گردآوری شده است. برای هر نویسنده، معرفی کوتاه و فهرست کتاب‌های او به‌همراه شمار آثارش در هر موضوع ارائه می‌شود.</p>
 
 </section>
 
@@ -77,7 +77,7 @@ const authorList = [...authors.values()].sort((a, b) =>
 
 <script>
 import { initBookFilter } from "../lib/bookFilter.js";
-initBookFilter();
+document.addEventListener("astro:page-load", initBookFilter);
 </script>
 
 </MainLayout>

@@ -22,7 +22,7 @@ const allTags = buildTagFilters(books);
         <img class="icon-dark" src="/icons/shia-d.svg" alt="کتاب‌های شیعه" />
     </div>
 
-    <p>کتاب‌هایی درباره تاریخ، عقاید و اندیشه شیعه.</p>
+    <p>تشیع، از برجسته‌ترین جریان‌های مورد مناقشه در تاریخ اسلام بوده است. این بخش به معرفی کتاب‌هایی اختصاص دارد که با هدف نقد و رد باورها، مبانی و آموزه‌های تشیع نگاشته شده‌اند.</p>
 
 </section>
 
@@ -48,9 +48,11 @@ const allTags = buildTagFilters(books);
 <script>
 import { initAllGrids } from "../lib/bookGrid.js";
 import { initBookFilter } from "../lib/bookFilter.js";
+window.addEventListener("resize", initAllGrids);
+document.addEventListener("astro:page-load", () => {
 initAllGrids();
 initBookFilter();
-window.addEventListener("resize", initAllGrids);
+});
 </script>
 
 </MainLayout>

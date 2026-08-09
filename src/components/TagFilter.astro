@@ -32,13 +32,13 @@ const { tags, gridId, byCategory = false } = Astro.props;
 )}
 
 <script>
-const wrap = document.querySelector("[data-filter-bar]");
-const bar = wrap?.querySelector(".filter-bar");
-const arrowR = wrap?.querySelector(".arrow-right");
-const arrowL = wrap?.querySelector(".arrow-left");
+let filterRefs = null;
+let windowFilterBound = false;
 
 const update = () => {
-    if (!wrap || !bar) return;
+    const refs = filterRefs;
+    if (!refs) return;
+    const { wrap, bar, arrowL, arrowR } = refs;
     const overflow = bar.scrollWidth > bar.clientWidth + 2;
     wrap.classList.toggle("overflow", overflow);
     bar.classList.toggle("overflow", overflow);
@@ -49,28 +49,45 @@ const update = () => {
     arrowR.classList.toggle("disabled", !overflow || bar.scrollLeft >= max - 2);
 };
 
-const step = () => {
-    const chip = bar.querySelector(".filter-chip");
-    return chip ? (chip.offsetWidth + 8) * 3 : bar.clientWidth * 0.4;
-};
+const initFilter = () => {
+    const wrap = document.querySelector("[data-filter-bar]");
+    if (!wrap || wrap.dataset.bound) return;
+    wrap.dataset.bound = "1";
+    const bar = wrap.querySelector(".filter-bar");
+    const arrowR = wrap.querySelector(".arrow-right");
+    const arrowL = wrap.querySelector(".arrow-left");
+    if (!bar) return;
+    filterRefs = { wrap, bar, arrowL, arrowR };
 
-arrowR?.addEventListener("click", () => bar.scrollBy({ left: step(), behavior: "smooth" }));
-arrowL?.addEventListener("click", () => bar.scrollBy({ left: -step(), behavior: "smooth" }));
+    const step = () => {
+        const chip = bar.querySelector(".filter-chip");
+        return chip ? (chip.offsetWidth + 8) * 3 : bar.clientWidth * 0.4;
+    };
 
-bar?.addEventListener("click", (e) => {
-    const chip = e.target.closest(".filter-chip");
-    if (!chip) return;
-    if (bar.scrollWidth > bar.clientWidth + 2) {
-        chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    arrowR?.addEventListener("click", () => bar.scrollBy({ left: step(), behavior: "smooth" }));
+    arrowL?.addEventListener("click", () => bar.scrollBy({ left: -step(), behavior: "smooth" }));
+
+    bar.addEventListener("click", (e) => {
+        const chip = e.target.closest(".filter-chip");
+        if (!chip) return;
+        if (bar.scrollWidth > bar.clientWidth + 2) {
+            chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+        }
+    });
+
+    bar.addEventListener("scroll", update, { passive: true });
+    update();
+    setTimeout(update, 300);
+    setTimeout(update, 1000);
+
+    if (!windowFilterBound) {
+        windowFilterBound = true;
+        window.addEventListener("resize", update);
+        window.addEventListener("load", update);
     }
-});
-
-bar?.addEventListener("scroll", update, { passive: true });
-window.addEventListener("resize", update);
-window.addEventListener("load", update);
-update();
-setTimeout(update, 300);
-setTimeout(update, 1000);
+};
+initFilter();
+document.addEventListener("astro:page-load", initFilter);
 </script>
 
 <style lang="scss">
@@ -84,20 +101,26 @@ padding:10px 0 2px;
 display:flex;
 flex-wrap:nowrap;
 gap:8px;
-justify-content:center;
+justify-content:flex-start;
 overflow-x:auto;
 scrollbar-width:none;
 -ms-overflow-style:none;
-padding:4px 0;
+padding:4px 46px;
 scroll-behavior:smooth;
 
 &::-webkit-scrollbar{
 display:none;
 }
 
+&:not(.overflow) .filter-chip:first-child{
+margin-inline-start:auto;
+}
+
+&:not(.overflow) .filter-chip:last-child{
+margin-inline-end:auto;
+}
+
 &.overflow{
-justify-content:flex-start;
-padding:4px 46px;
 mask-image:linear-gradient(to left, transparent 0, #000 18px, #000 calc(100% - 48px), transparent calc(100% - 34px), transparent 100%);
 -webkit-mask-image:linear-gradient(to left, transparent 0, #000 18px, #000 calc(100% - 48px), transparent calc(100% - 34px), transparent 100%);
 }
@@ -174,11 +197,10 @@ left:2px;
 
 @media(max-width:900px){
 .filter-bar{
-padding:4px 0;
+padding:4px 38px;
 }
 
 .filter-bar.overflow{
-padding:4px 38px;
 mask-image:linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 40px), transparent calc(100% - 30px), transparent 100%);
 -webkit-mask-image:linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 40px), transparent calc(100% - 30px), transparent 100%);
 }

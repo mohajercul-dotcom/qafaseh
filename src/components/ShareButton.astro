@@ -34,50 +34,64 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${enco
 </div>
 
 <script>
+let shareRefs = null;
+let shareDocBound = false;
+
+const initShare = () => {
 const block = document.querySelector(".share-block");
+if (!block || block.dataset.bound) return;
+block.dataset.bound = "1";
 const toggle = block?.querySelector(".share-toggle");
 const pop = block?.querySelector(".share-pop");
+shareRefs = { block, toggle, pop };
 
 const openShareSheet = async () => {
-    const url = toggle.dataset.copyUrl;
-    const text = toggle.dataset.copyText;
-    const title = toggle.dataset.copyTitle || text;
-    if (navigator.share) {
-        try {
-            await navigator.share({ title, text, url });
-            return true;
-        } catch (err) {
-            if (err.name === "AbortError") return true;
-        }
-    }
-    return false;
+const url = toggle.dataset.copyUrl;
+const text = toggle.dataset.copyText;
+const title = toggle.dataset.copyTitle || text;
+if (navigator.share) {
+try {
+await navigator.share({ title, text, url });
+return true;
+} catch (err) {
+if (err.name === "AbortError") return true;
+}
+}
+return false;
 };
 
 toggle?.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const shared = await openShareSheet();
-    if (!shared) {
-        pop?.classList.toggle("open");
-    }
+e.stopPropagation();
+const shared = await openShareSheet();
+if (!shared) {
+pop?.classList.toggle("open");
+}
 });
 
+if (!shareDocBound) {
+shareDocBound = true;
 document.addEventListener("click", (e) => {
-    if (block && !block.contains(e.target)) {
-        pop?.classList.remove("open");
-    }
+const refs = shareRefs;
+if (refs && refs.block && !refs.block.contains(e.target)) {
+refs.pop?.classList.remove("open");
+}
 });
+}
 
 block?.querySelector("[data-pop-copy]")?.addEventListener("click", async () => {
-    const url = toggle.dataset.copyUrl;
-    const text = toggle.dataset.copyText;
-    try {
-        await navigator.clipboard.writeText(`${text}\n${url}`);
-        const btn = block.querySelector("[data-pop-copy]");
-        btn.textContent = "کپی شد ✓";
-        setTimeout(() => (btn.textContent = "کپی لینک"), 2000);
-    } catch {}
-    pop?.classList.remove("open");
+const url = toggle.dataset.copyUrl;
+const text = toggle.dataset.copyText;
+try {
+await navigator.clipboard.writeText(`${text}\n${url}`);
+const btn = block.querySelector("[data-pop-copy]");
+btn.textContent = "کپی شد ✓";
+setTimeout(() => (btn.textContent = "کپی لینک"), 2000);
+} catch {}
+pop?.classList.remove("open");
 });
+};
+initShare();
+document.addEventListener("astro:page-load", initShare);
 </script>
 
 <style lang="scss">
