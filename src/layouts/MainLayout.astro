@@ -66,16 +66,13 @@ const switchPaths = {
 
 </main>
 
-<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label={t.lang.chooseTitle}>
+<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label="Language">
     <div class="lang-modal-card">
-        <h2>{t.lang.chooseTitle}</h2>
-        <p>{t.lang.chooseHint}</p>
         <div class="lang-options">
             <a href={switchPaths.fa} data-lang="fa"><span class="lang-name">{t.lang.fa}</span></a>
             <a href={switchPaths.ar} data-lang="ar"><span class="lang-name">{t.lang.ar}</span></a>
             <a href={switchPaths.ur} data-lang="ur"><span class="lang-name">{t.lang.ur}</span></a>
         </div>
-        <button class="lang-modal-close" type="button" data-lang-close>{t.lang.close}</button>
     </div>
 </div>
 
@@ -140,14 +137,6 @@ const initLangModal = () => {
             localStorage.setItem("qafaseh-lang", a.dataset.lang);
         });
     });
-    const closeBtn = modal.querySelector("[data-lang-close]");
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            localStorage.setItem("qafaseh-lang", "none");
-            modal.classList.remove("show");
-            document.body.classList.remove("modal-open");
-        });
-    }
 };
 initLangModal();
 document.addEventListener("astro:page-load", initLangModal);
@@ -234,18 +223,6 @@ transition:transform .3s cubic-bezier(.34,1.56,.64,1);
 .lang-modal.show &{
 transform:translateY(0) scale(1);
 }
-
-h2{
-font-size:22px;
-font-weight:900;
-margin-bottom:8px;
-}
-
-p{
-color:var(--gray);
-font-size:14px;
-margin-bottom:24px;
-}
 }
 
 .lang-options{
@@ -274,24 +251,6 @@ border-color:var(--accent);
 color:#fff;
 transform:translateY(-2px);
 }
-}
-}
-
-.lang-modal-close{
-background:transparent;
-border:1px solid var(--border);
-color:var(--gray);
-font-family:inherit;
-font-size:13px;
-font-weight:600;
-padding:9px 22px;
-border-radius:12px;
-cursor:pointer;
-transition:color .2s, border-color .2s;
-
-&:hover{
-color:var(--accent);
-border-color:var(--accent);
 }
 }
 }

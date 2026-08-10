@@ -5,11 +5,8 @@ export const uiAr: UiDict = {
     siteDescription: "تعريف الكتب والمؤلفين والأفكار",
     lang: {
         fa: "فارسی",
-        ar: "العربية",
+        ar: "العربیة",
         ur: "اردو",
-        chooseTitle: "اختيار اللغة",
-        chooseHint: "اختر لغتك المفضلة",
-        close: "إغلاق",
     },
     nav: {
         home: "الرئيسية",

@@ -7,9 +7,6 @@ export const uiFa: UiDict = {
         fa: "فارسی",
         ar: "العربیة",
         ur: "اردو",
-        chooseTitle: "انتخاب زبان",
-        chooseHint: "زبان موردنظر خود را انتخاب کنید",
-        close: "بستن",
     },
     nav: {
         home: "خانه",

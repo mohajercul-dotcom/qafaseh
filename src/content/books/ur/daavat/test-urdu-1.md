@@ -6,7 +6,7 @@ pages: 120
 volumes: 1
 pubDate: "2025-06-10"
 reads: 12
-today: false
+today: true
 description: "یہ ایک آزمائشی اردو کتاب ہے جو سایت کی اردو زبان کی آزمائش کے لیے شامل کی گئی ہے۔"
 tags: ["اردو", "ٹیسٹ"]
 ---

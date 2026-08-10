@@ -6,7 +6,7 @@ pages: 80
 volumes: 1
 pubDate: "2025-06-12"
 reads: 8
-today: false
+today: true
 description: "دعوت کے اصولوں پر ایک مختصر اردو رسالہ۔"
 tags: ["اردو", "دعوت"]
 ---

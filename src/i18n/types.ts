@@ -7,9 +7,6 @@ export interface UiDict {
         fa: string;
         ar: string;
         ur: string;
-        chooseTitle: string;
-        chooseHint: string;
-        close: string;
     };
     nav: {
         home: string;
