@@ -1,8 +1,11 @@
 ---
-const { title, author, excerpt, url, shortUrl } = Astro.props;
+import { getUi } from "../i18n/index.js";
+
+const { title, author, excerpt, url, shortUrl, locale = "fa" } = Astro.props;
+const t = getUi(locale);
 
 const pageUrl = shortUrl || url || Astro.url.href;
-const shareText = excerpt ? `${excerpt}\n\nبرای ادامه مقاله، کلیک کنید` : `${title} — ${author}`;
+const shareText = excerpt ? `${excerpt}\n\n${t.share.continueReading}` : `${title} — ${author}`;
 const encodedText = encodeURIComponent(shareText);
 const encodedUrl = encodeURIComponent(pageUrl);
 
@@ -21,19 +24,19 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${enco
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
         </svg>
-        <span>اشتراک‌گذاری</span>
+        <span>{t.share.button}</span>
     </button>
 
     <div class="share-pop">
-        <button class="pop-item copy" data-pop-copy>کپی لینک</button>
-        <a class="pop-item" href={telegram} target="_blank" rel="noopener">تلگرام</a>
-        <a class="pop-item" href={whatsapp} target="_blank" rel="noopener">واتس‌اپ</a>
-        <a class="pop-item" href={twitter} target="_blank" rel="noopener">X</a>
+        <button class="pop-item copy" data-pop-copy>{t.share.copy}</button>
+        <a class="pop-item" href={telegram} target="_blank" rel="noopener">{t.share.telegram}</a>
+        <a class="pop-item" href={whatsapp} target="_blank" rel="noopener">{t.share.whatsapp}</a>
+        <a class="pop-item" href={twitter} target="_blank" rel="noopener">{t.share.x}</a>
     </div>
 
 </div>
 
-<script>
+<script define:vars={{ copyLabel: t.share.copy, copiedLabel: t.share.copied }}>
 let shareRefs = null;
 let shareDocBound = false;
 
@@ -84,8 +87,8 @@ const text = toggle.dataset.copyText;
 try {
 await navigator.clipboard.writeText(`${text}\n${url}`);
 const btn = block.querySelector("[data-pop-copy]");
-btn.textContent = "کپی شد ✓";
-setTimeout(() => (btn.textContent = "کپی لینک"), 2000);
+btn.textContent = copiedLabel;
+setTimeout(() => (btn.textContent = copyLabel), 2000);
 } catch {}
 pop?.classList.remove("open");
 });

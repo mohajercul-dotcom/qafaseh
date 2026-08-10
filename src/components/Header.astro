@@ -5,20 +5,39 @@ import IconButton from "./IconButton.astro";
 import Logo from "./Logo.astro";
 import IconFromFile from "./icons/IconFromFile.astro";
 import VaraqIcon from "./icons/VaraqIcon.astro";
+import { getUi } from "../i18n/index.js";
+import { localizePath, switchLocalePath } from "../lib/i18n.js";
 
 const path = Astro.url.pathname;
 const { searchIndex = [] } = Astro.props;
 
-const menuItems = [
-    { href: "/shiite", label: "شیعه", tip: "شیعه‌شناسی" },
-    { href: "/atheism", label: "الحاد", tip: " الحاد شناسی" },
-    { href: "/aqeedah", label: "عقیده", tip: "عقیده اهل‌سنت" },
-    { href: "/adyan", label: "ادیان", tip: "معرفی و نقد ادیان" },
-    { href: "/maqabeh", label: "مکاتب فکری", tip: "مکاتب فکری و فلسفی" },
-    { href: "/fraq", label: "فرقه‌ها", tip: "فرقه‌های منتسب به اسلام" },
-    { href: "/daavat", label: "دعوت", tip: "روش‌های دعوت برای دعوتگران" },
-    { href: "/authors", label: "نویسندگان", tip: "نویسندگان و آثارشان" },
-];
+const locale = Astro.currentLocale;
+const t = getUi(locale);
+
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+
+const menuItems = categoryKeys.map((key) => ({
+    key,
+    href: localizePath(locale, `/${key}`),
+    label: t.menu[key].label,
+    tip: t.menu[key].tip,
+}));
+
+const authorsItem = {
+    key: "authors",
+    href: localizePath(locale, "/authors"),
+    label: t.menu.authors.label,
+    tip: t.menu.authors.tip,
+};
+
+const faqHref = localizePath(locale, "/faq");
+const homeHref = localizePath(locale, "/");
+
+const switchPaths = {
+    fa: switchLocalePath(path, locale, "fa"),
+    ar: switchLocalePath(path, locale, "ar"),
+    ur: switchLocalePath(path, locale, "ur"),
+};
 ---
 
 <header>
@@ -26,71 +45,73 @@ const menuItems = [
 <div class="container nav">
 
 <nav class="right-menu">
-<Logo />
+<Logo locale={locale} />
 {menuItems.map((item) => (
 <a class:list={["menu-link", { active: path === item.href || path.startsWith(item.href + "/") }]}
 href={item.href} data-tip={item.tip}>{item.label}</a>
 ))}
+<a class:list={["menu-link", { active: path === authorsItem.href || path.startsWith(authorsItem.href + "/") }]}
+href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 </nav>
 
-<SearchBox searchIndex={searchIndex} />
+<SearchBox searchIndex={searchIndex} locale={locale} />
 
 <div class="left-menu">
-<button class="icon-button" data-tip="زبان" id="btnLangDesktop">
+<button class="icon-button" data-tip={t.nav.languageTip} id="btnLangDesktop">
 <IconFromFile src="lang.svg" />
 </button>
 <ThemeToggle />
-<a class="icon-button" data-tip="سوالات متداول" id="btnFaqDesktop" href="/faq">
+<a class="icon-button" data-tip={t.nav.faqTip} id="btnFaqDesktop" href={faqHref}>
 <IconFromFile src="faq.svg" />
 </a>
-<IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" title="پروژه‌های دیگر" />
-<button class="icon-button" data-tip="درباره ما" id="btnAboutDesktop">
+<IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" title={t.nav.projectsTip} />
+<button class="icon-button" data-tip={t.nav.about} id="btnAboutDesktop">
 <IconFromFile src="info.svg" />
 </button>
-<button class="icon-button" data-tip="تماس با ما" id="btnContactDesktop">
+<button class="icon-button" data-tip={t.nav.contact} id="btnContactDesktop">
 <IconFromFile src="mail.svg" />
 </button>
 </div>
 
 </div>
 
-<nav class="bottom-nav" aria-label="منوی پایین">
+<nav class="bottom-nav" aria-label={t.nav.dasteh}>
 
-<a class="bottom-link" href="/" data-tip="خانه">
+<a class="bottom-link" href={homeHref} data-tip={t.nav.homeTip}>
 <span class="bottom-icon home-icon"><VaraqIcon /></span>
-<span>خانه</span>
+<span>{t.nav.home}</span>
 </a>
 
-<button class="bottom-link" id="btnDasteh" data-tip="دسته‌ها">
+<button class="bottom-link" id="btnDasteh" data-tip={t.nav.dastehTip}>
 <span class="bottom-icon">
 <IconFromFile src="hamburger.svg" />
 </span>
-<span>دسته</span>
+<span>{t.nav.dasteh}</span>
 </button>
 
-<button class="bottom-link" id="themeToggleBottom" data-tip="تم شب و روز">
+<button class="bottom-link" id="themeToggleBottom" data-tip={t.nav.themeTip}>
 <span class="bottom-icon">
 <span class="icon-sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
 <span class="icon-moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span>
 </span>
-<span>تم</span>
+<span>{t.nav.theme}</span>
 </button>
 
-<button class="bottom-link" id="btnLangBottom" data-tip="زبان">
+<button class="bottom-link" id="btnLangBottom" data-tip={t.nav.languageTip}>
 <span class="bottom-icon">
 <IconFromFile src="lang.svg" />
 </span>
-<span>زبان</span>
+<span>{t.nav.language}</span>
 </button>
 
 </nav>
 
 <div class="mobile-search">
-<SearchBox searchIndex={searchIndex} />
-<a class="icon-button mobile-faq" data-tip="سوالات متداول" id="btnFaqMobile" href="/faq">
+<SearchBox searchIndex={searchIndex} locale={locale} />
+<a class="icon-button mobile-faq" data-tip={t.nav.faqTip} id="btnFaqMobile" href={faqHref}>
 <IconFromFile src="faq.svg" />
 </a>
-<button class="icon-button mobile-bisher" data-tip="بیشتر" id="btnBisher">
+<button class="icon-button mobile-bisher" data-tip={t.nav.moreTip} id="btnBisher">
 <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
 </button>
 </div>
@@ -101,14 +122,9 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 
 <div class="mb-popup" id="popupDasteh">
 <div class="mb-popup-grid" data-cols="2">
-<a class:list={["mb-bubble", { active: path === "/shiite" || path.startsWith("/shiite/") }]} href="/shiite">شیعه</a>
-<a class:list={["mb-bubble", { active: path === "/atheism" || path.startsWith("/atheism/") }]} href="/atheism">الحاد</a>
-<a class:list={["mb-bubble", { active: path === "/aqeedah" || path.startsWith("/aqeedah/") }]} href="/aqeedah">عقیده</a>
-<a class:list={["mb-bubble", { active: path === "/adyan" || path.startsWith("/adyan/") }]} href="/adyan">ادیان</a>
-<a class:list={["mb-bubble", { active: path === "/maqabeh" || path.startsWith("/maqabeh/") }]} href="/maqabeh">مکاتب فکری</a>
-<a class:list={["mb-bubble", { active: path === "/fraq" || path.startsWith("/fraq/") }]} href="/fraq">فرقه‌ها</a>
-<a class:list={["mb-bubble", { active: path === "/daavat" || path.startsWith("/daavat/") }]} href="/daavat">دعوت</a>
-<a class:list={["mb-bubble", { active: path === "/authors" || path.startsWith("/authors/") }]} href="/authors">نویسندگان</a>
+{[...menuItems, authorsItem].map((item) => (
+<a class:list={["mb-bubble", { active: path === item.href || path.startsWith(item.href + "/") }]} href={item.href}>{item.label}</a>
+))}
 </div>
 </div>
 
@@ -116,74 +132,61 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 <div class="mb-popup-grid" data-cols="1">
 <a class="mb-bubble" href="https://mohajercul.vercel.app/" target="_blank" rel="noopener">
 <span class="mb-icon-circle"><IconFromFile src="grid.svg" /></span>
-پروژه‌های دیگر
+{t.nav.projects}
 </a>
 <button class="mb-bubble" id="btnAboutMobile">
 <span class="mb-icon-circle"><IconFromFile src="info.svg" /></span>
-درباره ما
+{t.nav.about}
 </button>
 <button class="mb-bubble" id="btnContactMobile">
 <span class="mb-icon-circle"><IconFromFile src="mail.svg" /></span>
-تماس با ما
+{t.nav.contact}
 </button>
 </div>
 </div>
 
 <div class="about-overlay" id="aboutOverlay">
-<div class="about-modal" role="dialog" aria-modal="true" aria-label="درباره ما">
-<button class="modal-close" id="aboutClose" title="بستن">
+<div class="about-modal" role="dialog" aria-modal="true" aria-label={t.nav.about}>
+<button class="modal-close" id="aboutClose" title={t.aboutModal.close}>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
 <div class="modal-icon"><IconFromFile src="info.svg" /></div>
-<h3>درباره ما</h3>
-<p>کتابخانه‌ای دیجیتال برای معرفی کتاب‌های ناب و اندیشه‌های ماندگار؛ جایی برای خواندن، اندیشیدن و به اشتراک گذاشتن.</p>
-<p>ما تلاش می‌کنیم هر کتاب را با معرفی دقیق، اطلاعات کامل و لینک دانلود در اختیارتان بگذاریم تا دسترسی به دانش آسان‌تر شود.</p>
+<h3>{t.aboutModal.title}</h3>
+<p>{t.aboutModal.p1}</p>
+<p>{t.aboutModal.p2}</p>
 <div class="socials">
-<a class="social instagram" href="#" title="اینستاگرام"><IconFromFile src="instagram.svg" /></a>
-<a class="social telegram" href="#" title="تلگرام"><IconFromFile src="telegram.svg" /></a>
-<a class="social tiktok" href="#" title="تیک‌تاک"><IconFromFile src="tiktok.svg" /></a>
+<a class="social instagram" href="#" title={t.aboutModal.instagram}><IconFromFile src="instagram.svg" /></a>
+<a class="social telegram" href="#" title={t.aboutModal.telegram}><IconFromFile src="telegram.svg" /></a>
+<a class="social tiktok" href="#" title={t.aboutModal.tiktok}><IconFromFile src="tiktok.svg" /></a>
 </div>
 </div>
 </div>
 
 <div class="contact-overlay" id="contactOverlay">
-<div class="contact-modal" role="dialog" aria-modal="true" aria-label="تماس با ما">
-<button class="modal-close" id="contactClose" title="بستن">
+<div class="contact-modal" role="dialog" aria-modal="true" aria-label={t.nav.contact}>
+<button class="modal-close" id="contactClose" title={t.contactModal.close}>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
 <div class="modal-icon"><IconFromFile src="mail.svg" /></div>
-<h3>تماس با ما</h3>
-<p style="font-size:14px;color:var(--gray);margin-bottom:24px;">از طریق تلگرام با تیم ما در ارتباط باشید</p>
+<h3>{t.contactModal.title}</h3>
+<p style="font-size:14px;color:var(--gray);margin-bottom:24px;">{t.contactModal.intro}</p>
 <div class="contact-list">
+{t.contactModal.labels.map((label) => (
 <a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
 <span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
-<span class="contact-text"><span class="contact-label">ارتباط با بخش فنی</span></span>
+<span class="contact-text"><span class="contact-label">{label}</span></span>
 <span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
 </a>
-<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
-<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
-<span class="contact-text"><span class="contact-label">ارتباط با مدیر</span></span>
-<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
-</a>
-<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
-<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
-<span class="contact-text"><span class="contact-label">ارتباط با مسئول سایت</span></span>
-<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
-</a>
-<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
-<span class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
-<span class="contact-text"><span class="contact-label">درخواست ثبت کتاب</span></span>
-<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
-</a>
+))}
 </div>
 </div>
 </div>
 
 <div class="mb-popup" id="popupLang">
 <div class="mb-popup-grid" data-cols="1">
-<button class="mb-bubble lang-opt active">فارسی</button>
-<button class="mb-bubble lang-opt">العربیة</button>
-<button class="mb-bubble lang-opt">اردو</button>
+<a class:list={["mb-bubble lang-opt", { active: locale === "fa" }]} href={switchPaths.fa} data-lang="fa">{t.lang.fa}</a>
+<a class:list={["mb-bubble lang-opt", { active: locale === "ar" }]} href={switchPaths.ar} data-lang="ar">{t.lang.ar}</a>
+<a class:list={["mb-bubble lang-opt", { active: locale === "ur" }]} href={switchPaths.ur} data-lang="ur">{t.lang.ur}</a>
 </div>
 </div>
 
@@ -592,7 +595,6 @@ transition:fill .3s ease;
 
 .icon-button{
 position:relative;
-position:relative;
 width:42px;
 height:42px;
 border-radius:50%;
@@ -860,6 +862,7 @@ const btnBisher = document.getElementById("btnBisher");
 const themeBtn = document.getElementById("themeToggleBottom");
 const btnAbout = document.getElementById("btnAboutMobile");
 const btnContact = document.getElementById("btnContactMobile");
+const popupLang = document.getElementById("popupLang");
 
 function closeAll(){
 popupDasteh?.classList.remove("open");
@@ -946,7 +949,6 @@ btnFaqMobile?.addEventListener("click", closeAll);
 
 const btnLangDesktop = document.getElementById("btnLangDesktop");
 const btnLangBottom = document.getElementById("btnLangBottom");
-const popupLang = document.getElementById("popupLang");
 
 function openLangPopup(btn){
 closeAll();
@@ -982,8 +984,7 @@ btnLangBottom?.addEventListener("click", () => openLangPopup(btnLangBottom));
 
 document.querySelectorAll(".lang-opt").forEach((item) => {
 item.addEventListener("click", () => {
-document.querySelectorAll(".lang-opt").forEach((i) => i.classList.remove("active"));
-item.classList.add("active");
+localStorage.setItem("qafaseh-lang", item.dataset.lang || "none");
 });
 });
 
@@ -1044,7 +1045,7 @@ initHeader();
 document.addEventListener("astro:page-load", initHeader);
 </script>
 
-<script is:inline define:vars={{ searchIndex }}>
+<script is:inline define:vars={{ searchIndex, translatorLabel: t.search.translator }}>
 (function(){
 const INDEX = searchIndex;
 const desktopSearch = document.querySelector(".nav .search");
@@ -1097,7 +1098,7 @@ const q=input.value,results=q.trim()?matches(q):[];
 resultsBox.classList.toggle("open",results.length>0||(q.trim()&&results.length===0));
 empty.classList.toggle("show",q.trim()&&results.length===0);
 clearBtn.classList.toggle("show",q.trim().length>0);
-list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}" ${cid}><span class="result-cat" ${cid}>${item.category}</span><span class="result-title" ${cid}>${item.title}</span><span class="result-author" ${cid}>${item.author}${item.translator?" — ترجمه "+item.translator:""}</span>${item.language?`<span class="result-lang ${langClass(item.language)}" ${cid}>${item.language}</span>`:""}</a>`).join("");
+list.innerHTML=results.slice(0,7).map(({item})=>`<a class="result" href="${item.href}" ${cid}><span class="result-cat" ${cid}>${item.category}</span><span class="result-title" ${cid}>${item.title}</span><span class="result-author" ${cid}>${item.author}${item.translator?" — "+translatorLabel+" "+item.translator:""}</span>${item.language?`<span class="result-lang ${langClass(item.language)}" ${cid}>${item.language}</span>`:""}</a>`).join("");
 };
 input.addEventListener("input",render);
 input.addEventListener("focus",render);

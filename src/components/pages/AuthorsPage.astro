@@ -1,0 +1,188 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import TagFilter from "../TagFilter.astro";
+import { allBooks } from "../../lib/paths.js";
+import { slugify, normalizeAuthor } from "../../lib/books.js";
+import { getUi } from "../../i18n/index.js";
+import { localizePath, toLocaleDigits, bookSiteLang, localizeAsset } from "../../lib/i18n.js";
+
+const { locale = "fa" } = Astro.props;
+const t = getUi(locale);
+
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+const collections = categoryKeys.map((name) => ({ name, label: t.menu[name].label }));
+
+const all = (await allBooks()).filter((b) => bookSiteLang(b) === locale);
+
+const authors = new Map();
+for (const book of all) {
+    const name = normalizeAuthor(book.data.author);
+    const entry = authors.get(name) || { name, counts: {}, total: 0 };
+    entry.counts[book.category] = (entry.counts[book.category] || 0) + 1;
+    entry.total++;
+    authors.set(name, entry);
+}
+
+const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.name, "fa"));
+---
+
+<MainLayout>
+
+    <section class="page-hero">
+
+        <div class="page-icon">
+            <img class="icon-light" src={localizeAsset(locale, "/icons/nevisande-l.svg")} alt={t.menu.authors.label} />
+            <img class="icon-dark" src={localizeAsset(locale, "/icons/nevisande-d.svg")} alt={t.menu.authors.label} />
+        </div>
+
+        <p>{t.authors.desc}</p>
+
+    </section>
+
+    <TagFilter tags={collections.map((c) => c.label)} gridId="authors-grid" byCategory locale={locale} />
+
+    <section class="authors" id="authors-grid">
+
+        {authorList.map((author) => (
+            <a
+                class="author-card"
+                href={localizePath(locale, `/authors/${slugify(author.name)}`)}
+                data-cat={Object.keys(author.counts)
+                    .filter((key) => author.counts[key] > 0)
+                    .map((key) => t.menu[key].label)
+                    .join(",")}
+            >
+                <h3>{author.name}</h3>
+
+                <div class="counts">
+                    {Object.entries(author.counts)
+                        .filter(([, count]) => count > 0)
+                        .map(([key, count]) => (
+                            <span class="count">{t.menu[key].label}: {count}</span>
+                        ))}
+                    <span class="total">{t.authors.total} {author.total}</span>
+                </div>
+            </a>
+        ))}
+
+    </section>
+
+    <script>
+        import { initBookFilter } from "../../lib/bookFilter.js";
+        document.addEventListener("astro:page-load", initBookFilter);
+    </script>
+
+</MainLayout>
+
+<style lang="scss">
+
+.page-hero{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+}
+
+p{
+margin-top:14px;
+color:var(--gray);
+}
+}
+
+.page-icon{
+position:relative;
+display:inline-flex;
+width:min(280px,64%);
+aspect-ratio:18/4.27;
+margin:0 auto;
+}
+
+.page-icon img{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+margin:auto;
+transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+
+.icon-light{
+opacity:1;
+transform:scale(1);
+}
+
+.icon-dark{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-light{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-dark{
+opacity:1;
+transform:scale(1);
+}
+
+.authors{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+padding:20px 0 40px;
+}
+
+.author-card{
+display:block;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+text-decoration:none;
+transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+
+&:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+h3{
+font-size:17px;
+margin-bottom:14px;
+}
+
+.counts{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+font-size:12px;
+
+.count{
+padding:4px 10px;
+border-radius:20px;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+}
+
+.total{
+color:var(--text);
+font-weight:700;
+align-self:center;
+}
+}
+}
+
+@media(max-width:900px){
+.authors{
+grid-template-columns:1fr;
+}
+
+.page-icon{
+width:min(220px,70%);
+}
+}
+
+</style>

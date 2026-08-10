@@ -1,0 +1,165 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import BookCard from "../BookCard.astro";
+import TagFilter from "../TagFilter.astro";
+import { getCollection } from "astro:content";
+import { slugify } from "../../lib/books.js";
+import { buildTagFilters } from "../../lib/buildTagFilters.js";
+import { getUi } from "../../i18n/index.js";
+import { localizePath, bookDescription, bookSiteLang, localizeAsset } from "../../lib/i18n.js";
+
+const { category = "shiite", locale = "fa" } = Astro.props;
+const t = getUi(locale);
+
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+if (!categoryKeys.includes(category)) {
+    throw new Error(`Invalid category: ${category}`);
+}
+
+const books = (await getCollection(category))
+    .filter((b) => bookSiteLang(b) === locale)
+    .sort((a, b) => a.data.title.localeCompare(b.data.title, "fa"));
+
+const allTags = buildTagFilters(books);
+
+const icons = {
+    shiite: "shia",
+    atheism: "elhad",
+    aqeedah: "aqideh",
+    adyan: "adyan",
+    maqabeh: "makateb",
+    fraq: "feraq",
+    daavat: "davat",
+};
+
+const iconBase = icons[category] || "shia";
+const gridId = `books-${category}`;
+---
+
+<MainLayout>
+
+    <section class="page-hero">
+
+        <div class="page-icon">
+            <img class="icon-light" src={localizeAsset(locale, `/icons/${iconBase}-l.svg`)} alt={t.categories[category].alt} />
+            <img class="icon-dark" src={localizeAsset(locale, `/icons/${iconBase}-d.svg`)} alt={t.categories[category].alt} />
+        </div>
+
+        <p>{t.categories[category].desc}</p>
+
+    </section>
+
+    <TagFilter tags={allTags} gridId={gridId} locale={locale} />
+
+    <div class="books" id={gridId} data-cols="3">
+        {books.map((book) => (
+            <div class="book-item">
+                <BookCard
+                    title={book.data.title}
+                    author={book.data.author}
+                    description={bookDescription(book, locale)}
+                    language={book.data.language}
+                    href={localizePath(locale, `/books/${slugify(book.data.title)}`)}
+                    tags={book.data.tags || []}
+                    locale={locale}
+                />
+            </div>
+        ))}
+    </div>
+
+    <script>
+        import { initAllGrids } from "../../lib/bookGrid.js";
+        import { initBookFilter } from "../../lib/bookFilter.js";
+        window.addEventListener("resize", initAllGrids);
+        document.addEventListener("astro:page-load", () => {
+            initAllGrids();
+            initBookFilter();
+        });
+    </script>
+
+</MainLayout>
+
+<style lang="scss">
+
+.page-hero{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+}
+
+p{
+margin-top:14px;
+color:var(--gray);
+}
+}
+
+.page-icon{
+position:relative;
+display:inline-flex;
+width:min(280px,64%);
+aspect-ratio:18/4.27;
+margin:0 auto;
+}
+
+.page-icon img{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+margin:auto;
+transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+
+.icon-light{
+opacity:1;
+transform:scale(1);
+}
+
+.icon-dark{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-light{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-dark{
+opacity:1;
+transform:scale(1);
+}
+
+.books{
+display:flex;
+gap:16px;
+padding:20px 0 40px;
+opacity:0;
+transition:opacity .2s;
+
+&.ready{
+opacity:1;
+}
+}
+
+:global(.book-col){
+flex:1;
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+@media(max-width:900px){
+.books{
+flex-direction:column;
+}
+
+.page-icon{
+width:min(220px,70%);
+}
+}
+
+</style>

@@ -1,19 +1,22 @@
 ---
-const { tags, gridId, byCategory = false } = Astro.props;
+import { getUi } from "../i18n/index.js";
+
+const { tags, gridId, byCategory = false, locale = "fa" } = Astro.props;
+const t = getUi(locale);
 ---
 
 {tags.length > 0 && (
     <div class="filter-wrap" data-filter-bar data-grid={gridId}>
 
-        <button class="filter-arrow arrow-right" type="button" aria-label="فیلتر بعدی">
+        <button class="filter-arrow arrow-right" type="button" aria-label={t.filter.next}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
         </button>
 
         <div class="filter-bar">
             {byCategory ? (
-                <button class="filter-chip active" data-cat="">همه</button>
+                <button class="filter-chip active" data-cat="">{t.filter.all}</button>
             ) : (
-                <button class="filter-chip active" data-tag="">همه</button>
+                <button class="filter-chip active" data-tag="">{t.filter.all}</button>
             )}
             {tags.map((tag) => (
                 byCategory ? (
@@ -24,7 +27,7 @@ const { tags, gridId, byCategory = false } = Astro.props;
             ))}
         </div>
 
-        <button class="filter-arrow arrow-left" type="button" aria-label="فیلتر قبلی">
+        <button class="filter-arrow arrow-left" type="button" aria-label={t.filter.prev}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
         </button>
 

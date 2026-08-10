@@ -5,8 +5,6 @@ const bookSchema = z.object({
     title: z.string(),
     author: z.string(),
     translator: z.string().optional(),
-    year: z.string().optional(),
-    publisher: z.string().optional(),
     pages: z.number().optional(),
     volumes: z.number().optional(),
     language: z.string().optional(),
@@ -14,46 +12,47 @@ const bookSchema = z.object({
     format: z.string().optional(),
     cover: z.string().optional(),
     reads: z.number().optional(),
-    featured: z.boolean().optional(),
     today: z.boolean().optional(),
     caption: z.string().optional(),
     description: z.string().optional(),
+    descriptionAr: z.string().optional(),
+    descriptionUr: z.string().optional(),
     tags: z.array(z.string()).optional(),
     pubDate: z.coerce.date().optional(),
 });
 
 const shiite = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/shiite" }),
+    loader: glob({ pattern: "*/shiite/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const atheism = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/atheism" }),
+    loader: glob({ pattern: "*/atheism/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const aqeedah = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/aqeedah" }),
+    loader: glob({ pattern: "*/aqeedah/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const adyan = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/adyan" }),
+    loader: glob({ pattern: "*/adyan/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const maqabeh = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/maqabeh" }),
+    loader: glob({ pattern: "*/maqabeh/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const fraq = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/fraq" }),
+    loader: glob({ pattern: "*/fraq/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 
 const daavat = defineCollection({
-    loader: glob({ pattern: "**/*.md", base: "./src/content/books/daavat" }),
+    loader: glob({ pattern: "*/daavat/**/*.md", base: "./src/content/books" }),
     schema: bookSchema,
 });
 

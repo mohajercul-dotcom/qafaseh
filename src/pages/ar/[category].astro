@@ -1,0 +1,11 @@
+---
+import CategoryPage from "../../components/pages/CategoryPage.astro";
+
+export function getStaticPaths() {
+    const categories = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+    return categories.map((category) => ({ params: { category }, props: { category, locale: "ar" } }));
+}
+
+const { category } = Astro.params;
+---
+<CategoryPage category={category} locale="ar" />

@@ -1,0 +1,260 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getUi, getFaq } from "../../i18n/index.js";
+import { localizeAsset } from "../../lib/i18n.js";
+
+const { locale = "fa" } = Astro.props;
+const t = getUi(locale);
+const faq = getFaq(locale);
+---
+
+<MainLayout>
+
+    <section class="page-hero">
+
+        <div class="page-icon">
+            <img class="icon-light" src={localizeAsset(locale, "/icons/faq-l.svg")} alt={t.faqAlt} />
+            <img class="icon-dark" src={localizeAsset(locale, "/icons/faq-d.svg")} alt={t.faqAlt} />
+        </div>
+
+    </section>
+
+    <section class="faq-list">
+
+        {faq.categories.map((category) => (
+            <Fragment>
+                <h2 class="faq-category">{category.title}</h2>
+                {category.items.map((item) => (
+                    <div class="faq-item" data-faq>
+                        <div class="faq-question">
+                            <h3>{item.q}</h3>
+                            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <div class="faq-answer" set:html={item.a} />
+                    </div>
+                ))}
+            </Fragment>
+        ))}
+
+    </section>
+
+</MainLayout>
+
+<script>
+const initFaq = () => {
+document.querySelectorAll("[data-faq]").forEach((item) => {
+if (item.dataset.bound) return;
+item.dataset.bound = "1";
+item.addEventListener("click", () => {
+const answer = item.querySelector(".faq-answer");
+const isOpen = item.classList.contains("open");
+
+document.querySelectorAll("[data-faq].open").forEach((other) => {
+if (other !== item) {
+other.classList.remove("open");
+other.querySelector(".faq-answer").style.maxHeight = "0";
+}
+});
+
+if (isOpen) {
+item.classList.remove("open");
+answer.style.maxHeight = "0";
+} else {
+item.classList.add("open");
+answer.style.maxHeight = answer.scrollHeight + "px";
+}
+});
+});
+};
+initFaq();
+document.addEventListener("astro:page-load", initFaq);
+</script>
+
+<style lang="scss">
+
+.page-hero{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+}
+
+p{
+margin-top:12px;
+color:var(--gray);
+}
+}
+
+.page-icon{
+position:relative;
+display:inline-flex;
+width:min(280px,64%);
+aspect-ratio:18/4.27;
+margin:0 auto;
+}
+
+.page-icon img{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+margin:auto;
+transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+
+.icon-light{
+opacity:1;
+transform:scale(1);
+}
+
+.icon-dark{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-light{
+opacity:0;
+transform:scale(.9);
+}
+
+:global(.dark) .icon-dark{
+opacity:1;
+transform:scale(1);
+}
+
+.faq-list{
+max-width:800px;
+margin:0 auto;
+padding:20px 0 60px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.faq-category{
+font-size:22px;
+font-weight:900;
+color:var(--accent);
+margin:30px 0 4px;
+
+&:first-child{
+margin-top:0;
+}
+}
+
+.faq-item{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+cursor:pointer;
+transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+
+&:hover{
+transform:translateY(-3px);
+box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+}
+
+.faq-question{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+
+h3{
+font-size:17px;
+font-weight:700;
+flex:1;
+}
+}
+
+.chevron{
+color:var(--gray);
+flex-shrink:0;
+transition:transform .3s ease, color .2s;
+
+.faq-item:hover &{
+color:var(--accent);
+}
+
+.faq-item.open &{
+transform:rotate(180deg);
+color:var(--accent);
+}
+}
+
+.faq-answer{
+max-height:0;
+overflow:hidden;
+transition:max-height .35s ease;
+
+p{
+color:var(--gray);
+font-size:14px;
+line-height:1.9;
+margin:0;
+padding-top:14px;
+text-align:justify;
+}
+
+ul{
+color:var(--gray);
+font-size:14px;
+line-height:2;
+margin:8px 0 0;
+padding:0 20px;
+text-align:justify;
+}
+
+li{
+margin-bottom:4px;
+}
+}
+
+@media(max-width:900px){
+.page-hero{
+padding:24px 0;
+
+h1{
+font-size:28px;
+}
+}
+
+.faq-list{
+padding:12px 0 40px;
+}
+
+.faq-category{
+font-size:19px;
+margin:24px 0 2px;
+}
+
+.faq-item{
+padding:18px;
+}
+
+.faq-question h3{
+font-size:15px;
+}
+
+.faq-answer{
+p, ul{
+font-size:13px;
+}
+}
+}
+
+</style>
+
+<style is:global>
+@media(min-width:901px){
+.back-to-top{
+bottom:24px;
+top:auto;
+left:calc(50% - 400px - 25px);
+}
+}
+</style>

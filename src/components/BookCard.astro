@@ -1,5 +1,10 @@
 ---
-const { title, author, description, publisher, year, language, href, tags = [] } = Astro.props;
+import { getUi } from "../i18n/index.js";
+import { bookLocale } from "../lib/i18n.js";
+
+const { title, author, description, language, href, tags = [], locale = "fa" } = Astro.props;
+const t = getUi(locale);
+const langCode = bookLocale({ data: { language } });
 ---
 
 <div class="book-card" data-accordion data-tags={tags.join(",")}>
@@ -13,32 +18,28 @@ const { title, author, description, publisher, year, language, href, tags = [] }
 
         <div class="card-right">
             {language && (
-                <span class:list={["lang-badge", language === "فارسی" ? "fa" : language === "اردو" ? "ur" : "ar"]}>
+                <span class:list={["lang-badge", langCode]}>
                     {language}
                 </span>
             )}
-            {description && (
-                <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            )}
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
 
     </div>
 
-    {description && (
-        <div class="accordion-body">
-            <p class="desc">{description}</p>
-            <div class="desc-row">
-                <a class="more-btn" href={href}>بیشتر</a>
-            </div>
-            {tags.length > 0 && (
-                <div class="tags-line">
-                    {tags.map((tag) => (
-                        <span class="tag-chip">#{tag}</span>
-                    ))}
-                </div>
-            )}
+    <div class="accordion-body">
+        <p class:list={["desc", { "no-intro": !description }]}>{description || t.book.noIntro}</p>
+        <div class="desc-row">
+            <a class="more-btn" href={href}>{t.bookCard.more}</a>
         </div>
-    )}
+        {tags.length > 0 && (
+            <div class="tags-line">
+                {tags.map((tag) => (
+                    <span class="tag-chip">#{tag}</span>
+                ))}
+            </div>
+        )}
+    </div>
 
 </div>
 
@@ -186,6 +187,11 @@ font-size:13px;
 line-height:1.8;
 margin:0;
 padding-top:14px;
+
+&.no-intro{
+font-style:italic;
+opacity:.8;
+}
 }
 
 .desc-row{

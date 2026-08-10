@@ -1,5 +1,8 @@
 ---
-const { searchIndex = [] } = Astro.props;
+import { getUi } from "../i18n/index.js";
+
+const { searchIndex = [], locale = "fa" } = Astro.props;
+const t = getUi(locale);
 ---
 
 <div class="search">
@@ -13,13 +16,13 @@ const { searchIndex = [] } = Astro.props;
 
         <input
         type="text"
-        placeholder="در قفسه همه‌چیز را بجویید..."
+        placeholder={t.search.placeholder}
         autocomplete="off"
         spellcheck="false"
         data-search-input
         />
 
-        <button class="search-clear" data-search-clear title="پاک کردن">
+        <button class="search-clear" data-search-clear title={t.search.clear}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
                 <line x1="6" y1="6" x2="18" y2="18"/>
@@ -30,7 +33,7 @@ const { searchIndex = [] } = Astro.props;
 
     <div class="search-results" data-search-results>
 
-        <p class="results-empty" data-results-empty>چیزی پیدا نشد</p>
+        <p class="results-empty" data-results-empty>{t.search.empty}</p>
 
         <div class="results-list" data-results-list></div>
 
@@ -38,7 +41,7 @@ const { searchIndex = [] } = Astro.props;
 
 </div>
 
-<script is:inline define:vars={{ searchIndex }}>
+<script is:inline define:vars={{ searchIndex, translatorLabel: t.search.translator }}>
 const INDEX = searchIndex;
 
 const input = document.querySelector("[data-search-input]");
@@ -181,7 +184,7 @@ const render = () => {
             <a class="result" href="${item.href}" ${cidAttr}>
                 <span class="result-cat" ${cidAttr}>${item.category}</span>
                 <span class="result-title" ${cidAttr}>${item.title}</span>
-                <span class="result-author" ${cidAttr}>${item.author}${item.translator ? " — ترجمه " + item.translator : ""}</span>
+                <span class="result-author" ${cidAttr}>${item.author}${item.translator ? " — " + translatorLabel + " " + item.translator : ""}</span>
                 ${item.language ? `<span class="result-lang ${langClass(item.language)}" ${cidAttr}>${item.language}</span>` : ""}
             </a>
         `

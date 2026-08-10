@@ -5,6 +5,13 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://qafaseh.vercel.app',
+  i18n: {
+    locales: ['fa', 'ar', 'ur'],
+    defaultLocale: 'fa',
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/books/') || page.includes('/books/'),

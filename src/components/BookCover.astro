@@ -1,5 +1,8 @@
 ---
-const { title, author, category, cover } = Astro.props;
+import { getUi } from "../i18n/index.js";
+
+const { title, author, category, cover, locale = "fa" } = Astro.props;
+const t = getUi(locale);
 ---
 
 {
@@ -11,13 +14,13 @@ const { title, author, category, cover } = Astro.props;
             <div class="cover-inner">
 
                 <span class="cover-cat">
-                    {category === "shiite" ? "کتاب‌های شیعه" : "کتاب‌های الحاد"}
+                    {category === "shiite" ? t.bookCover.shiite : t.bookCover.atheism}
                 </span>
 
                 <h2>{title}</h2>
 
                 <div class="cover-footer">
-                    <span class="cover-author">مترجم: {author}</span>
+                    <span class="cover-author">{t.bookCover.translatorPrefix} {author}</span>
                 </div>
 
             </div>

@@ -1,8 +1,12 @@
 ---
 import VaraqIcon from "./icons/VaraqIcon.astro";
+import { getUi } from "../i18n/index.js";
+
+const { locale = "fa" } = Astro.props;
+const t = getUi(locale);
 ---
 
-<a class="logo" href="/" data-tip="قفسه">
+<a class="logo" href={locale === "fa" ? "/" : `/${locale}/`} data-tip={t.siteTitle}>
 
     <span class="logo-book">
         <VaraqIcon />

@@ -3,83 +3,38 @@ import "../styles/global.scss";
 import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import IconFromFile from "../components/icons/IconFromFile.astro";
-import { getCollection } from "astro:content";
+import { allBooks } from "../lib/paths.js";
 import { slugify } from "../lib/books.js";
+import { getUi } from "../i18n/index.js";
+import { localizePath, switchLocalePath, bookSiteLang } from "../lib/i18n.js";
 
-const title = "قفسه";
-const description = "معرفی کتاب‌ها، نویسندگان و اندیشه‌ها";
+const locale = Astro.currentLocale;
+const t = getUi(locale);
 
-const shiiteBooks = await getCollection("shiite");
-const atheismBooks = await getCollection("atheism");
-const aqeedahBooks = await getCollection("aqeedah");
-const adyanBooks = await getCollection("adyan");
-const maqabehBooks = await getCollection("maqabeh");
-const fraqBooks = await getCollection("fraq");
-const daavatBooks = await getCollection("daavat");
+const title = t.siteTitle;
+const description = t.siteDescription;
 
-const searchIndex = [
-    ...shiiteBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "شیعه",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...atheismBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "الحاد",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...aqeedahBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "عقیده",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...adyanBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "ادیان",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...maqabehBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "مکاتب فکری",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...fraqBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "فرق",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-    ...daavatBooks.map((b) => ({
-        title: b.data.title,
-        author: b.data.author,
-        translator: b.data.translator || "",
-        language: b.data.language || "",
-        category: "دعوت",
-        href: `/books/${slugify(b.data.title)}`,
-    })),
-];
+const books = (await allBooks()).filter((b) => bookSiteLang(b) === locale);
+
+const searchIndex = books.map((b) => ({
+    title: b.data.title,
+    author: b.data.author,
+    translator: b.data.translator || "",
+    language: b.data.language || "",
+    category: t.menu[b.category].label,
+    href: localizePath(locale, `/books/${slugify(b.data.title)}`),
+}));
+
+const switchPaths = {
+    fa: switchLocalePath(Astro.url.pathname, locale, "fa"),
+    ar: switchLocalePath(Astro.url.pathname, locale, "ar"),
+    ur: switchLocalePath(Astro.url.pathname, locale, "ur"),
+};
 ---
 
 <!DOCTYPE html>
 
-<html lang="fa" dir="rtl">
+<html lang={locale} dir="rtl">
 
 <head>
 
@@ -111,7 +66,20 @@ const searchIndex = [
 
 </main>
 
-<button class:list={["back-to-top", { "is-home": Astro.url.pathname === "/" }]} id="backToTop" data-tip="پرش به بالا" aria-label="پرش به بالا">
+<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label={t.lang.chooseTitle}>
+    <div class="lang-modal-card">
+        <h2>{t.lang.chooseTitle}</h2>
+        <p>{t.lang.chooseHint}</p>
+        <div class="lang-options">
+            <a href={switchPaths.fa} data-lang="fa"><span class="lang-name">{t.lang.fa}</span></a>
+            <a href={switchPaths.ar} data-lang="ar"><span class="lang-name">{t.lang.ar}</span></a>
+            <a href={switchPaths.ur} data-lang="ur"><span class="lang-name">{t.lang.ur}</span></a>
+        </div>
+        <button class="lang-modal-close" type="button" data-lang-close>{t.lang.close}</button>
+    </div>
+</div>
+
+<button class:list={["back-to-top", { "is-home": Astro.url.pathname === "/" }]} id="backToTop" data-tip={t.backToTop} aria-label={t.backToTop}>
 <IconFromFile src="scroll-top.svg" />
 </button>
 
@@ -162,6 +130,28 @@ document.addEventListener("astro:page-load", () => {
 });
 }
 
+const initLangModal = () => {
+    const modal = document.getElementById("langModal");
+    if (!modal || localStorage.getItem("qafaseh-lang")) return;
+    modal.classList.add("show");
+    document.body.classList.add("modal-open");
+    modal.querySelectorAll("[data-lang]").forEach((a) => {
+        a.addEventListener("click", () => {
+            localStorage.setItem("qafaseh-lang", a.dataset.lang);
+        });
+    });
+    const closeBtn = modal.querySelector("[data-lang-close]");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            localStorage.setItem("qafaseh-lang", "none");
+            modal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+        });
+    }
+};
+initLangModal();
+document.addEventListener("astro:page-load", initLangModal);
+
 </script>
 
 <script is:inline>
@@ -204,6 +194,105 @@ main{
 height:auto;
 padding-top:7px;
 padding-bottom:80px;
+}
+}
+
+.lang-modal{
+position:fixed;
+inset:0;
+z-index:200;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(6px);
+-webkit-backdrop-filter:blur(6px);
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .3s ease, visibility .3s;
+
+&.show{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+
+.lang-modal-card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:34px;
+max-width:420px;
+width:100%;
+text-align:center;
+box-shadow:0 24px 64px rgba(0,0,0,.3);
+transform:translateY(16px) scale(.97);
+transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+
+.lang-modal.show &{
+transform:translateY(0) scale(1);
+}
+
+h2{
+font-size:22px;
+font-weight:900;
+margin-bottom:8px;
+}
+
+p{
+color:var(--gray);
+font-size:14px;
+margin-bottom:24px;
+}
+}
+
+.lang-options{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-bottom:20px;
+
+a{
+display:flex;
+align-items:center;
+justify-content:center;
+padding:14px 18px;
+border-radius:14px;
+border:1px solid var(--border);
+background:color-mix(in srgb, var(--accent) 6%, transparent);
+color:var(--text);
+text-decoration:none;
+font-size:15px;
+font-weight:700;
+transition:background .25s ease, border-color .25s ease, transform .2s ease;
+
+&:hover{
+background:var(--accent);
+border-color:var(--accent);
+color:#fff;
+transform:translateY(-2px);
+}
+}
+}
+
+.lang-modal-close{
+background:transparent;
+border:1px solid var(--border);
+color:var(--gray);
+font-family:inherit;
+font-size:13px;
+font-weight:600;
+padding:9px 22px;
+border-radius:12px;
+cursor:pointer;
+transition:color .2s, border-color .2s;
+
+&:hover{
+color:var(--accent);
+border-color:var(--accent);
+}
 }
 }
 
