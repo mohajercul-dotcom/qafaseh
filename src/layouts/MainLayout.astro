@@ -6,7 +6,7 @@ import IconFromFile from "../components/icons/IconFromFile.astro";
 import { allBooks } from "../lib/paths.js";
 import { slugify } from "../lib/books.js";
 import { getUi } from "../i18n/index.js";
-import { localizePath, switchLocalePath, bookSiteLang } from "../lib/i18n.js";
+import { localizePath, switchLocalePath } from "../lib/i18n.js";
 
 const locale = Astro.currentLocale;
 const t = getUi(locale);
@@ -14,7 +14,7 @@ const t = getUi(locale);
 const title = t.siteTitle;
 const description = t.siteDescription;
 
-const books = (await allBooks()).filter((b) => bookSiteLang(b) === locale);
+const books = await allBooks();
 
 const searchIndex = books.map((b) => ({
     title: b.data.title,
