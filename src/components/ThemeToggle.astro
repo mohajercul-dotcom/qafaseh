@@ -1,9 +1,11 @@
 ---
 import SunIcon from "./icons/SunIcon.astro";
 import MoonIcon from "./icons/MoonIcon.astro";
+
+const { tip = "تم شب و روز" } = Astro.props;
 ---
 
-<button class="theme-btn" data-tip="تم شب و روز">
+<button class="theme-btn" data-tip={tip}>
 
 <span class="icon-moon"><MoonIcon /></span>
 <span class="icon-sun"><SunIcon /></span>

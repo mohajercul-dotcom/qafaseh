@@ -14,7 +14,7 @@ export const uiUr: UiDict = {
         dasteh: "اقسام",
         dastehTip: "اقسام",
         theme: "تھیم",
-        themeTip: "رات اور دن کا تھیم",
+        themeTip: "تھیم ڈارک/لائٹ",
         language: "زبان",
         languageTip: "زبان",
         more: "مزید",

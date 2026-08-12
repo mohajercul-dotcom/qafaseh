@@ -14,7 +14,7 @@ export const uiAr: UiDict = {
         dasteh: "التصنيفات",
         dastehTip: "التصنيفات",
         theme: "المظهر",
-        themeTip: "المظهر الليلي والنهاري",
+        themeTip: "الواضع الداكن/الفاتح",
         language: "اللغة",
         languageTip: "اللغة",
         more: "المزيد",
