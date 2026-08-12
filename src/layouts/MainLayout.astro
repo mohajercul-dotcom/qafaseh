@@ -145,21 +145,31 @@ document.addEventListener("astro:page-load", initLangModal);
 
 <script is:inline>
 (function(){
-const btn = document.getElementById("backToTop");
-if(!btn || btn.dataset.bound) return;
-btn.dataset.bound = "1";
-window.__bttBtn = btn;
-const onScroll = () => {
+const showIfScrolled = () => {
 const b = window.__bttBtn;
 if (b) b.classList.toggle("show", window.scrollY > 400);
 };
-onScroll();
-if(!window.__bttScrollBound){
-window.__bttScrollBound = true;
-window.addEventListener("scroll", onScroll, {passive:true});
-}
+
+const bind = () => {
+const btn = document.getElementById("backToTop");
+if (!btn) return;
+btn.dataset.bound = "1";
+window.__bttBtn = btn;
 btn.addEventListener("click", () => {
 window.scrollTo({top:0, behavior:"smooth"});
+});
+};
+
+if (!window.__bttScrollBound) {
+window.__bttScrollBound = true;
+window.addEventListener("scroll", showIfScrolled, {passive:true});
+}
+
+bind();
+showIfScrolled();
+document.addEventListener("astro:page-load", () => {
+bind();
+showIfScrolled();
 });
 })();
 </script>

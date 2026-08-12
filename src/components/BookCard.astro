@@ -84,11 +84,12 @@ border:1px solid var(--border);
 border-radius:18px;
 padding:22px;
 cursor:pointer;
-transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease, background .6s ease;
 
 &:hover{
-transform:translateY(-4px);
-box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+transform:translateY(-5px);
+border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
+box-shadow:0 14px 34px color-mix(in srgb, var(--accent) 16%, transparent), 0 4px 10px rgba(0,0,0,.06);
 }
 }
 
@@ -106,6 +107,11 @@ min-width:0;
 h3{
 font-size:17px;
 margin-bottom:6px;
+transition:color .25s ease;
+
+.book-card:hover &{
+color:var(--accent);
+}
 }
 }
 

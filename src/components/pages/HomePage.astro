@@ -53,7 +53,7 @@ const todayPanels = todayQueues.map((c) =>
     c.books.map((b) => {
         const desc = b.data.caption || bookDescription(b, locale);
         const cover = b.data.cover
-            ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}">`
+            ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
             : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
         return `<a class="today-link" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><span class="today-cta">${escHtml(t.home.viewBook)}</span></div></div>${cover}</a>`;
     })
@@ -360,11 +360,12 @@ border:1px solid var(--border);
 border-radius:22px;
 padding:25px;
 grid-column:span 4;
-transition:transform .3s ease, box-shadow .3s ease, background .6s ease, border-color .6s ease;
+transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease, background .6s ease;
 
 &:hover{
-transform:translateY(-4px);
-box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+transform:translateY(-5px);
+border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
+box-shadow:0 14px 34px color-mix(in srgb, var(--accent) 16%, transparent), 0 4px 10px rgba(0,0,0,.06);
 }
 
 h3{
@@ -444,10 +445,12 @@ border:1px solid var(--border);
 border-radius:22px;
 padding:25px;
 text-align:center;
+transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease;
 
 &:hover{
-transform:translateY(-4px);
-box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+transform:translateY(-5px);
+border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
+box-shadow:0 14px 34px color-mix(in srgb, var(--accent) 16%, transparent), 0 4px 10px rgba(0,0,0,.06);
 }
 
 h3{
@@ -513,6 +516,12 @@ width:130px;
 flex-shrink:0;
 order:2;
 align-self:flex-start;
+transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
+
+&:hover .cover-photo,
+&:hover .cover-img{
+transform:scale(1.05);
 }
 
 .today-info{
@@ -562,6 +571,15 @@ font-weight:700;
 padding:8px 22px;
 border-radius:20px;
 transition:transform .2s ease, box-shadow .2s ease;
+
+&:hover{
+transform:translateY(-1px);
+box-shadow:0 8px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+&:active{
+transform:scale(.95);
+}
 }
 }
 }

@@ -39,17 +39,16 @@ const t = getUi(locale);
 
     </div>
 
-</div>
-
 <script is:inline define:vars={{ searchIndex, translatorLabel: t.search.translator }}>
 const INDEX = searchIndex;
 
-const input = document.querySelector("[data-search-input]");
-const list = document.querySelector("[data-results-list]");
-const resultsBox = document.querySelector("[data-search-results]");
-const empty = document.querySelector("[data-results-empty]");
-const clearBtn = document.querySelector("[data-search-clear]");
-const cidAttr = "data-astro-cid-" + (document.querySelector("[data-search-input]")?.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
+const root = document.currentScript ? document.currentScript.closest(".search") : document;
+const input = root.querySelector("[data-search-input]");
+const list = root.querySelector("[data-results-list]");
+const resultsBox = root.querySelector("[data-search-results]");
+const empty = root.querySelector("[data-results-empty]");
+const clearBtn = root.querySelector("[data-search-clear]");
+const cidAttr = "data-astro-cid-" + (input?.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
 
 const normalize = (str = "") =>
     String(str)
@@ -199,7 +198,7 @@ if (!window.__searchDocBound) {
     window.__searchDocBound = true;
     document.addEventListener("click", (e) => {
         if (!e.target.closest(".search")) {
-            document.querySelector("[data-search-results]")?.classList.remove("open");
+            document.querySelectorAll("[data-search-results]").forEach((el) => el.classList.remove("open"));
         }
     });
 }
@@ -212,6 +211,8 @@ clearBtn?.addEventListener("click", () => {
 
 render();
 </script>
+
+</div>
 
 <style lang="scss">
 

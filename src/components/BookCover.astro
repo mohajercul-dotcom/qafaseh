@@ -7,7 +7,7 @@ const t = getUi(locale);
 
 {
     cover ? (
-        <img class="cover-img" src={cover} alt={title} />
+        <img class="cover-img" src={cover} alt={title} loading="lazy" decoding="async" />
     ) : (
         <div class:list={["cover-photo", category]}>
 
