@@ -11,13 +11,17 @@ const bookSchema = z.object({
     download: z.string().optional(),
     format: z.string().optional(),
     cover: z.string().optional(),
-    reads: z.number().optional(),
     today: z.boolean().optional(),
     caption: z.string().optional(),
+    authorDesc: z.string().optional(),
+    authorDescAr: z.string().optional(),
+    authorDescUr: z.string().optional(),
     description: z.string().optional(),
     descriptionAr: z.string().optional(),
     descriptionUr: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    cardTags: z.array(z.string()).optional(),
+    filterTags: z.array(z.string()).optional(),
     pubDate: z.coerce.date().optional(),
 });
 

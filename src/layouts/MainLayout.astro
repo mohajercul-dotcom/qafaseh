@@ -127,6 +127,22 @@ document.addEventListener("astro:page-load", () => {
 });
 }
 
+if (!window.__themeSyncBound) {
+window.__themeSyncBound = true;
+const syncTheme = () => {
+    document.documentElement.classList.toggle("dark", localStorage.getItem("theme") === "dark");
+};
+syncTheme();
+document.addEventListener("astro:before-swap", (e) => {
+    const defaultSwap = e.swap;
+    e.swap = () => {
+        defaultSwap();
+        syncTheme();
+    };
+});
+document.addEventListener("astro:page-load", syncTheme);
+}
+
 const initLangModal = () => {
     const modal = document.getElementById("langModal");
     if (!modal || localStorage.getItem("qafaseh-lang")) return;

@@ -10,7 +10,6 @@ download: "https://t.me/..."
 format: "PDF"
 description: "توضیح کوتاه"
 caption: "توضیح ویژه"
-reads: 412
 pubDate: 2025-05-10T22:30:00
 ---
 

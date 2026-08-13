@@ -57,6 +57,9 @@ export interface UiDict {
         suggested: string;
         viewBook: string;
         translatorPrefix: string;
+        authorOfDay: string;
+        authorBooks: (count: string, n: number) => string;
+        authorInTopics: (topics: string, n: number) => string;
         newest: string;
         mostRead: string;
         totalBooks: string;

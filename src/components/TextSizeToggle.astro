@@ -19,7 +19,7 @@ sizeBox.dataset.bound = "1";
 const targetSel = sizeBox?.dataset.target;
 const target = targetSel ? document.querySelector(targetSel) : null;
 
-const SIZES = [15, 16, 17];
+const SIZES = [15, 16, 17, 18];
 
 let current = parseInt(localStorage.getItem("text-size"), 10) || SIZES[0];
 if (!SIZES.includes(current)) {

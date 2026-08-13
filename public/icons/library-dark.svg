@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 621.83 233.62">
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 683.83 290.62">
   <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
   <defs>
     <style>
@@ -15,82 +15,89 @@
         fill: #e2a458;
       }
 
+      .st3 {
+        isolation: isolate;
+        opacity: .6;
+      }
+
       .st4 {
         fill: #c98a4b;
       }
 
       .st5 {
-        opacity: .55;
-      }
-
-      .st3 {
-        isolation: isolate;
-        opacity: .6;
+        opacity: .46;
       }
     </style>
   </defs>
   <g class="st5">
-    <path class="st3" d="M15.92,10.76h588.9c4.17,0,7.55,2.18,7.55,4.87h0c0,2.69-3.38,4.87-7.55,4.87H15.92c-4.17,0-7.55-2.18-7.55-4.87h0c0-2.69,3.38-4.87,7.55-4.87Z"/>
-    <path class="st3" d="M15.92,212.52h588.9c4.17,0,7.55,2.18,7.55,4.87h0c0,2.69-3.38,4.87-7.55,4.87H15.92c-4.17,0-7.55-2.18-7.55-4.87h0c0-2.69,3.38-4.87,7.55-4.87Z"/>
-    <path class="st3" d="M15.92,77.75h588.9c4.17,0,7.55,2.18,7.55,4.87h0c0,2.69-3.38,4.87-7.55,4.87H15.92c-4.17,0-7.55-2.18-7.55-4.87h0c0-2.69,3.38-4.87,7.55-4.87Z"/>
-    <path class="st3" d="M15.92,144.74h588.9c4.17,0,7.55,2.18,7.55,4.87h0c0,2.69-3.38,4.87-7.55,4.87H15.92c-4.17,0-7.55-2.18-7.55-4.87h0c0-2.69,3.38-4.87,7.55-4.87Z"/>
+    <path class="st3" d="M7.95,33.92h620.32c4.39,0,7.95,2.3,7.95,5.13h0c0,2.83-3.56,5.13-7.95,5.13H7.95c-4.39,0-7.95-2.3-7.95-5.13h0c0-2.83,3.56-5.13,7.95-5.13Z"/>
+    <path class="st3" d="M7.95,246.44h620.32c4.39,0,7.95,2.3,7.95,5.13h0c0,2.83-3.56,5.13-7.95,5.13H7.95c-4.39,0-7.95-2.3-7.95-5.13h0c0-2.83,3.56-5.13,7.95-5.13Z"/>
+    <path class="st3" d="M7.95,104.48h620.32c4.39,0,7.95,2.3,7.95,5.13h0c0,2.83-3.56,5.13-7.95,5.13H7.95c-4.39,0-7.95-2.3-7.95-5.13h0c0-2.83,3.56-5.13,7.95-5.13Z"/>
+    <path class="st3" d="M7.95,175.05h620.32c4.39,0,7.95,2.3,7.95,5.13h0c0,2.83-3.56,5.13-7.95,5.13H7.95c-4.39,0-7.95-2.3-7.95-5.13h0c0-2.83,3.56-5.13,7.95-5.13Z"/>
     <g>
-      <rect class="st4" x="240.87" y="35.12" width="17.05" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="262.8" y="41.21" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="282.29" y="32.68" width="19.49" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="306.65" y="39.99" width="13.4" height="34.1" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="324.92" y="35.12" width="15.83" height="38.98" rx="3.65" ry="3.65"/>
+      <rect class="st4" x="244.9" y="59.58" width="17.96" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="268" y="65.99" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="288.53" y="57.01" width="20.53" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="314.19" y="64.71" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="333.44" y="59.58" width="16.67" height="41.06" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st4" x="49.48" y="169.94" width="17.05" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="71.41" y="176.03" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="90.9" y="167.5" width="19.49" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="115.26" y="174.81" width="13.4" height="34.1" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="133.53" y="169.94" width="15.83" height="38.98" rx="3.65" ry="3.65"/>
+      <rect class="st4" x="43.3" y="201.59" width="17.96" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="66.4" y="208.01" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="86.93" y="199.02" width="20.53" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="112.59" y="206.72" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="131.84" y="201.59" width="16.67" height="41.06" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st4" x="25.56" y="35.12" width="17.05" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="47.49" y="41.21" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="66.97" y="32.68" width="19.49" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="91.33" y="39.99" width="13.4" height="34.1" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="109.6" y="35.12" width="15.83" height="38.98" rx="3.65" ry="3.65"/>
+      <rect class="st4" x="529.95" y="201.59" width="17.96" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="553.05" y="208.01" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="573.58" y="199.02" width="20.53" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="599.24" y="206.72" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="618.49" y="201.59" width="16.67" height="41.06" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st2" x="240.87" y="103.08" width="19.49" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="265.24" y="109.17" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="284.72" y="100.64" width="17.05" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="306.65" y="107.95" width="13.4" height="34.1" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="324.92" y="103.08" width="18.27" height="38.98" rx="3.65" ry="3.65"/>
+      <rect class="st4" x="18.11" y="59.58" width="17.96" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="41.21" y="65.99" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="61.73" y="57.01" width="20.53" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="87.39" y="64.71" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="106.63" y="59.58" width="16.67" height="41.06" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st1" x="240.87" y="169.94" width="15.83" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="261.58" y="176.03" width="19.49" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="285.94" y="167.5" width="14.62" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="305.43" y="174.81" width="17.05" height="34.1" rx="3.65" ry="3.65"/>
+      <rect class="st2" x="244.9" y="131.16" width="20.53" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="270.58" y="137.58" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="291.09" y="128.59" width="17.96" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="314.19" y="136.29" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="333.44" y="131.16" width="19.24" height="41.06" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st0" x="524.73" y="35.12" width="17.05" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="546.66" y="41.21" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="566.14" y="32.68" width="19.49" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="590.5" y="39.99" width="13.4" height="34.1" rx="3.65" ry="3.65"/>
+      <rect class="st1" x="244.9" y="201.59" width="16.67" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="266.72" y="208.01" width="20.53" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="292.38" y="199.02" width="15.4" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="312.91" y="206.72" width="17.96" height="35.92" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st4" x="500.88" y="103.08" width="18.27" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st2" x="524.02" y="109.17" width="14.62" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="543.51" y="100.64" width="17.05" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="565.43" y="107.95" width="14.62" height="34.1" rx="3.65" ry="3.65"/>
+      <rect class="st0" x="543.91" y="59.58" width="17.96" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="567.01" y="65.99" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="587.53" y="57.01" width="20.53" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="613.19" y="64.71" width="14.11" height="35.92" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st2" x="416.53" y="169.94" width="14.62" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="436.02" y="176.03" width="17.05" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="457.94" y="167.5" width="15.83" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="478.65" y="174.81" width="17.05" height="34.1" rx="3.65" ry="3.65"/>
+      <rect class="st4" x="518.79" y="131.16" width="19.24" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st2" x="543.16" y="137.58" width="15.4" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="563.69" y="128.59" width="17.96" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="586.78" y="136.29" width="15.4" height="35.92" rx="3.84" ry="3.84"/>
     </g>
     <g>
-      <rect class="st2" x="97.24" y="103.08" width="14.62" height="38.98" rx="3.65" ry="3.65"/>
-      <rect class="st1" x="116.73" y="109.17" width="17.05" height="32.89" rx="3.65" ry="3.65"/>
-      <rect class="st0" x="138.65" y="100.64" width="15.83" height="41.41" rx="3.65" ry="3.65"/>
-      <rect class="st4" x="159.36" y="107.95" width="17.05" height="34.1" rx="3.65" ry="3.65"/>
+      <rect class="st2" x="394.12" y="201.59" width="15.4" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="414.65" y="208.01" width="17.96" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="437.74" y="199.02" width="16.67" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="459.56" y="206.72" width="17.96" height="35.92" rx="3.84" ry="3.84"/>
+    </g>
+    <g>
+      <rect class="st2" x="93.61" y="131.16" width="15.4" height="41.06" rx="3.84" ry="3.84"/>
+      <rect class="st1" x="114.14" y="137.58" width="17.96" height="34.64" rx="3.84" ry="3.84"/>
+      <rect class="st0" x="137.23" y="128.59" width="16.67" height="43.62" rx="3.84" ry="3.84"/>
+      <rect class="st4" x="159.05" y="136.29" width="17.96" height="35.92" rx="3.84" ry="3.84"/>
     </g>
   </g>
 </svg>

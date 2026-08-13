@@ -2,7 +2,7 @@ export function buildTagFilters(books) {
     const counts = new Map();
 
     for (const book of books) {
-        for (const tag of book.data.tags || []) {
+        for (const tag of book.data.filterTags ?? book.data.tags ?? []) {
             counts.set(tag, (counts.get(tag) || 0) + 1);
         }
     }

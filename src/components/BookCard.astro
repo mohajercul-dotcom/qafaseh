@@ -2,9 +2,10 @@
 import { getUi } from "../i18n/index.js";
 import { bookLocale } from "../lib/i18n.js";
 
-const { title, author, description, language, href, tags = [], locale = "fa" } = Astro.props;
+const { title, author, description, language, href, tags = [], cardTags, locale = "fa" } = Astro.props;
 const t = getUi(locale);
 const langCode = bookLocale({ data: { language } });
+const chips = cardTags ?? tags;
 ---
 
 <div class="book-card" data-accordion data-tags={tags.join(",")}>
@@ -32,9 +33,9 @@ const langCode = bookLocale({ data: { language } });
         <div class="desc-row">
             <a class="more-btn" href={href}>{t.bookCard.more}</a>
         </div>
-        {tags.length > 0 && (
+        {chips.length > 0 && (
             <div class="tags-line">
-                {tags.map((tag) => (
+                {chips.map((tag) => (
                     <span class="tag-chip">#{tag}</span>
                 ))}
             </div>

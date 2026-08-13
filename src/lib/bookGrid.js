@@ -2,8 +2,14 @@ export function initBookGrid(gridId) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
 
-    const allItems = Array.from(grid.querySelectorAll(".book-item"));
-    if (allItems.length === 0) return;
+    const items = Array.from(grid.querySelectorAll(".book-item"));
+    if (items.length === 0) return;
+
+    if (!grid.__bookOrder || grid.__bookOrder.length !== items.length) {
+        grid.__bookOrder = items;
+    }
+
+    const allItems = Array.from(grid.__bookOrder);
 
     const visible = allItems.filter((item) => item.style.display !== "none");
 

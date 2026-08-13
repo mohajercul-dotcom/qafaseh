@@ -32,9 +32,8 @@ export function initBookFilter() {
 
         chips.forEach((chip) => {
             chip.addEventListener("click", () => {
-                const isActive = chip.classList.contains("active");
                 chips.forEach((c) => c.classList.remove("active"));
-                if (!isActive) chip.classList.add("active");
+                chip.classList.add("active");
                 apply();
             });
         });

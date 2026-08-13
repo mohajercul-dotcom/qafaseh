@@ -60,7 +60,8 @@ const gridId = `books-${category}`;
                     description={bookDescription(book, locale)}
                     language={book.data.language}
                     href={localizePath(locale, `/books/${slugify(book.data.title)}`)}
-                    tags={book.data.tags || []}
+                    tags={book.data.filterTags ?? book.data.tags ?? []}
+                    cardTags={book.data.cardTags ?? book.data.tags ?? []}
                     locale={locale}
                 />
             </div>

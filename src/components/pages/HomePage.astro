@@ -28,7 +28,36 @@ const newest = [...localBooks]
         return new Date(tb) - new Date(ta);
     })
     .slice(0, 5);
-const mostRead = [...localBooks].sort((a, b) => (b.data.reads || 0) - (a.data.reads || 0)).slice(0, 5);
+const authorList = [];
+{
+    const authorMap = new Map();
+    for (const b of localBooks) {
+        const name = normalizeAuthor(b.data.author);
+        const entry = authorMap.get(name) || { name, cats: new Set(), books: [] };
+        entry.cats.add(t.menu[b.category].label);
+        entry.books.push(b);
+        authorMap.set(name, entry);
+    }
+    for (const entry of authorMap.values()) {
+        const books = [...entry.books].sort((a, b) => a.data.title.localeCompare(b.data.title, locale));
+        const bioKey = locale === "ar" ? "authorDescAr" : locale === "ur" ? "authorDescUr" : "authorDesc";
+        const bio =
+            books.find((b) => b.data[bioKey])?.data[bioKey] ||
+            books.find((b) => b.data.authorDesc)?.data.authorDesc ||
+            "";
+        authorList.push({
+            name: entry.name,
+            href: localizePath(locale, `/authors/${slugify(entry.name)}`),
+            count: books.length,
+            summary:
+                t.home.authorBooks(toLocaleDigits(books.length, locale), books.length) +
+                " " +
+                t.home.authorInTopics(toLocaleDigits(entry.cats.size, locale), entry.cats.size),
+            bio,
+        });
+    }
+    authorList.sort((a, b) => a.name.localeCompare(b.name, locale));
+}
 
 const escHtml = (s) =>
     String(s ?? "")
@@ -49,15 +78,25 @@ const todayQueues = categoryKeys
     }))
     .filter((c) => c.books.length > 0);
 
-const todayPanels = todayQueues.map((c) =>
-    c.books.map((b) => {
-        const desc = b.data.caption || bookDescription(b, locale);
-        const cover = b.data.cover
-            ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
-            : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
-        return `<a class="today-link" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><span class="today-cta">${escHtml(t.home.viewBook)}</span></div></div>${cover}</a>`;
-    })
-);
+const todayPanels = [];
+{
+    const queues = todayQueues.map((c) => [...c.books]);
+    let any = true;
+    while (any) {
+        any = false;
+        for (const q of queues) {
+            if (q.length) {
+                const b = q.shift();
+                const desc = b.data.caption || bookDescription(b, locale);
+                const cover = b.data.cover
+                    ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
+                    : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
+                todayPanels.push(`<a class="today-link" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><span class="today-cta">${escHtml(t.home.viewBook)}</span></div></div>${cover}</a>`);
+                any = true;
+            }
+        }
+    }
+}
 ---
 
 <MainLayout>
@@ -86,7 +125,7 @@ const todayPanels = todayQueues.map((c) =>
         {todayQueues.length > 0 && (
             <div class="card today-card" data-today-card>
                 <h3>{t.home.suggested}</h3>
-                <div class="today-panel" data-today-panel set:html={todayPanels[0][0]} />
+                <div class="today-panel" data-today-panel set:html={todayPanels[0]} />
             </div>
         )}
 
@@ -94,7 +133,7 @@ const todayPanels = todayQueues.map((c) =>
             <script
                 type="application/json"
                 id="today-queue"
-                set:html={JSON.stringify({ count: todayQueues.length, panels: todayPanels })}
+                set:html={JSON.stringify({ count: todayPanels.length, panels: todayPanels })}
             />
         )}
 
@@ -109,17 +148,20 @@ const todayPanels = todayQueues.map((c) =>
             </div>
         </div>
 
-        <div class="card">
-            <h3>{t.home.mostRead}</h3>
-            <div class="card-list">
-                {mostRead.map((b, i) => (
-                    <a class="card-link ranked" href={localizePath(locale, `/books/${slugify(b.data.title)}`)}>
-                        <span class="rank">{toLocaleDigits(String(i + 1).padStart(2, "0"), locale)}</span>
-                        <span>{b.data.title}</span>
-                    </a>
-                ))}
+        {authorList.length > 0 && (
+            <div class="card" data-author-card>
+                <h3>{t.home.authorOfDay}</h3>
+                <div class="author-panel" data-author-panel />
             </div>
-        </div>
+        )}
+
+        {authorList.length > 0 && (
+            <script
+                type="application/json"
+                id="author-of-day"
+                set:html={JSON.stringify({ view: t.bookCard.more, list: authorList })}
+            />
+        )}
 
     </section>
 
@@ -157,17 +199,13 @@ todayCard.dataset.bound = "1";
 const queueEl = document.getElementById("today-queue");
 if (!queueEl) return;
 const queue = JSON.parse(queueEl.textContent);
+const panels = Array.isArray(queue.panels) ? queue.panels : [];
 const panel = todayCard.querySelector("[data-today-panel]");
 const render = () => {
-if (!panel) return;
+if (!panel || panels.length === 0) return;
 const now = new Date();
 const localDay = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
-const catIdx = localDay % queue.count;
-const cycle = Math.floor(localDay / queue.count);
-const list = queue.panels[catIdx];
-if (Array.isArray(list) && list.length) {
-panel.innerHTML = list[cycle % list.length];
-}
+panel.innerHTML = panels[localDay % panels.length];
 };
 render();
 const now = new Date();
@@ -176,6 +214,48 @@ setTimeout(render, nextMidnight - now);
 };
 initToday();
 document.addEventListener("astro:page-load", initToday);
+</script>
+
+<script>
+const initAuthorOfDay = () => {
+const card = document.querySelector("[data-author-card]");
+if (!card || card.dataset.bound) return;
+card.dataset.bound = "1";
+const payloadEl = document.getElementById("author-of-day");
+const panel = card.querySelector("[data-author-panel]");
+if (!payloadEl || !panel) return;
+let payload;
+try {
+payload = JSON.parse(payloadEl.textContent);
+} catch {
+return;
+}
+const authors = Array.isArray(payload.list) ? payload.list : [];
+if (authors.length === 0) return;
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const render = () => {
+const now = new Date();
+const localDay = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+const a = authors[localDay % authors.length];
+if (!a) return;
+const info = a.bio ? a.bio : a.summary;
+panel.innerHTML =
+`<div class="author-head">` +
+`<div class="author-text">` +
+`<a class="author-name-link" href="${esc(a.href)}"><span class="author-name">${esc(a.name)}</span></a>` +
+`<p class="author-bio">${esc(info)}</p>` +
+`</div>` +
+`<span class="writer-icon" aria-hidden="true"></span>` +
+`</div>` +
+`<div class="author-actions"><a class="author-btn" href="${esc(a.href)}">${esc(payload.view)}</a></div>`;
+};
+render();
+const now = new Date();
+const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+setTimeout(render, nextMidnight - now);
+};
+initAuthorOfDay();
+document.addEventListener("astro:page-load", initAuthorOfDay);
 </script>
 
 <style lang="scss">
@@ -264,7 +344,7 @@ width:min(45vw,170px);
 
 .hero-description{
 flex:1;
-max-width:30%;
+max-width:55%;
 align-self:center;
 text-align:justify;
 direction:rtl;
@@ -286,16 +366,18 @@ margin:0;
 }
 
 .hero-library{
-    flex-shrink:0;
-    width:min(360px,30%);
-    aspect-ratio:4/3;
+    flex:1 1 auto;
+    min-width:0;
+    align-self:center;
     position:relative;
+    height:200px;
 }
 
 .hero-library img{
     display:block;
     width:100%;
     height:100%;
+    object-fit:contain;
     position:absolute;
     inset:0;
     margin:auto;
@@ -428,7 +510,14 @@ flex-direction:column;
 overflow:hidden;
 
 .today-panel{
-display:block;
+flex:1;
+min-height:0;
+display:flex;
+flex-direction:column;
+
+.today-link{
+flex:1;
+}
 }
 }
 
@@ -499,6 +588,95 @@ font-size:10px;
 </style>
 
 <style is:global lang="scss">
+
+.author-panel{
+flex:1;
+min-height:0;
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+[data-author-card]{
+display:flex;
+flex-direction:column;
+}
+
+.author-head{
+flex:1;
+min-height:0;
+display:flex;
+align-items:flex-start;
+gap:20px;
+}
+
+.author-text{
+flex:1;
+min-width:0;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.writer-icon{
+flex-shrink:0;
+width:130px;
+height:130px;
+background:var(--text);
+-webkit-mask:url("/icons/writer.svg") center/contain no-repeat;
+mask:url("/icons/writer.svg") center/contain no-repeat;
+transition:background .6s ease;
+}
+
+.author-name-link{
+text-decoration:none;
+}
+
+.author-name{
+display:block;
+font-size:26px;
+font-weight:800;
+color:var(--text);
+line-height:1.4;
+transition:color .2s ease;
+}
+
+.author-name-link:hover .author-name{
+color:var(--accent);
+}
+
+.author-bio{
+font-size:13.5px;
+line-height:2;
+color:var(--gray);
+text-align:justify;
+margin:0;
+}
+
+.author-actions{
+margin-top:auto;
+}
+
+.author-btn{
+display:inline-block;
+background:var(--accent);
+color:#fff;
+font-size:13px;
+font-weight:700;
+padding:8px 22px;
+border-radius:20px;
+text-decoration:none;
+transition:transform .2s ease, box-shadow .2s ease;
+
+&:hover{
+transform:translateY(-1px);
+box-shadow:0 8px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+&:active{
+transform:scale(.95);
+}
+}
 
 .today-link{
 position:relative;
