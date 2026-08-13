@@ -30,7 +30,6 @@ export interface UiDict {
     aboutModal: {
         title: string;
         p1: string;
-        p2: string;
         instagram: string;
         telegram: string;
         tiktok: string;
