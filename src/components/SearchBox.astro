@@ -50,6 +50,17 @@ const empty = root.querySelector("[data-results-empty]");
 const clearBtn = root.querySelector("[data-search-clear]");
 const cidAttr = "data-astro-cid-" + (input?.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
 
+const AR_SPECIFIC = /[كيةؤئأإآى]|[\u0660-\u0669]/;
+const UR_SPECIFIC = /[ٹڈڑںےھ]/;
+const FA_SPECIFIC = /[کپچژگی]|[\u06F0-\u06F9]/;
+
+const queryLang = (raw = "") => {
+    if (AR_SPECIFIC.test(raw)) return "ar";
+    if (UR_SPECIFIC.test(raw)) return "ur";
+    if (FA_SPECIFIC.test(raw)) return "fa";
+    return "";
+};
+
 const normalize = (str = "") =>
     String(str)
         .replace(/[يى]/g, "ی")
@@ -111,11 +122,14 @@ const matches = (query) => {
     const q = normalize(query);
     if (!q) return [];
 
+    const lang = queryLang(query);
+    const scope = lang ? INDEX.filter((item) => (item.lang || "") === lang) : INDEX;
+
     const qTokens = splitTokens(q);
     const qJoined = q.replace(/\s+/g, "");
     const scored = [];
 
-    for (const item of INDEX) {
+    for (const item of scope) {
         const title = normalize(item.title);
         const author = normalize(item.author);
         const translator = normalize(item.translator);
