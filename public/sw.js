@@ -1,6 +1,5 @@
 const CACHE = "qafaseh-v1";
-const ASSETS = [
-  "/",
+const PRECACHE = [
   "/favicon.svg",
   "/fonts/Vazirmatn-Regular.woff2",
   "/fonts/Vazirmatn-Medium.woff2",
@@ -11,7 +10,7 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting())
   );
 });
 
@@ -25,6 +24,22 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  const url = new URL(e.request.url);
+  const isHTML = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith(".html");
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(e.request).then((res) => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then((cached) => {
       const fetched = fetch(e.request).then((res) => {
