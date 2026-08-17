@@ -65,7 +65,7 @@ href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 <IconFromFile src="faq.svg" />
 </a>
 <IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" title={t.nav.projectsTip} />
-<button class="icon-button" data-tip={t.nav.install} id="btnInstallDesktop" style="display:none;">
+<button class="icon-button" data-tip={t.nav.install} id="btnInstallDesktop">
 <IconFromFile src="download.svg" />
 </button>
 <button class="icon-button" data-tip={t.nav.about} id="btnAboutDesktop">
@@ -145,7 +145,7 @@ href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 <span class="mb-icon-circle"><IconFromFile src="mail.svg" /></span>
 {t.nav.contact}
 </button>
-<button class="mb-bubble" id="btnInstall" style="display:none;">
+<button class="mb-bubble" id="btnInstall">
 <span class="mb-icon-circle">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 </span>
@@ -1065,18 +1065,35 @@ let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", (e) => {
 e.preventDefault();
 deferredPrompt = e;
-if (btnInstall) btnInstall.style.display = "";
-if (btnInstallDesktop) btnInstallDesktop.style.display = "";
 });
 const handleInstall = async () => {
-if (!deferredPrompt) return;
+if (deferredPrompt) {
 deferredPrompt.prompt();
 const { outcome } = await deferredPrompt.userChoice;
 deferredPrompt = null;
-if (outcome === "accepted") {
-if (btnInstall) btnInstall.style.display = "none";
-if (btnInstallDesktop) btnInstallDesktop.style.display = "none";
+return;
 }
+const isMobile = window.innerWidth <= 900;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isAndroid = /Android/.test(navigator.userAgent);
+let msg = "";
+if (isIOS) {
+msg = "در سافاری روی دکمه «اشتراک‌گذاری» و سپس «افزودن به صفحه اصلی» بزنید.";
+} else if (isAndroid) {
+msg = "در منوی مرورگر (سه‌نقطه) گزینه «افزودن به صفحه اصلی» را بزنید.";
+} else {
+msg = "در آدرس‌بار روی آیکون نصب (⊕) کلیک کنید یا از منوی مرورگر گزینه «Install» را بزنید.";
+}
+let toast = document.getElementById("installToast");
+if (!toast) {
+toast = document.createElement("div");
+toast.id = "installToast";
+toast.style.cssText = "position:fixed;bottom:"+(isMobile?"90px":"24px")+(isMobile?";left:16px;right:16px":";left:50%;transform:translateX(-50%)")+"z-index:200;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:14px 18px;font-size:13px;line-height:1.8;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;direction:rtl;";
+document.body.appendChild(toast);
+}
+toast.textContent = msg;
+toast.style.display = "block";
+setTimeout(() => { toast.style.display = "none"; }, 5000);
 };
 btnInstall?.addEventListener("click", handleInstall);
 btnInstallDesktop?.addEventListener("click", handleInstall);
