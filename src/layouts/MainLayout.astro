@@ -182,6 +182,12 @@ window.__bttBtn = btn;
 btn.addEventListener("click", () => {
 window.scrollTo({top:0, behavior:"smooth"});
 btn.blur();
+requestAnimationFrame(() => {
+btn.style.pointerEvents = "none";
+requestAnimationFrame(() => {
+btn.style.pointerEvents = "";
+});
+});
 });
 };
 
@@ -328,6 +334,13 @@ transform:translateY(0);
 background:var(--accent);
 border-color:transparent;
 color:#fff;
+}
+
+&:active{
+background:var(--accent);
+border-color:transparent;
+color:#fff;
+transform:scale(.92);
 }
 
 :global(.dark) &{
