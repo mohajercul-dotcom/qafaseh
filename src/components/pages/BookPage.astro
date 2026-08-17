@@ -180,22 +180,28 @@ const syncHeight = () => {
         content.style.maxHeight = "";
         return;
     }
-    const main = document.querySelector(".book-main");
     const titleRow = document.querySelector(".book-main .title-row");
-    const shareBlock = document.querySelector(".book-main .share-block");
+    const actionsRow = document.querySelector(".book-main .actions-row");
     const titleH = titleRow ? titleRow.offsetHeight : 0;
-    const shareH = shareBlock ? shareBlock.offsetHeight + 18 : 0;
+    const actionsH = actionsRow ? actionsRow.offsetHeight + 12 : 0;
     const sideH = side.offsetHeight;
-    const maxH = sideH - titleH - shareH;
-    content.style.maxHeight = maxH + "px";
+    const maxH = sideH - titleH - actionsH;
+    if (maxH > 0) {
+        content.style.maxHeight = maxH + "px";
+    }
 };
 if (!window.__syncHeightBound) {
 window.__syncHeightBound = true;
-window.addEventListener("load", syncHeight);
+window.addEventListener("load", () => {
+    syncHeight();
+    setTimeout(syncHeight, 500);
+    setTimeout(syncHeight, 1500);
+});
 window.addEventListener("resize", syncHeight);
 document.addEventListener("astro:page-load", () => {
     syncHeight();
     setTimeout(syncHeight, 300);
+    setTimeout(syncHeight, 1000);
 });
 }
 syncHeight();

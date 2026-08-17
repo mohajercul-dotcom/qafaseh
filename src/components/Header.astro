@@ -529,6 +529,17 @@ justify-content:center;
 font-size:13px;
 padding:10px 10px;
 }
+
+@media(max-width:900px){
+&#popupLang{
+width:170px;
+}
+
+#popupLang .mb-bubble{
+padding:8px 8px;
+font-size:12px;
+}
+}
 }
 
 .mb-popup-grid{
@@ -878,239 +889,239 @@ animation:mb-theme-spin .6s cubic-bezier(.34,1.56,.64,1);
 body.modal-open{overflow:hidden;}
 </style>
 <script is:inline>
-const initHeader = () => {
-const headerEl = document.querySelector("header");
-if (!headerEl || headerEl.dataset.bound) return;
-headerEl.dataset.bound = "1";
-const overlay = document.getElementById("mbOverlay");
-const popupDasteh = document.getElementById("popupDasteh");
-const popupBisher = document.getElementById("popupBisher");
-const btnDasteh = document.getElementById("btnDasteh");
-const btnBisher = document.getElementById("btnBisher");
-const themeBtn = document.getElementById("themeToggleBottom");
-const btnAbout = document.getElementById("btnAboutMobile");
-const btnContact = document.getElementById("btnContactMobile");
-const popupLang = document.getElementById("popupLang");
+if (!window.__headerDelegateBound) {
+window.__headerDelegateBound = true;
 
-function closeAll(){
-popupDasteh?.classList.remove("open");
-popupBisher?.classList.remove("open");
-popupLang?.classList.remove("open");
-overlay?.classList.remove("open");
-document.body.classList.remove("modal-open");
+function closeAllPopups(){
+    document.getElementById("popupDasteh")?.classList.remove("open");
+    document.getElementById("popupBisher")?.classList.remove("open");
+    document.getElementById("popupLang")?.classList.remove("open");
+    document.getElementById("mbOverlay")?.classList.remove("open");
+    document.body.classList.remove("modal-open");
 }
 
-btnDasteh?.addEventListener("click", (e) => {
-e.stopPropagation();
-const wasOpen = popupDasteh.classList.contains("open");
-closeAll();
-if(!wasOpen){
-popupDasteh.classList.add("open");
-overlay.classList.add("open");
-document.body.classList.add("modal-open");
-}
-});
-
-btnBisher?.addEventListener("click", (e) => {
-e.stopPropagation();
-const wasOpen = popupBisher.classList.contains("open");
-closeAll();
-if(!wasOpen){
-const rect = btnBisher.getBoundingClientRect();
-const popupW = 220;
-const center = rect.left + rect.width / 2;
-let left = center - popupW / 2;
-left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
-popupBisher.style.left = left + "px";
-popupBisher.style.right = "auto";
-popupBisher.style.top = (rect.bottom + 8) + "px";
-popupBisher.classList.add("open");
-overlay.classList.add("open");
-document.body.classList.add("modal-open");
-}
-});
-
-overlay?.addEventListener("click", closeAll);
-
-document.querySelectorAll(".mb-bubble[href]").forEach((item) => {
-item.addEventListener("click", closeAll);
-});
-
-btnAbout?.addEventListener("click", () => {
-closeAll();
-const aboutOverlay = document.getElementById("aboutOverlay");
-if(aboutOverlay){
-aboutOverlay.classList.add("open");
-document.body.classList.add("modal-open");
-}
-});
-
-btnContact?.addEventListener("click", () => {
-closeAll();
-const contactOverlay = document.getElementById("contactOverlay");
-if(contactOverlay){
-contactOverlay.classList.add("open");
-document.body.classList.add("modal-open");
-}
-});
-
-const btnAboutDesktop = document.getElementById("btnAboutDesktop");
-const btnContactDesktop = document.getElementById("btnContactDesktop");
-const aboutClose = document.getElementById("aboutClose");
-const contactClose = document.getElementById("contactClose");
-const aboutOverlay = document.getElementById("aboutOverlay");
-const contactOverlay = document.getElementById("contactOverlay");
-
-btnAboutDesktop?.addEventListener("click", () => {
-aboutOverlay?.classList.add("open");
-document.body.classList.add("modal-open");
-});
-
-btnContactDesktop?.addEventListener("click", () => {
-contactOverlay?.classList.add("open");
-document.body.classList.add("modal-open");
-});
-
-const btnFaqMobile = document.getElementById("btnFaqMobile");
-
-btnFaqMobile?.addEventListener("click", closeAll);
-
-const btnLangDesktop = document.getElementById("btnLangDesktop");
-const btnLangBottom = document.getElementById("btnLangBottom");
-
-function openLangPopup(btn){
-closeAll();
-const popupW = 220;
-const rect = btn.getBoundingClientRect();
-const fromBottom = rect.top > window.innerHeight * 0.6;
-const center = rect.left + rect.width / 2;
-let left = center - popupW / 2;
-left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
-if(fromBottom){
-popupLang.style.top = "auto";
-popupLang.style.bottom = "72px";
-popupLang.style.right = "auto";
-popupLang.style.left = left + "px";
-popupLang.style.transform = "translateX(0) translateY(12px)";
-}else{
-popupLang.style.bottom = "auto";
-popupLang.style.top = (rect.bottom + 8) + "px";
-popupLang.style.right = "auto";
-popupLang.style.left = left + "px";
-popupLang.style.transform = "translateX(0) translateY(-12px)";
-}
-popupLang.classList.add("open");
-requestAnimationFrame(() => {
-popupLang.style.transform = "translateX(0) translateY(0)";
-});
-overlay.classList.add("open");
-document.body.classList.add("modal-open");
+function closeOverlay(id){
+    document.getElementById(id)?.classList.remove("open");
+    document.body.classList.remove("modal-open");
 }
 
-btnLangDesktop?.addEventListener("click", () => openLangPopup(btnLangDesktop));
-btnLangBottom?.addEventListener("click", () => openLangPopup(btnLangBottom));
+document.addEventListener("click", (e) => {
+    const target = e.target;
 
-document.querySelectorAll(".lang-opt").forEach((item) => {
-item.addEventListener("click", () => {
-localStorage.setItem("qafaseh-lang", item.dataset.lang || "none");
+    if (target.closest("#btnDasteh")) {
+        e.stopPropagation();
+        const popup = document.getElementById("popupDasteh");
+        const overlay = document.getElementById("mbOverlay");
+        const wasOpen = popup?.classList.contains("open");
+        closeAllPopups();
+        if (!wasOpen) {
+            popup?.classList.add("open");
+            overlay?.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnBisher")) {
+        e.stopPropagation();
+        const popup = document.getElementById("popupBisher");
+        const overlay = document.getElementById("mbOverlay");
+        const wasOpen = popup?.classList.contains("open");
+        closeAllPopups();
+        if (!wasOpen) {
+            const btn = document.getElementById("btnBisher");
+            const rect = btn.getBoundingClientRect();
+            const popupW = 190;
+            const center = rect.left + rect.width / 2;
+            let left = center - popupW / 2;
+            left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+            popup.style.left = left + "px";
+            popup.style.right = "auto";
+            popup.style.top = (rect.bottom + 8) + "px";
+            popup.classList.add("open");
+            overlay?.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnAboutMobile")) {
+        closeAllPopups();
+        const aboutOverlay = document.getElementById("aboutOverlay");
+        if (aboutOverlay) {
+            aboutOverlay.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnContactMobile")) {
+        closeAllPopups();
+        const contactOverlay = document.getElementById("contactOverlay");
+        if (contactOverlay) {
+            contactOverlay.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnAboutDesktop")) {
+        document.getElementById("aboutOverlay")?.classList.add("open");
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    if (target.closest("#btnContactDesktop")) {
+        document.getElementById("contactOverlay")?.classList.add("open");
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    if (target.closest("#aboutClose") || (target.id === "aboutOverlay")) {
+        closeOverlay("aboutOverlay");
+        return;
+    }
+
+    if (target.closest("#contactClose") || (target.id === "contactOverlay")) {
+        closeOverlay("contactOverlay");
+        return;
+    }
+
+    if (target.id === "mbOverlay") {
+        closeAllPopups();
+        return;
+    }
+
+    if (target.closest(".mb-bubble[href]")) {
+        closeAllPopups();
+    }
 });
-});
 
-function closeModal(id){
-const el = document.getElementById(id);
-el?.classList.remove("open");
-document.body.classList.remove("modal-open");
-}
-
-aboutClose?.addEventListener("click", () => closeModal("aboutOverlay"));
-contactClose?.addEventListener("click", () => closeModal("contactOverlay"));
-
-aboutOverlay?.addEventListener("click", (e) => {
-if(e.target === aboutOverlay) closeModal("aboutOverlay");
-});
-
-contactOverlay?.addEventListener("click", (e) => {
-if(e.target === contactOverlay) closeModal("contactOverlay");
-});
-
-if(!window.__headerKeyBound){
-window.__headerKeyBound = true;
 document.addEventListener("keydown", (e) => {
-if(e.key === "Escape"){
-closeModal("aboutOverlay");
-closeModal("contactOverlay");
-}
-});
-}
-
-themeBtn?.addEventListener("click", () => {
-const html = document.documentElement;
-html.classList.add("theme-anim");
-themeBtn.classList.remove("spin");
-void themeBtn.offsetWidth;
-themeBtn.classList.add("spin");
-const isDark = html.classList.toggle("dark");
-localStorage.setItem("theme", isDark ? "dark" : "light");
-window.setTimeout(() => {
-html.classList.remove("theme-anim");
-themeBtn.classList.remove("spin");
-}, 650);
+    if (e.key === "Escape") {
+        closeOverlay("aboutOverlay");
+        closeOverlay("contactOverlay");
+        closeAllPopups();
+    }
 });
 
-const btnInstall = document.getElementById("btnInstall");
-const btnInstallDesktop = document.getElementById("btnInstallDesktop");
-if ((btnInstall || btnInstallDesktop) && !window.__installBound) {
-window.__installBound = true;
-let deferredPrompt = null;
-window.addEventListener("beforeinstallprompt", (e) => {
-e.preventDefault();
-deferredPrompt = e;
+const handleLangPopup = (btn) => {
+    closeAllPopups();
+    const popup = document.getElementById("popupLang");
+    const overlay = document.getElementById("mbOverlay");
+    if (!popup) return;
+    const popupW = 190;
+    const rect = btn.getBoundingClientRect();
+    const fromBottom = rect.top > window.innerHeight * 0.6;
+    const center = rect.left + rect.width / 2;
+    let left = center - popupW / 2;
+    left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+    if (fromBottom) {
+        popup.style.top = "auto";
+        popup.style.bottom = "72px";
+        popup.style.right = "auto";
+        popup.style.left = left + "px";
+        popup.style.transform = "translateX(0) translateY(12px)";
+    } else {
+        popup.style.bottom = "auto";
+        popup.style.top = (rect.bottom + 8) + "px";
+        popup.style.right = "auto";
+        popup.style.left = left + "px";
+        popup.style.transform = "translateX(0) translateY(-12px)";
+    }
+    popup.classList.add("open");
+    requestAnimationFrame(() => {
+        popup.style.transform = "translateX(0) translateY(0)";
+    });
+    overlay?.classList.add("open");
+    document.body.classList.add("modal-open");
+};
+
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#btnLangDesktop")) {
+        handleLangPopup(document.getElementById("btnLangDesktop"));
+    }
+    if (e.target.closest("#btnLangBottom")) {
+        handleLangPopup(document.getElementById("btnLangBottom"));
+    }
+    if (e.target.closest(".lang-opt")) {
+        localStorage.setItem("qafaseh-lang", e.target.closest(".lang-opt").dataset.lang || "none");
+    }
 });
+
+const handleThemeToggle = () => {
+    const themeBtn = document.getElementById("themeToggleBottom");
+    if (!themeBtn) return;
+    const html = document.documentElement;
+    html.classList.add("theme-anim");
+    themeBtn.classList.remove("spin");
+    void themeBtn.offsetWidth;
+    themeBtn.classList.add("spin");
+    const isDark = html.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    window.setTimeout(() => {
+        html.classList.remove("theme-anim");
+        themeBtn.classList.remove("spin");
+    }, 650);
+};
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#themeToggleBottom")) {
+        handleThemeToggle();
+    }
+});
+
 const handleInstall = async () => {
-if (deferredPrompt) {
-deferredPrompt.prompt();
-const { outcome } = await deferredPrompt.userChoice;
-deferredPrompt = null;
-return;
-}
-const isMobile = window.innerWidth <= 900;
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const isAndroid = /Android/.test(navigator.userAgent);
-let msg = "";
-if (isIOS) {
-msg = "در سافاری روی دکمه «اشتراک‌گذاری» و سپس «افزودن به صفحه اصلی» بزنید.";
-} else if (isAndroid) {
-msg = "در منوی مرورگر (سه‌نقطه) گزینه «افزودن به صفحه اصلی» را بزنید.";
-} else {
-msg = "در آدرس‌بار روی آیکون نصب (⊕) کلیک کنید یا از منوی مرورگر گزینه «Install» را بزنید.";
-}
-let toast = document.getElementById("installToast");
-if (!toast) {
-toast = document.createElement("div");
-toast.id = "installToast";
-toast.style.cssText = "position:fixed;bottom:"+(isMobile?"90px":"24px")+(isMobile?";left:16px;right:16px":";left:50%;transform:translateX(-50%)")+"z-index:200;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:14px 18px;font-size:13px;line-height:1.8;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;direction:rtl;";
-document.body.appendChild(toast);
-}
-toast.textContent = msg;
-toast.style.display = "block";
-setTimeout(() => { toast.style.display = "none"; }, 5000);
+    if (window.__deferredPrompt) {
+        window.__deferredPrompt.prompt();
+        const { outcome } = await window.__deferredPrompt.userChoice;
+        window.__deferredPrompt = null;
+        return;
+    }
+    const isMobile = window.innerWidth <= 900;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    let msg = "";
+    if (isIOS) {
+        msg = "در سافاری روی دکمه «اشتراک‌گذاری» و سپس «افزودن به صفحه اصلی» بزنید.";
+    } else if (/Android/.test(navigator.userAgent)) {
+        msg = "در منوی مرورگر (سه‌نقطه) گزینه «افزودن به صفحه اصلی» را بزنید.";
+    } else {
+        msg = "در آدرس‌بار روی آیکون نصب (⊕) کلیک کنید یا از منوی مرورگر گزینه «Install» را بزنید.";
+    }
+    let toast = document.getElementById("installToast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "installToast";
+        toast.style.cssText = "position:fixed;bottom:"+(isMobile?"90px":"24px")+(isMobile?";left:16px;right:16px":";left:50%;transform:translateX(-50%)")+"z-index:200;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:14px 18px;font-size:13px;line-height:1.8;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;direction:rtl;";
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 5000);
 };
-btnInstall?.addEventListener("click", handleInstall);
-btnInstallDesktop?.addEventListener("click", handleInstall);
-}
-
-const currentPath = window.location.pathname;
-document.querySelectorAll(".bottom-link").forEach((link) => {
-const href = link.getAttribute("href");
-if(href && (href === "/" ? currentPath === "/" : currentPath.startsWith(href))){
-link.classList.add("active");
-}
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#btnInstall") || e.target.closest("#btnInstallDesktop")) {
+        handleInstall();
+    }
 });
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    window.__deferredPrompt = e;
+});
+
+const setActiveLink = () => {
+    const currentPath = window.location.pathname;
+    document.querySelectorAll(".bottom-link").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href && (href === "/" ? currentPath === "/" : currentPath.startsWith(href))) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
 };
-if (document.readyState === "loading") {
-document.addEventListener("DOMContentLoaded", initHeader);
-} else {
-initHeader();
+
+setActiveLink();
+document.addEventListener("astro:page-load", setActiveLink);
 }
-document.addEventListener("astro:page-load", initHeader);
 </script>

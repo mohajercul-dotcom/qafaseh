@@ -232,3 +232,56 @@ view-transition-name:header;
 animation:none !important;
 }
 }
+
+// ===== Right-to-Left (RTL) Support =====
+
+html[dir="rtl"]{
+  // RTL view transition animations (reverse direction)
+  ::view-transition-old(root){
+    animation-name:vt-out-rtl;
+  }
+
+  ::view-transition-new(root){
+    animation-name:vt-in-rtl;
+  }
+
+  body{
+    text-align:right;
+  }
+
+  input,
+  textarea{
+    text-align:right;
+  }
+
+  // RTL animations
+  @keyframes vt-out-rtl{
+    from{ transform:none; opacity:1; }
+    to{ transform:translateX(3.5%); opacity:0; }
+  }
+
+  @keyframes vt-in-rtl{
+    from{ transform:translateX(-3.5%); opacity:0; }
+    to{ transform:none; opacity:1; }
+  }
+
+  @keyframes vt-out-back-rtl{
+    from{ transform:none; opacity:1; }
+    to{ transform:translateX(-3.5%); opacity:0; }
+  }
+
+  @keyframes vt-in-back-rtl{
+    from{ transform:translateX(3.5%); opacity:0; }
+    to{ transform:none; opacity:1; }
+  }
+}
+
+html[dir="rtl"][data-astro-transition="backward"]{
+  ::view-transition-old(root){
+    animation-name:vt-out-back-rtl;
+  }
+
+  ::view-transition-new(root){
+    animation-name:vt-in-back-rtl;
+  }
+}
