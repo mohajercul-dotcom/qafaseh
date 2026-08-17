@@ -25,6 +25,7 @@ export interface UiDict {
         projectsTip: string;
         about: string;
         contact: string;
+        install: string;
     };
     menu: Record<CategoryKey | "authors", { label: string; tip: string }>;
     aboutModal: {

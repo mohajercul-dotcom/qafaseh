@@ -25,6 +25,7 @@ export const uiFa: UiDict = {
         projectsTip: "پروژه‌های دیگر",
         about: "درباره ما",
         contact: "تماس با ما",
+        install: "نصب قفسه",
     },
     menu: {
         shiite: { label: "شیعه", tip: "شیعه‌شناسی" },
@@ -47,7 +48,7 @@ export const uiFa: UiDict = {
     contactModal: {
         title: "تماس با ما",
         intro: "از طریق تلگرام با تیم ما در ارتباط باشید",
-        labels: ["ارتباط با بخش فنی", "ارتباط با مدیر", "ارتباط با مسئول سایت", "درخواست ثبت کتاب"],
+        labels: ["ارتباط با بخش فنی", "ارتباط با مسئول سایت", "درخواست ثبت کتاب"],
         close: "بستن",
     },
     search: {
