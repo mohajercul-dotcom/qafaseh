@@ -182,10 +182,14 @@ window.__bttBtn = btn;
 btn.addEventListener("click", () => {
 window.scrollTo({top:0, behavior:"smooth"});
 btn.blur();
+});
+
+btn.addEventListener("touchend", () => {
 requestAnimationFrame(() => {
-btn.style.pointerEvents = "none";
+btn.blur();
+btn.style.opacity = "0.99";
 requestAnimationFrame(() => {
-btn.style.pointerEvents = "";
+btn.style.opacity = "";
 });
 });
 });
@@ -337,9 +341,6 @@ color:#fff;
 }
 
 &:active{
-background:var(--accent);
-border-color:transparent;
-color:#fff;
 transform:scale(.92);
 }
 
