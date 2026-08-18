@@ -176,22 +176,20 @@ if (b) b.classList.toggle("show", window.scrollY > 400);
 
 const bind = () => {
 const btn = document.getElementById("backToTop");
-if (!btn) return;
+if (!btn || btn.dataset.bound) return;
 btn.dataset.bound = "1";
 window.__bttBtn = btn;
+
+btn.onpointerdown = () => btn.classList.add("active-touch");
+btn.onpointerup = () => {
+btn.classList.remove("active-touch");
+btn.blur();
+};
+btn.onpointerleave = () => btn.classList.remove("active-touch");
+
 btn.addEventListener("click", () => {
 window.scrollTo({top:0, behavior:"smooth"});
-btn.blur();
 });
-
-btn.addEventListener("touchstart", () => {
-        btn.classList.add("active-touch");
-    });
-
-    btn.addEventListener("touchend", () => {
-        btn.classList.remove("active-touch");
-        btn.blur();
-    });
 };
 
 if (!window.__bttScrollBound) {
@@ -334,7 +332,7 @@ visibility:visible;
 transform:translateY(0);
 }
 
-&:hover{
+&:hover, &.active-touch{
 background:var(--accent);
 border-color:transparent;
 color:#fff;
