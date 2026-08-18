@@ -5,6 +5,10 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://qafaseh.vercel.app',
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'load',
+  },
   i18n: {
     locales: ['fa', 'ar', 'ur'],
     defaultLocale: 'fa',

@@ -1,11 +1,11 @@
 ---
 import { getUi } from "../i18n/index.js";
 
-const { locale = "fa" } = Astro.props;
+const { locale = "fa", pageType = "books" } = Astro.props;
 const t = getUi(locale);
 ---
 
-<div class="search" data-translator={t.search.translator} data-base={import.meta.env.BASE_URL || "/"}>
+<div class="search" data-page-type={pageType} data-translator={t.search.translator} data-base={import.meta.env.BASE_URL || "/"}>
 
     <div class="search-inner">
 
@@ -68,6 +68,7 @@ const initSearch = () => {
                 const empty = root?.querySelector("[data-results-empty]");
                 const clearBtn = root?.querySelector("[data-search-clear]");
                 const query = input.value;
+                const pageType = root?.dataset.pageType || "books";
 
                 if (!query.trim()) {
                     if (list) list.innerHTML = "";
@@ -80,6 +81,39 @@ const initSearch = () => {
                 if (clearBtn) clearBtn.classList.add("show");
 
                 try {
+                    if (pageType === "faq") {
+                        const faqItems = document.querySelectorAll("[data-faq]");
+                        const matches = [];
+                        faqItems.forEach((item) => {
+                            const q3 = item.querySelector(".faq-question h3");
+                            const a3 = item.querySelector(".faq-answer");
+                            const qText = q3 ? q3.textContent.toLowerCase() : "";
+                            const aText = a3 ? a3.textContent.toLowerCase() : "";
+                            if (qText.includes(q) || aText.includes(q)) {
+                                matches.push({
+                                    question: q3 ? q3.textContent.trim() : "",
+                                    answer: a3 ? a3.textContent.trim().slice(0, 120) : ""
+                                });
+                            }
+                        });
+
+                        if (empty) empty.classList.toggle("show", matches.length === 0);
+                        if (resultsBox) resultsBox.classList.toggle("open", matches.length > 0);
+
+                        if (list) {
+                            list.innerHTML = matches.slice(0, 7)
+                                .map((m) => `
+                                <div class="result-item faq-result" ${cidAttr}>
+                                    <div class="result-content" ${cidAttr}>
+                                        <span class="result-title" ${cidAttr}>${m.question}</span>
+                                        <span class="result-author" ${cidAttr}>${m.answer}…</span>
+                                    </div>
+                                </div>`)
+                                .join("");
+                        }
+                        return;
+                    }
+
                     if (!window.__pagefind) {
                         const mod = await import(base + "pagefind/pagefind.js");
                         const pf = mod.default || mod;
@@ -98,10 +132,7 @@ const initSearch = () => {
                         if (!u.includes("/books/") || !item.meta?.category) return false;
                         const fields = [
                             item.meta?.title || "",
-                            item.meta?.category || "",
-                            item.meta?.author || "",
-                            item.meta?.translator || "",
-                            item.meta?.language || ""
+                            item.meta?.author || ""
                         ].join(" ").toLowerCase();
                         return fields.includes(q);
                     }).slice(0, 7);
@@ -112,11 +143,8 @@ const initSearch = () => {
                     if (list) {
                         list.innerHTML = bookResults
                             .map((item) => {
-                                const cat = item.meta?.category || "";
-                                const lang = item.meta?.language || "";
                                 const author = item.meta?.author || "";
                                 const translator = item.meta?.translator || "";
-                                const langCls = langClass(lang);
                                 const authorLine = translator ? author + " — " + translatorLabel + " " + translator : author;
                                 return `
                                 <a class="result-item" href="${item.url}" ${cidAttr}>
@@ -124,7 +152,6 @@ const initSearch = () => {
                                         <span class="result-title" ${cidAttr}>${item.meta?.title || ""}</span>
                                         <span class="result-author" ${cidAttr}>${authorLine}</span>
                                     </div>
-                                    ${lang ? `<span class="result-lang ${langCls}" ${cidAttr}>${lang}</span>` : ""}
                                 </a>`;
                             })
                             .join("");
@@ -378,50 +405,6 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis;
 flex-shrink:0;
-}
-
-.result-lang{
-font-size:11px;
-font-weight:600;
-padding:4px 10px;
-border-radius:8px;
-white-space:nowrap;
-
-&.fa{
-background:rgba(16,185,129,.1);
-color:#059669;
-}
-
-&.ar{
-background:rgba(59,130,246,.1);
-color:#2563eb;
-}
-
-&.ur{
-background:rgba(245,158,11,.1);
-color:#d97706;
-}
-
-:global(.dark) &.fa{
-background:rgba(74,222,128,.12);
-color:#4ade80;
-}
-
-:global(.dark) &.ar{
-background:rgba(96,165,250,.12);
-color:#60a5fa;
-}
-
-:global(.dark) &.ur{
-background:rgba(251,146,60,.12);
-color:#fb923c;
-}
-}
-
-@media(max-width:640px){
-.result-lang{
-display:none;
-}
 }
 
 </style>

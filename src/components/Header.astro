@@ -53,7 +53,7 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 </nav>
 
-<SearchBox locale={locale} />
+<SearchBox locale={locale} pageType={path.includes("/faq") ? "faq" : "books"} />
 
 <div class="left-menu">
 <button class="icon-button" data-tip={t.nav.languageTip} id="btnLangDesktop">
@@ -109,7 +109,7 @@ href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 </nav>
 
 <div class="mobile-search">
-<SearchBox locale={locale} />
+<SearchBox locale={locale} pageType={path.includes("/faq") ? "faq" : "books"} />
 <a class="icon-button mobile-faq" data-tip={t.nav.faqTip} id="btnFaqMobile" href={faqHref}>
 <IconFromFile src="faq.svg" />
 </a>
@@ -429,7 +429,14 @@ border-bottom:1px solid var(--border);
 position:relative;
 z-index:51;
 align-items:center;
-gap:10px;
+gap:8px;
+overflow:hidden;
+
+:global(.search){
+flex:1;
+min-width:0;
+width:auto;
+}
 
 .mobile-faq{
 flex-shrink:0;
@@ -437,6 +444,10 @@ flex-shrink:0;
 &::after,&::before{
 display:none !important;
 }
+}
+
+.mobile-bisher{
+flex-shrink:0;
 }
 }
 
@@ -447,6 +458,7 @@ overflow:visible;
 .nav{display:none;}
 .mobile-search{display:flex;}
 .bottom-nav{display:flex;}
+.icon-button{width:38px;height:38px;}
 }
 }
 
