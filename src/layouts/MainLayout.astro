@@ -180,15 +180,23 @@ if (!btn || btn.dataset.bound) return;
 btn.dataset.bound = "1";
 window.__bttBtn = btn;
 
-btn.onpointerdown = () => btn.classList.add("active-touch");
-btn.onpointerup = () => {
+btn.onpointerdown = (e) => {
+btn.classList.add("active-touch");
+};
+
+btn.onpointerup = (e) => {
 btn.classList.remove("active-touch");
 btn.blur();
 };
-btn.onpointerleave = () => btn.classList.remove("active-touch");
 
-btn.addEventListener("click", () => {
+btn.onpointercancel = (e) => {
+btn.classList.remove("active-touch");
+btn.blur();
+};
+
+btn.addEventListener("click", (e) => {
 window.scrollTo({top:0, behavior:"smooth"});
+btn.blur();
 });
 };
 
@@ -316,6 +324,7 @@ display:flex;
 align-items:center;
 justify-content:center;
 cursor:pointer;
+-webkit-tap-highlight-color:transparent;
 opacity:0;
 visibility:hidden;
 transform:translateY(16px);
@@ -332,10 +341,19 @@ visibility:visible;
 transform:translateY(0);
 }
 
-&:hover, &.active-touch{
+&:hover{
+@media(hover:hover){
 background:var(--accent);
 border-color:transparent;
 color:#fff;
+}
+}
+
+&.active-touch{
+background:var(--accent)!important;
+border-color:transparent!important;
+color:#fff!important;
+transform:scale(.92);
 }
 
 &:active{
