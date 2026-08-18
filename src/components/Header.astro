@@ -9,7 +9,6 @@ import { getUi } from "../i18n/index.js";
 import { localizePath, switchLocalePath } from "../lib/i18n.js";
 
 const path = Astro.url.pathname;
-const { searchIndex = [] } = Astro.props;
 
 const locale = Astro.currentLocale;
 const t = getUi(locale);
@@ -54,7 +53,7 @@ href={item.href} data-tip={item.tip}>{item.label}</a>
 href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 </nav>
 
-<SearchBox searchIndex={searchIndex} locale={locale} />
+<SearchBox locale={locale} />
 
 <div class="left-menu">
 <button class="icon-button" data-tip={t.nav.languageTip} id="btnLangDesktop">
@@ -110,7 +109,7 @@ href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
 </nav>
 
 <div class="mobile-search">
-<SearchBox searchIndex={searchIndex} locale={locale} />
+<SearchBox locale={locale} />
 <a class="icon-button mobile-faq" data-tip={t.nav.faqTip} id="btnFaqMobile" href={faqHref}>
 <IconFromFile src="faq.svg" />
 </a>

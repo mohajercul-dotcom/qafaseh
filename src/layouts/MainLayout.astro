@@ -3,10 +3,8 @@ import "../styles/global.scss";
 import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import IconFromFile from "../components/icons/IconFromFile.astro";
-import { allBooks } from "../lib/paths.js";
-import { slugify } from "../lib/books.js";
 import { getUi } from "../i18n/index.js";
-import { localizePath, switchLocalePath, bookSiteLang } from "../lib/i18n.js";
+import { localizePath, switchLocalePath } from "../lib/i18n.js";
 
 const locale = Astro.currentLocale;
 const t = getUi(locale);
@@ -14,18 +12,6 @@ const isRTL = locale === "ar" || locale === "fa" || locale === "ur";
 
 const title = t.siteTitle;
 const description = t.siteDescription;
-
-const books = await allBooks();
-
-const searchIndex = books.map((b) => ({
-    title: b.data.title,
-    author: b.data.author,
-    translator: b.data.translator || "",
-    language: b.data.language || "",
-    category: t.menu[b.category].label,
-    href: localizePath(locale, `/books/${slugify(b.data.title)}`),
-    lang: bookSiteLang(b),
-}));
 
 const switchPaths = {
     fa: switchLocalePath(Astro.url.pathname, locale, "fa"),
@@ -62,7 +48,7 @@ const switchPaths = {
 
 <body>
 
-<Header searchIndex={searchIndex} />
+<Header />
 
 <main class="container">
 
