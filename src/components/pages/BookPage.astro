@@ -207,16 +207,17 @@ document.addEventListener("astro:page-load", () => {
 syncHeight();
 </script>
 
-<script is:inline define:vars={{ copyLabel: t.book.copy, copiedLabel: t.book.copied }}>
+<script is:inline define:vars={{ copyLabel: t.book.copy, copiedLabel: t.book.copied, bookLocale: locale }}>
 const setupFootnotes = () => {
     const refs = document.querySelectorAll(".content a[data-footnote-ref]");
     if (!refs.length) return;
 
-    const toFa = (s) => s.replace(/\d/g, (d) => String.fromCharCode(d.charCodeAt(0) + 1728));
+    const base = bookLocale === "ar" ? 0x0660 : 0x06f0;
+    const toLocaleNum = (s) => s.replace(/\d/g, (d) => String.fromCodePoint(base + Number(d)));
 
     const localizeDigits = (node) => {
         if (node && node.textContent) {
-            node.textContent = toFa(node.textContent);
+            node.textContent = toLocaleNum(node.textContent);
         }
     };
 
