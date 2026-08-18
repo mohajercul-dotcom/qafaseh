@@ -58,9 +58,9 @@ const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.n
                     {Object.entries(author.counts)
                         .filter(([, count]) => count > 0)
                         .map(([key, count]) => (
-                            <span class="count">{t.menu[key].label}: {count}</span>
+                            <span class="count">{t.menu[key].label}: {toLocaleDigits(count, locale)}</span>
                         ))}
-                    <span class="total">{t.authors.total} {author.total}</span>
+                    <span class="total">{t.authors.total} {toLocaleDigits(author.total, locale)}</span>
                 </div>
             </a>
         ))}

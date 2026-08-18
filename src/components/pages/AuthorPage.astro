@@ -39,7 +39,7 @@ const total = allBooksForAuthor.length;
 
         <p class="stats">
             {groups.map((group) => (
-                <span class="badge">{group.label}: {group.books.length}</span>
+                <span class="badge">{group.label}: {toLocaleDigits(group.books.length, locale)}</span>
             ))}
             <span class="badge total">{t.authors.totalBooks(toLocaleDigits(total, locale))}</span>
         </p>
