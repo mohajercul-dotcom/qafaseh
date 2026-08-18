@@ -184,15 +184,14 @@ window.scrollTo({top:0, behavior:"smooth"});
 btn.blur();
 });
 
-btn.addEventListener("touchend", () => {
-requestAnimationFrame(() => {
-btn.blur();
-btn.style.opacity = "0.99";
-requestAnimationFrame(() => {
-btn.style.opacity = "";
-});
-});
-});
+btn.addEventListener("touchstart", () => {
+        btn.classList.add("active-touch");
+    });
+
+    btn.addEventListener("touchend", () => {
+        btn.classList.remove("active-touch");
+        btn.blur();
+    });
 };
 
 if (!window.__bttScrollBound) {
@@ -304,6 +303,7 @@ transform:translateY(-2px);
 position:fixed;
 bottom:24px;
 left:24px;
+right:auto;
 z-index:70;
 width:48px;
 height:48px;
