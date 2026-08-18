@@ -91,7 +91,7 @@ const todayPanels = [];
                 const cover = b.data.cover
                     ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
                     : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
-                todayPanels.push(`<a class="today-link" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><span class="today-cta">${escHtml(t.home.viewBook)}</span></div></div>${cover}</a>`);
+                todayPanels.push(`<div class="today-link"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><a class="today-cta" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}">${escHtml(t.home.viewBook)}</a></div></div>${cover}</div>`);
                 any = true;
             }
         }
@@ -750,6 +750,7 @@ font-size:13px;
 font-weight:700;
 padding:8px 22px;
 border-radius:20px;
+text-decoration:none;
 transition:transform .2s ease, box-shadow .2s ease;
 
 &:hover{
