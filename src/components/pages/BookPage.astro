@@ -63,6 +63,7 @@ const firstParagraph = (() => {
 ) : (
     <MainLayout>
 
+        <span data-pagefind-meta="title" style="display:none">{book.data.title}</span>
         <span data-pagefind-meta="category" style="display:none">{t.menu[category]?.label || category}</span>
         <span data-pagefind-meta="author" style="display:none">{book.data.author}</span>
         {book.data.translator && <span data-pagefind-meta="translator" style="display:none">{book.data.translator}</span>}
@@ -77,7 +78,7 @@ const firstParagraph = (() => {
                     <TextSizeToggle target=".content" />
                 </div>
 
-                <article class="content">
+                <article class="content" data-pagefind-ignore="index">
                     {hasIntro ? (
                         <Content />
                     ) : (
@@ -108,7 +109,7 @@ const firstParagraph = (() => {
 
             </section>
 
-            <aside class="book-side">
+            <aside class="book-side" data-pagefind-ignore="index">
 
                 <BookCover
                     title={book.data.title}

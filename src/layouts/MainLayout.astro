@@ -50,13 +50,13 @@ const switchPaths = {
 
 <Header />
 
-<main class="container">
+<main class="container" data-pagefind-ignore="index">
 
 <slot />
 
 </main>
 
-<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label="Language">
+<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label="Language" data-pagefind-ignore>
     <div class="lang-modal-card">
         <div class="lang-options">
             <a href={switchPaths.fa} data-lang="fa"><span class="lang-name">{t.lang.fa}</span></a>
@@ -66,7 +66,7 @@ const switchPaths = {
     </div>
 </div>
 
-<button class:list={["back-to-top", { "is-home": ["/","/fa/","/ar/","/ur/"].includes(Astro.url.pathname) }]} id="backToTop" data-tip={t.backToTop} aria-label={t.backToTop}>
+<button class:list={["back-to-top", { "is-home": ["/","/fa/","/ar/","/ur/"].includes(Astro.url.pathname) }]} id="backToTop" data-tip={t.backToTop} aria-label={t.backToTop} data-pagefind-ignore>
 <IconFromFile src="scroll-top.svg" />
 </button>
 
