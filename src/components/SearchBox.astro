@@ -40,111 +40,92 @@ const t = getUi(locale);
     </div>
 
 <script is:inline type="module">
-if (!window.__searchBound) {
-    window.__searchBound = true;
-
-    let pagefind = null;
-    let pagefindReady = false;
-    let pagefindLoading = null;
-    let searchTimeout = null;
-
-    const loadPagefind = (base) => {
-        if (pagefindReady) return Promise.resolve();
-        if (pagefindLoading) return pagefindLoading;
-
-        pagefindLoading = (async () => {
-            try {
-                const mod = await import(base + "pagefind/pagefind.js");
-                pagefind = mod.default || mod;
-                if (typeof pagefind.init === "function") {
-                    await pagefind.init();
-                }
-                pagefindReady = true;
-            } catch (e) {
-                console.warn("Pagefind failed to load:", e);
-            }
-        })();
-
-        return pagefindLoading;
-    };
-
+const initSearch = () => {
     const langClass = (lang) => {
-        const l = String(lang || "").toLowerCase();
+        const l = String(lang || "");
         if (l.includes("فارسی") || l.includes("persian")) return "fa";
         if (l.includes("اردو") || l.includes("urdu")) return "ur";
         if (l.includes("عربی") || l.includes("arabic")) return "ar";
         return "";
     };
 
-    const doSearch = async (input) => {
-        const root = input.closest(".search");
-        if (!root) return;
-        const list = root.querySelector("[data-results-list]");
-        const resultsBox = root.querySelector("[data-search-results]");
-        const empty = root.querySelector("[data-results-empty]");
-        const clearBtn = root.querySelector("[data-search-clear]");
-        const translatorLabel = root.dataset.translator || "";
-        const base = root.dataset.base || "/";
-        const query = input.value;
-
-        await loadPagefind(base);
-        if (!pagefind || !query.trim()) {
-            list.innerHTML = "";
-            resultsBox.classList.remove("open");
-            empty.classList.remove("show");
-            clearBtn.classList.toggle("show", query.trim().length > 0);
-            return;
-        }
-
-        try {
-            const results = await pagefind.search(query);
-            const data = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
-
-            clearBtn.classList.toggle("show", query.trim().length > 0);
-            empty.classList.toggle("show", data.length === 0);
-            resultsBox.classList.toggle("open", data.length > 0 || query.trim().length > 0);
-
-            list.innerHTML = data
-                .map((item) => {
-                    const cat = item.meta?.category || "";
-                    const lang = item.meta?.language || "";
-                    const author = item.meta?.author || "";
-                    const translator = item.meta?.translator || "";
-                    const langCls = langClass(lang);
-                    return `
-                    <a class="result" href="${item.url}">
-                        ${cat ? `<span class="result-cat">${cat}</span>` : ""}
-                        <span class="result-title">${item.meta?.title || ""}</span>
-                        <span class="result-author">${author}${translator ? " — " + translatorLabel + " " + translator : ""}</span>
-                        ${lang ? `<span class="result-lang ${langCls}">${lang}</span>` : ""}
-                    </a>`;
-                })
-                .join("");
-        } catch (e) {
-            console.warn("Pagefind search error:", e);
-        }
-    };
-
     document.querySelectorAll("[data-search-input]").forEach((input) => {
         if (input.dataset.bound) return;
         input.dataset.bound = "1";
 
+        const cidAttr = "data-astro-cid-" + (input.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
+
         input.addEventListener("input", () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => doSearch(input), 80);
+            const root = input.closest(".search");
+            clearTimeout(input._searchTimeout);
+            input._searchTimeout = setTimeout(async () => {
+                const list = root?.querySelector("[data-results-list]");
+                const base = root?.dataset.base || "/";
+                const translatorLabel = root?.dataset.translator || "";
+                const resultsBox = root?.querySelector("[data-search-results]");
+                const empty = root?.querySelector("[data-results-empty]");
+                const clearBtn = root?.querySelector("[data-search-clear]");
+                const query = input.value;
+
+                if (!query.trim()) {
+                    if (list) list.innerHTML = "";
+                    if (resultsBox) resultsBox.classList.remove("open");
+                    if (empty) empty.classList.remove("show");
+                    if (clearBtn) clearBtn.classList.remove("show");
+                    return;
+                }
+
+                if (clearBtn) clearBtn.classList.add("show");
+
+                try {
+                    if (!window.__pagefind) {
+                        const mod = await import(base + "pagefind/pagefind.js");
+                        const pf = mod.default || mod;
+                        if (typeof pf.init === "function") await pf.init();
+                        window.__pagefind = pf;
+                    }
+                    const pf = window.__pagefind;
+                    if (!pf) return;
+
+                    const results = await pf.search(query);
+                    const allData = await Promise.all(results.results.slice(0, 20).map((r) => r.data()));
+
+                    const bookResults = allData.filter((item) => {
+                        const u = item.url || "";
+                        return u.includes("/books/") && item.meta?.category;
+                    }).slice(0, 7);
+
+                    if (empty) empty.classList.toggle("show", bookResults.length === 0);
+                    if (resultsBox) resultsBox.classList.toggle("open", bookResults.length > 0);
+
+                    if (list) {
+                        list.innerHTML = bookResults
+                            .map((item) => {
+                                const cat = item.meta?.category || "";
+                                const lang = item.meta?.language || "";
+                                const author = item.meta?.author || "";
+                                const translator = item.meta?.translator || "";
+                                const langCls = langClass(lang);
+                                const authorLine = translator ? author + " — " + translatorLabel + " " + translator : author;
+                                return `
+                                <a class="result" href="${item.url}" ${cidAttr}>
+                                    <span class="result-cat" ${cidAttr}>${cat}</span>
+                                    <span class="result-title" ${cidAttr}>${item.meta?.title || ""}</span>
+                                    <span class="result-author" ${cidAttr}>${authorLine}</span>
+                                    ${lang ? `<span class="result-lang ${langCls}" ${cidAttr}>${lang}</span>` : ""}
+                                </a>`;
+                            })
+                            .join("");
+                    }
+                } catch (e) {
+                    console.warn("Search error:", e);
+                }
+            }, 80);
         });
 
         input.addEventListener("focus", () => {
-            const base = input.closest(".search")?.dataset.base || "/";
-            loadPagefind(base);
-            if (input.value.trim()) doSearch(input);
+            if (input.value.trim()) input.dispatchEvent(new Event("input"));
         });
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!e.target.closest(".search")) {
-            document.querySelectorAll("[data-search-results]").forEach((el) => el.classList.remove("open"));
-        }
     });
 
     document.querySelectorAll("[data-search-clear]").forEach((btn) => {
@@ -164,7 +145,19 @@ if (!window.__searchBound) {
             if (input) input.focus();
         });
     });
-}
+
+    if (!window.__searchDocBound) {
+        window.__searchDocBound = true;
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".search")) {
+                document.querySelectorAll("[data-search-results]").forEach((el) => el.classList.remove("open"));
+            }
+        });
+    }
+};
+
+initSearch();
+document.addEventListener("astro:page-load", initSearch);
 </script>
 
 </div>
@@ -174,7 +167,6 @@ if (!window.__searchBound) {
 .search{
 position:relative;
 width:100%;
-}
 
 .search-inner{
 position:relative;
@@ -271,6 +263,7 @@ visibility:visible;
 transform:translateY(0);
 }
 }
+}
 
 .results-empty{
 display:none;
@@ -294,7 +287,7 @@ flex-direction:column;
 .result{
 display:flex;
 align-items:center;
-gap:10px;
+gap:8px;
 padding:10px 14px;
 text-decoration:none;
 transition:background .2s ease;
@@ -306,11 +299,12 @@ border-top:1px solid color-mix(in srgb, var(--border) 60%, transparent);
 &:hover{
 background:color-mix(in srgb, var(--accent) 8%, transparent);
 }
+}
 
 .result-cat{
 flex-shrink:0;
 font-size:10px;
-padding:4px 10px;
+padding:3px 10px;
 border-radius:12px;
 background:color-mix(in srgb, var(--accent) 15%, transparent);
 color:var(--accent);
@@ -319,8 +313,9 @@ color:var(--accent);
 .result-title{
 flex:0 1 auto;
 min-width:0;
+max-width:50%;
 font-size:14px;
-font-weight:600;
+font-weight:700;
 color:var(--text);
 white-space:nowrap;
 overflow:hidden;
@@ -330,50 +325,51 @@ text-overflow:ellipsis;
 .result-author{
 flex:1;
 min-width:0;
-font-size:12px;
+font-size:11px;
+font-weight:400;
 color:var(--gray);
 white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis;
+opacity:.7;
 }
 
 .result-lang{
 flex-shrink:0;
-font-size:11px;
-font-weight:700;
-padding:4px 10px;
+font-size:10px;
+font-weight:600;
+padding:3px 10px;
 border-radius:20px;
 white-space:nowrap;
 
 &.fa{
-background:color-mix(in srgb, #2b9348 18%, transparent);
+background:color-mix(in srgb, #2b9348 15%, transparent);
 color:#2b9348;
 }
 
 &.ar{
-background:color-mix(in srgb, #e07b39 18%, transparent);
+background:color-mix(in srgb, #e07b39 15%, transparent);
 color:#e07b39;
 }
 
 &.ur{
-background:color-mix(in srgb, #3b82f6 18%, transparent);
+background:color-mix(in srgb, #3b82f6 15%, transparent);
 color:#3b82f6;
 }
 
 :global(.dark) &.fa{
-background:color-mix(in srgb, #4ade80 18%, transparent);
+background:color-mix(in srgb, #4ade80 15%, transparent);
 color:#4ade80;
 }
 
 :global(.dark) &.ar{
-background:color-mix(in srgb, #fb923c 18%, transparent);
+background:color-mix(in srgb, #fb923c 15%, transparent);
 color:#fb923c;
 }
 
 :global(.dark) &.ur{
-background:color-mix(in srgb, #60a5fa 18%, transparent);
+background:color-mix(in srgb, #60a5fa 15%, transparent);
 color:#60a5fa;
-}
 }
 }
 
