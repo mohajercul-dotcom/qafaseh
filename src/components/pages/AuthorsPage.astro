@@ -10,9 +10,16 @@ const { locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
 const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
-const collections = categoryKeys.map((name) => ({ name, label: t.menu[name].label }));
 
 const all = (await allBooks()).filter((b) => bookSiteLang(b) === locale);
+
+const categoryCounts = {};
+for (const book of all) {
+    categoryCounts[book.category] = (categoryCounts[book.category] || 0) + 1;
+}
+const activeCollections = categoryKeys
+    .filter((key) => categoryCounts[key] > 0)
+    .map((key) => ({ name: key, label: t.menu[key].label }));
 
 const authors = new Map();
 for (const book of all) {
@@ -39,7 +46,7 @@ const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.n
 
     </section>
 
-    <TagFilter tags={collections.map((c) => c.label)} gridId="authors-grid" byCategory locale={locale} />
+    <TagFilter tags={activeCollections.map((c) => c.label)} gridId="authors-grid" byCategory locale={locale} />
 
     <section class="authors" id="authors-grid">
 

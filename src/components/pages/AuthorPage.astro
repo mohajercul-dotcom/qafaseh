@@ -46,7 +46,7 @@ const total = allBooksForAuthor.length;
 
     </section>
 
-    <TagFilter tags={collections.map((c) => c.label)} gridId="books-author" byCategory locale={locale} />
+    <TagFilter tags={groups.map((g) => g.label)} gridId="books-author" byCategory locale={locale} />
     <div class="books" id="books-author" data-cols="3">
         {allBooksForAuthor.map((book) => (
             <div class="book-item" data-cat={t.menu[book.category].label}>
