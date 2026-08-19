@@ -23,7 +23,7 @@ for (const book of all) {
     authors.set(name, entry);
 }
 
-const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.name, "fa"));
+const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.name, locale));
 ---
 
 <MainLayout>
@@ -88,6 +88,10 @@ font-weight:900;
 p{
 margin-top:14px;
 color:var(--gray);
+text-align:justify;
+text-justify:inter-ideograph;
+line-height:1.9;
+padding:0 clamp(20px, 10vw, 250px);
 }
 }
 

@@ -18,7 +18,7 @@ if (!categoryKeys.includes(category)) {
 
 const books = (await getCollection(category))
     .filter((b) => bookSiteLang(b) === locale)
-    .sort((a, b) => a.data.title.localeCompare(b.data.title, "fa"));
+    .sort((a, b) => a.data.title.localeCompare(b.data.title, locale));
 
 const allTags = buildTagFilters(books);
 
@@ -94,6 +94,10 @@ font-weight:900;
 p{
 margin-top:14px;
 color:var(--gray);
+text-align:justify;
+text-justify:inter-ideograph;
+line-height:1.9;
+padding:0 clamp(20px, 10vw, 250px);
 }
 }
 
