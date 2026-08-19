@@ -169,22 +169,22 @@ const todayPanels = [];
 
         <div class="card stat">
             <h3>{t.home.totalBooks}</h3>
-            <strong>{toLocaleDigits(totalBooks, locale)}</strong>
+            <strong data-count={totalBooks}>{toLocaleDigits(totalBooks, locale)}</strong>
         </div>
 
         <div class="card stat">
             <h3>{t.home.authorsCount}</h3>
-            <strong>{toLocaleDigits(totalAuthors, locale)}</strong>
+            <strong data-count={totalAuthors}>{toLocaleDigits(totalAuthors, locale)}</strong>
         </div>
 
         <div class="card stat">
             <h3>{t.home.shiaBooks}</h3>
-            <strong>{toLocaleDigits(counts.shiite, locale)}</strong>
+            <strong data-count={counts.shiite}>{toLocaleDigits(counts.shiite, locale)}</strong>
         </div>
 
         <div class="card stat">
             <h3>{t.home.atheismBooks}</h3>
-            <strong>{toLocaleDigits(counts.atheism, locale)}</strong>
+            <strong data-count={counts.atheism}>{toLocaleDigits(counts.atheism, locale)}</strong>
         </div>
 
     </section>
@@ -214,6 +214,32 @@ setTimeout(render, nextMidnight - now);
 };
 initToday();
 document.addEventListener("astro:page-load", initToday);
+</script>
+
+<script>
+const initCountUp = () => {
+    document.querySelectorAll(".stats-row [data-count]").forEach((el) => {
+        if (el.dataset.animated) return;
+        el.dataset.animated = "1";
+        const target = parseInt(el.dataset.count, 10);
+        if (!target) return;
+        const locale = document.documentElement.lang || "fa";
+        const duration = 1500;
+        const start = performance.now();
+        const tick = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * target);
+            el.textContent = current.toLocaleString(locale);
+            if (progress < 1) requestAnimationFrame(tick);
+        };
+        el.textContent = "0";
+        requestAnimationFrame(tick);
+    });
+};
+initCountUp();
+document.addEventListener("astro:page-load", initCountUp);
 </script>
 
 <script>
