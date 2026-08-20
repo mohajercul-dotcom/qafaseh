@@ -5,7 +5,7 @@ import TagFilter from "../TagFilter.astro";
 import { allBooks } from "../../lib/paths.js";
 import { slugify, normalizeAuthor } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
-import { localizePath, toLocaleDigits, bookDescription, bookSiteLang } from "../../lib/i18n.js";
+import { localizePath, bookDescription, bookSiteLang } from "../../lib/i18n.js";
 
 const { name, locale = "fa" } = Astro.props;
 const t = getUi(locale);
@@ -37,16 +37,17 @@ const total = allBooksForAuthor.length;
 
         <h1>{name}</h1>
 
-        <p class="stats">
-            {groups.map((group) => (
-                <span class="badge">{group.label}: {toLocaleDigits(group.books.length, locale)}</span>
-            ))}
-            <span class="badge total">{t.authors.totalBooks(toLocaleDigits(total, locale))}</span>
-        </p>
-
     </section>
 
-    <TagFilter tags={groups.map((g) => g.label)} gridId="books-author" byCategory locale={locale} />
+    <TagFilter
+        tags={groups.map((g) => g.label)}
+        counts={Object.fromEntries(groups.map((g) => [g.label, g.books.length]))}
+        totalCount={total}
+        totalCountLabel={t.authors.total}
+        gridId="books-author"
+        byCategory
+        locale={locale}
+    />
     <div class="books" id="books-author" data-cols="3">
         {allBooksForAuthor.map((book) => (
             <div class="book-item" data-cat={t.menu[book.category].label}>
@@ -85,28 +86,6 @@ text-align:center;
 h1{
 font-size:40px;
 font-weight:900;
-}
-
-.stats{
-display:flex;
-justify-content:center;
-gap:12px;
-margin-top:16px;
-flex-wrap:wrap;
-}
-
-.badge{
-padding:6px 14px;
-border-radius:20px;
-font-size:13px;
-background:color-mix(in srgb, var(--accent) 15%, transparent);
-color:var(--accent);
-}
-
-.badge.total{
-background:var(--card);
-border:1px solid var(--border);
-color:var(--text);
 }
 }
 

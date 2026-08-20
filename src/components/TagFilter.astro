@@ -1,7 +1,7 @@
 ---
 import { getUi } from "../i18n/index.js";
 
-const { tags, gridId, byCategory = false, locale = "fa" } = Astro.props;
+const { tags, gridId, byCategory = false, locale = "fa", counts, totalCount, totalCountLabel } = Astro.props;
 const t = getUi(locale);
 ---
 
@@ -14,15 +14,15 @@ const t = getUi(locale);
 
         <div class="filter-bar">
             {byCategory ? (
-                <button class="filter-chip active" data-cat="">{t.filter.all}</button>
+                <button class="filter-chip active" data-cat="">{totalCount != null && totalCountLabel ? `${totalCountLabel} (${totalCount})` : t.filter.all}</button>
             ) : (
                 <button class="filter-chip active" data-tag="">{t.filter.all}</button>
             )}
             {tags.map((tag) => (
                 byCategory ? (
-                    <button class="filter-chip" data-cat={tag}>{tag}</button>
+                    <button class="filter-chip" data-cat={tag}>{counts && counts[tag] != null ? `${tag} (${counts[tag]})` : tag}</button>
                 ) : (
-                    <button class="filter-chip" data-tag={tag}>{tag}</button>
+                    <button class="filter-chip" data-tag={tag}>{counts && counts[tag] != null ? `${tag} (${counts[tag]})` : tag}</button>
                 )
             ))}
         </div>
