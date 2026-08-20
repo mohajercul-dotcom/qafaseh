@@ -7,16 +7,15 @@ const t = getUi(locale);
 const pageUrl = shortUrl || url || Astro.url.href;
 const shareText = excerpt ? `${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `${title} — ${author}\n\n${pageUrl}`;
 const encodedText = encodeURIComponent(shareText);
-const encodedUrl = encodeURIComponent(pageUrl);
 
-const telegram = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
-const whatsapp = `https://wa.me/?text=${encodedText}%0A%0A${encodedUrl}`;
-const twitter = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+const telegram = `https://t.me/share/url?text=${encodedText}`;
+const whatsapp = `https://wa.me/?text=${encodedText}`;
+const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
 ---
 
 <div class="share-block">
 
-    <button class="share-toggle" data-copy-url={pageUrl} data-copy-text={shareText} data-copy-title={title}>
+    <button class="share-toggle" data-copy-text={shareText} data-copy-title={title}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"/>
             <circle cx="6" cy="12" r="3"/>
@@ -49,12 +48,11 @@ const pop = block?.querySelector(".share-pop");
 shareRefs = { block, toggle, pop };
 
 const openShareSheet = async () => {
-const url = toggle.dataset.copyUrl;
 const text = toggle.dataset.copyText;
 const title = toggle.dataset.copyTitle || text;
 if (navigator.share) {
 try {
-await navigator.share({ title, text, url });
+await navigator.share({ title, text });
 return true;
 } catch (err) {
 if (err.name === "AbortError") return true;
