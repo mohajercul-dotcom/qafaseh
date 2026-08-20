@@ -15,7 +15,7 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
 
 <div class="share-block">
 
-    <button class="share-toggle" data-copy-text={shareText} data-copy-title={title}>
+    <button class="share-toggle" data-copy-text={shareText}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"/>
             <circle cx="6" cy="12" r="3"/>
@@ -49,10 +49,9 @@ shareRefs = { block, toggle, pop };
 
 const openShareSheet = async () => {
 const text = toggle.dataset.copyText;
-const title = toggle.dataset.copyTitle || text;
 if (navigator.share) {
 try {
-await navigator.share({ title, text });
+await navigator.share({ text });
 return true;
 } catch (err) {
 if (err.name === "AbortError") return true;
