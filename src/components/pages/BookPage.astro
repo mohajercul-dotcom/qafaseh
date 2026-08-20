@@ -293,6 +293,8 @@ const setupFootnotes = () => {
     let fullText = "";
 
     refs.forEach((ref) => {
+        if (ref.dataset.fnBound) return;
+        ref.dataset.fnBound = "1";
         ref.addEventListener("click", (e) => {
             e.preventDefault();
             if (activeRef === ref && tooltip.classList.contains("show")) {
@@ -346,6 +348,7 @@ if (document.readyState === "loading") {
 } else {
     setupFootnotes();
 }
+document.addEventListener("astro:page-load", setupFootnotes);
 </script>
 
 <style lang="scss" is:global>
