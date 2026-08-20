@@ -1,5 +1,6 @@
 ---
 import { getUi } from "../i18n/index.js";
+import { toLocaleDigits } from "../lib/i18n.js";
 
 const { tags, gridId, byCategory = false, locale = "fa", counts, totalCount, totalCountLabel } = Astro.props;
 const t = getUi(locale);
@@ -14,15 +15,15 @@ const t = getUi(locale);
 
         <div class="filter-bar">
             {byCategory ? (
-                <button class="filter-chip active" data-cat="">{totalCount != null && totalCountLabel ? `${totalCountLabel} (${totalCount})` : t.filter.all}</button>
+                <button class="filter-chip active" data-cat="">{totalCount != null && totalCountLabel ? `${totalCountLabel} (${toLocaleDigits(totalCount, locale)})` : t.filter.all}</button>
             ) : (
                 <button class="filter-chip active" data-tag="">{t.filter.all}</button>
             )}
             {tags.map((tag) => (
                 byCategory ? (
-                    <button class="filter-chip" data-cat={tag}>{counts && counts[tag] != null ? `${tag} (${counts[tag]})` : tag}</button>
+                    <button class="filter-chip" data-cat={tag}>{counts && counts[tag] != null ? `${tag} (${toLocaleDigits(counts[tag], locale)})` : tag}</button>
                 ) : (
-                    <button class="filter-chip" data-tag={tag}>{counts && counts[tag] != null ? `${tag} (${counts[tag]})` : tag}</button>
+                    <button class="filter-chip" data-tag={tag}>{counts && counts[tag] != null ? `${tag} (${toLocaleDigits(counts[tag], locale)})` : tag}</button>
                 )
             ))}
         </div>
