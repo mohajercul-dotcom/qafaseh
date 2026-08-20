@@ -6,9 +6,11 @@ const t = getUi(locale);
 
 const pageUrl = shortUrl || url || Astro.url.href;
 const shareText = excerpt ? `*${title}*\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `*${title}*\n\n${author}\n\n${pageUrl}`;
+const shareTextTg = excerpt ? `**${title}**\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `**${title}**\n\n${author}\n\n${pageUrl}`;
 const encodedText = encodeURIComponent(shareText);
+const encodedTextTg = encodeURIComponent(shareTextTg);
 
-const telegram = `https://t.me/share/url?text=${encodedText}`;
+const telegram = `https://t.me/share/url?text=${encodedTextTg}`;
 const whatsapp = `https://wa.me/?text=${encodedText}`;
 const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
 ---
