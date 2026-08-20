@@ -5,7 +5,7 @@ const { title, author, excerpt, url, shortUrl, locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
 const pageUrl = shortUrl || url || Astro.url.href;
-const shareText = excerpt ? `**${title}**\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `**${title}**\n\n${author}\n\n${pageUrl}`;
+const shareText = excerpt ? `*${title}*\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `*${title}*\n\n${author}\n\n${pageUrl}`;
 const encodedText = encodeURIComponent(shareText);
 
 const telegram = `https://t.me/share/url?text=${encodedText}`;
