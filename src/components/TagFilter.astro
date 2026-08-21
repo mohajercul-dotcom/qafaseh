@@ -2,7 +2,7 @@
 import { getUi } from "../i18n/index.js";
 import { toLocaleDigits } from "../lib/i18n.js";
 
-const { tags, gridId, byCategory = false, locale = "fa", counts, totalCount, totalCountLabel, recommendedLabel } = Astro.props;
+const { tags, gridId, byCategory = false, locale = "fa", counts, totalCount, totalCountLabel } = Astro.props;
 const t = getUi(locale);
 ---
 
@@ -18,9 +18,6 @@ const t = getUi(locale);
                 <button class="filter-chip active" data-cat="">{totalCount != null && totalCountLabel ? `${totalCountLabel} (${toLocaleDigits(totalCount, locale)})` : t.filter.all}</button>
             ) : (
                 <button class="filter-chip active" data-tag="">{t.filter.all}</button>
-            )}
-            {recommendedLabel && (
-                <button class="filter-chip rec-chip" data-recommended>{recommendedLabel}</button>
             )}
             {tags.map((tag) => (
                 byCategory ? (
@@ -153,17 +150,6 @@ color:var(--accent);
 &.active{
 background:var(--accent);
 border-color:var(--accent);
-color:#fff;
-}
-
-&.rec-chip{
-border-color:color-mix(in srgb, #c8a45c 40%, var(--border));
-color:#c8a45c;
-}
-
-&.rec-chip.active{
-background:linear-gradient(135deg, #c8a45c, #e8c96a);
-border-color:#c8a45c;
 color:#fff;
 }
 }

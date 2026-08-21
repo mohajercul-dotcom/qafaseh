@@ -12,13 +12,8 @@ export function initBookFilter() {
             const active = bar.querySelector(".filter-chip.active");
             const tag = active ? active.dataset.tag : null;
             const cat = active ? active.dataset.cat : null;
-            const onlyRecommended = active ? active.dataset.recommended : null;
 
             grid.querySelectorAll(".book-item, .author-card").forEach((item) => {
-                if (onlyRecommended !== undefined) {
-                    item.style.display = item.dataset.recommended !== undefined ? "" : "none";
-                    return;
-                }
                 if (cat !== undefined) {
                     const cats = (item.dataset.cat || "").split(",");
                     item.style.display = !cat || cats.includes(cat) ? "" : "none";

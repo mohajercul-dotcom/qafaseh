@@ -49,7 +49,7 @@ const gridId = `books-${category}`;
 
     </section>
 
-    <TagFilter tags={allTags} gridId={gridId} locale={locale} recommendedLabel={books.some((b) => b.data.recommended) ? t.filter.recommended : null} />
+    <TagFilter tags={allTags} gridId={gridId} locale={locale} />
 
     <div class="books" id={gridId} data-cols="3">
         {books.map((book) => (

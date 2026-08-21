@@ -49,7 +49,6 @@ const total = allBooksForAuthor.length;
         gridId="books-author"
         byCategory
         locale={locale}
-        recommendedLabel={allBooksForAuthor.some((b) => b.data.recommended) ? t.filter.recommended : null}
     />
     <div class="books" id="books-author" data-cols="3">
         {allBooksForAuthor.map((book) => (
