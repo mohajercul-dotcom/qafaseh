@@ -19,9 +19,11 @@ const groups = categoryKeys
     .map((key) => ({
         key,
         label: t.menu[key].label,
-        books: all.filter(
-            (book) => book.category === key && bookSiteLang(book) === locale && normalizeAuthor(book.data.author) === name
-        ),
+        books: all
+            .filter(
+                (book) => book.category === key && bookSiteLang(book) === locale && normalizeAuthor(book.data.author) === name
+            )
+            .sort((a, b) => a.data.title.localeCompare(b.data.title, locale)),
     }))
     .filter((group) => group.books.length > 0);
 
