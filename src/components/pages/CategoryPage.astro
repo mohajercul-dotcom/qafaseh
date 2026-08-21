@@ -49,11 +49,11 @@ const gridId = `books-${category}`;
 
     </section>
 
-    <TagFilter tags={allTags} gridId={gridId} locale={locale} />
+    <TagFilter tags={allTags} gridId={gridId} locale={locale} recommendedLabel={books.some((b) => b.data.recommended) ? t.filter.recommended : null} />
 
     <div class="books" id={gridId} data-cols="3">
         {books.map((book) => (
-            <div class="book-item">
+            <div class="book-item" {...book.data.recommended ? { "data-recommended": "" } : {}}>
                 <BookCard
                     title={book.data.title}
                     author={book.data.author}
@@ -63,6 +63,7 @@ const gridId = `books-${category}`;
                     tags={book.data.filterTags ?? book.data.tags ?? []}
                     cardTags={book.data.cardTags ?? book.data.tags ?? []}
                     locale={locale}
+                    recommended={book.data.recommended}
                 />
             </div>
         ))}

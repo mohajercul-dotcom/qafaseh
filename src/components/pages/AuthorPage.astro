@@ -49,10 +49,11 @@ const total = allBooksForAuthor.length;
         gridId="books-author"
         byCategory
         locale={locale}
+        recommendedLabel={allBooksForAuthor.some((b) => b.data.recommended) ? t.filter.recommended : null}
     />
     <div class="books" id="books-author" data-cols="3">
         {allBooksForAuthor.map((book) => (
-            <div class="book-item" data-cat={t.menu[book.category].label}>
+            <div class="book-item" data-cat={t.menu[book.category].label} {...book.data.recommended ? { "data-recommended": "" } : {}}>
                 <BookCard
                     title={book.data.title}
                     author={book.data.author}
@@ -62,6 +63,7 @@ const total = allBooksForAuthor.length;
                     tags={book.data.filterTags ?? book.data.tags ?? []}
                     cardTags={book.data.cardTags ?? book.data.tags ?? []}
                     locale={locale}
+                    recommended={book.data.recommended}
                 />
             </div>
         ))}

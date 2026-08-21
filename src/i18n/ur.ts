@@ -110,6 +110,7 @@ export const uiUr: UiDict = {
     },
     filter: {
         all: "سب",
+        recommended: "سفارش شدہ",
         next: "اگلا فلٹر",
         prev: "پچھلا فلٹر",
     },

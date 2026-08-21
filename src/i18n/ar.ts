@@ -110,6 +110,7 @@ export const uiAr: UiDict = {
     },
     filter: {
         all: "الكل",
+        recommended: "موصى به",
         next: "المرشح التالي",
         prev: "المرشح السابق",
     },

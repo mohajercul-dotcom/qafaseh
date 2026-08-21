@@ -2,13 +2,19 @@
 import { getUi } from "../i18n/index.js";
 import { bookLocale } from "../lib/i18n.js";
 
-const { title, author, description, language, href, tags = [], cardTags, locale = "fa" } = Astro.props;
+const { title, author, description, language, href, tags = [], cardTags, locale = "fa", recommended = false } = Astro.props;
 const t = getUi(locale);
 const langCode = bookLocale({ data: { language } });
 const chips = cardTags ?? tags;
 ---
 
 <div class="book-card" data-accordion data-tags={tags.join(",")}>
+
+    {recommended && (
+        <span class="recommended-tick" aria-label="پیشنهاد قفسه">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+    )}
 
     <div class="card-main">
 
@@ -80,6 +86,7 @@ document.addEventListener("astro:page-load", initAccordions);
 <style lang="scss">
 
 .book-card{
+position:relative;
 background:var(--card);
 border:1px solid var(--border);
 border-radius:18px;
@@ -247,6 +254,32 @@ background:color-mix(in srgb, var(--accent) 12%, transparent);
 color:var(--accent);
 font-size:11px;
 font-weight:600;
+}
+
+.recommended-tick{
+position:absolute;
+top:12px;
+left:12px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:linear-gradient(135deg, #c8a45c, #e8c96a);
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 2px 8px rgba(200,164,92,.4);
+z-index:2;
+
+svg{
+width:13px;
+height:13px;
+}
+}
+
+:global(.dark) .recommended-tick{
+background:linear-gradient(135deg, #b8943c, #d4b050);
+box-shadow:0 2px 8px rgba(184,148,60,.4);
 }
 
 </style>

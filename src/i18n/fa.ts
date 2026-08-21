@@ -109,6 +109,7 @@ export const uiFa: UiDict = {
     },
     filter: {
         all: "همه",
+        recommended: "پیشنهادی",
         next: "فیلتر بعدی",
         prev: "فیلتر قبلی",
     },

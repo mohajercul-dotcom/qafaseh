@@ -70,6 +70,7 @@ export interface UiDict {
     categories: Record<CategoryKey, { alt: string; desc: string }>;
     filter: {
         all: string;
+        recommended: string;
         next: string;
         prev: string;
     };
