@@ -258,28 +258,37 @@ font-weight:600;
 
 .recommended-tick{
 position:absolute;
-top:12px;
-left:12px;
-width:22px;
-height:22px;
-border-radius:50%;
-background:linear-gradient(135deg, #c8a45c, #e8c96a);
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 2px 8px rgba(200,164,92,.4);
+top:0;
+left:0;
+width:36px;
+height:36px;
+overflow:hidden;
 z-index:2;
 
+&::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:0;
+height:0;
+border-style:solid;
+border-width:36px 36px 0 0;
+border-color:#c8a45c transparent transparent transparent;
+}
+
 svg{
-width:13px;
-height:13px;
+position:absolute;
+top:6px;
+left:6px;
+width:14px;
+height:14px;
+color:#fff;
 }
 }
 
-:global(.dark) .recommended-tick{
-background:linear-gradient(135deg, #b8943c, #d4b050);
-box-shadow:0 2px 8px rgba(184,148,60,.4);
+:global(.dark) .recommended-tick::before{
+border-color:#b8943c transparent transparent transparent;
 }
 
 </style>
