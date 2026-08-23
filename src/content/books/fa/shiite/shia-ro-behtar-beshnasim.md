@@ -11,6 +11,7 @@ descriptionUr: "یہ کتاب تشیع کے عقائد، تاریخ اور فک�
 caption: "کتابی که با زبانی ساده و روان، خواننده را با عقاید شیعه و تفاوت‌های آن با اهل سنت آشنا می‌کند."
 today: true
 recommended: true
+recommendedAuthor: true
 tags: ["نقد تشیع", "عقیده", "فرقه‌ها"]
 cardTags: ["شیعه", "نقد"]
 filterTags: ["نقد تشیع", "عقیده"]

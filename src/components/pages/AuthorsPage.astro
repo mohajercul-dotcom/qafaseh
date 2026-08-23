@@ -24,9 +24,10 @@ const activeCollections = categoryKeys
 const authors = new Map();
 for (const book of all) {
     const name = normalizeAuthor(book.data.author);
-    const entry = authors.get(name) || { name, counts: {}, total: 0 };
+    const entry = authors.get(name) || { name, counts: {}, total: 0, recommended: false };
     entry.counts[book.category] = (entry.counts[book.category] || 0) + 1;
     entry.total++;
+    if (book.data.recommendedAuthor) entry.recommended = true;
     authors.set(name, entry);
 }
 
@@ -60,6 +61,11 @@ const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.n
                     .join(",")}
             >
                 <h3>{author.name}</h3>
+                {author.recommended && (
+                    <span class="recommended-tick" aria-label="پیشنهاد قفسه">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                )}
 
                 <div class="counts">
                     {Object.entries(author.counts)
@@ -148,6 +154,7 @@ padding:20px 0 40px;
 
 .author-card{
 display:block;
+position:relative;
 background:var(--card);
 border:1px solid var(--border);
 border-radius:18px;
@@ -184,6 +191,30 @@ font-weight:700;
 align-self:center;
 }
 }
+}
+
+.recommended-tick{
+position:absolute;
+top:-1px;
+left:-1px;
+width:38px;
+height:38px;
+background:linear-gradient(135deg, #c8a45c 50%, transparent 50%);
+z-index:2;
+border-radius:18px 0 0 0;
+
+svg{
+position:absolute;
+top:5px;
+left:4px;
+width:14px;
+height:14px;
+color:#fff;
+}
+}
+
+:global(.dark) .recommended-tick{
+background:linear-gradient(135deg, #b8943c 50%, transparent 50%);
 }
 
 @media(max-width:900px){

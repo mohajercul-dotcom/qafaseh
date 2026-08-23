@@ -6,6 +6,8 @@ tags: ["زندگی‌نامه", "نقد تشیع"]
 language: "فارسی"
 pages: 210
 volumes: 1
+recommended: true
+recommendedAuthor: true
 pubDate: 2025-05-10T22:30:00
 ---
 

@@ -31,13 +31,21 @@ const allBooksForAuthor = groups.flatMap((group) =>
     group.books.map((book) => ({ ...book, category: group.key }))
 );
 const total = allBooksForAuthor.length;
+const isRecommendedAuthor = allBooksForAuthor.some((b) => b.data.recommendedAuthor);
 ---
 
 <MainLayout>
 
     <section class="author-header">
 
-        <h1>{name}</h1>
+        <h1>
+            {name}
+            {isRecommendedAuthor && (
+                <span class="recommended-tick" aria-label="پیشنهاد قفسه">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+            )}
+        </h1>
 
     </section>
 
@@ -89,7 +97,33 @@ text-align:center;
 h1{
 font-size:40px;
 font-weight:900;
+position:relative;
+display:inline-block;
 }
+}
+
+.recommended-tick{
+display:inline-flex;
+vertical-align:middle;
+margin-right:8px;
+width:30px;
+height:30px;
+background:linear-gradient(135deg, #c8a45c 50%, transparent 50%);
+border-radius:14px 0 0 0;
+position:relative;
+
+svg{
+position:absolute;
+top:4px;
+left:3px;
+width:12px;
+height:12px;
+color:#fff;
+}
+}
+
+:global(.dark) .recommended-tick{
+background:linear-gradient(135deg, #b8943c 50%, transparent 50%);
 }
 
 .books{

@@ -13,6 +13,7 @@ const bookSchema = z.object({
     cover: z.string().optional(),
     today: z.boolean().optional(),
     recommended: z.boolean().optional(),
+    recommendedAuthor: z.boolean().optional(),
     caption: z.string().optional(),
     authorDesc: z.string().optional(),
     authorDescAr: z.string().optional(),

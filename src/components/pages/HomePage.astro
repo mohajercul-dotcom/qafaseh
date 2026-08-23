@@ -223,7 +223,9 @@ const initCountUp = () => {
         el.dataset.animated = "1";
         const target = parseInt(el.dataset.count, 10);
         if (!target) return;
-        const locale = document.documentElement.lang || "fa";
+        const locale = document.documentElement.dataset.lang || document.documentElement.lang || "fa";
+        const base = locale === "ar" ? 0x0660 : 0x06f0;
+        const toLocale = (n) => String(n).replace(/\d/g, (d) => String.fromCodePoint(base + Number(d)));
         const duration = 1500;
         const start = performance.now();
         const tick = (now) => {
@@ -231,10 +233,10 @@ const initCountUp = () => {
             const progress = Math.min(elapsed / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             const current = Math.round(eased * target);
-            el.textContent = current.toLocaleString(locale);
+            el.textContent = toLocale(current);
             if (progress < 1) requestAnimationFrame(tick);
         };
-        el.textContent = "0";
+        el.textContent = toLocale(0);
         requestAnimationFrame(tick);
     });
 };
