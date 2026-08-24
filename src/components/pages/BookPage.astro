@@ -199,12 +199,17 @@ const syncHeight = () => {
 };
 if (!window.__syncHeightBound) {
 window.__syncHeightBound = true;
+let syncRaf = null;
+const throttledSync = () => {
+    if (syncRaf) return;
+    syncRaf = requestAnimationFrame(() => { syncRaf = null; syncHeight(); });
+};
 window.addEventListener("load", () => {
     syncHeight();
     setTimeout(syncHeight, 500);
     setTimeout(syncHeight, 1500);
 });
-window.addEventListener("resize", syncHeight);
+window.addEventListener("resize", throttledSync);
 document.addEventListener("astro:page-load", () => {
     syncHeight();
     setTimeout(syncHeight, 300);
@@ -246,14 +251,15 @@ const setupFootnotes = () => {
         tooltip.innerHTML =
             "<span class='fn-text'></span>" +
             `<div class='fn-footer'><button class='fn-copy' type='button'>${copyLabel}</button></div>`;
+        const arrow = document.createElement("span");
+        arrow.className = "fn-arrow";
+        tooltip.appendChild(arrow);
         document.body.appendChild(tooltip);
     }
 
     const fnText = tooltip.querySelector(".fn-text");
     const copyBtn = tooltip.querySelector(".fn-copy");
-    const arrow = document.createElement("span");
-    arrow.className = "fn-arrow";
-    tooltip.appendChild(arrow);
+    const arrow = tooltip.querySelector(".fn-arrow");
 
     const textOf = (ref) => {
         const id = ref.id.replace("fnref-", "fn-");
@@ -339,7 +345,14 @@ const setupFootnotes = () => {
     }
     if (!window.__fnScrollBound) {
         window.__fnScrollBound = true;
-        window.addEventListener("scroll", hideFn, true);
+        let fnScrollRaf = null;
+        window.addEventListener("scroll", () => {
+            if (fnScrollRaf) return;
+            fnScrollRaf = requestAnimationFrame(() => {
+                fnScrollRaf = null;
+                hideFn();
+            });
+        }, true);
     }
 };
 
@@ -348,7 +361,10 @@ if (document.readyState === "loading") {
 } else {
     setupFootnotes();
 }
-document.addEventListener("astro:page-load", setupFootnotes);
+if (!window.__fnPageLoadBound) {
+    window.__fnPageLoadBound = true;
+    document.addEventListener("astro:page-load", setupFootnotes);
+}
 </script>
 
 <style lang="scss" is:global>

@@ -62,6 +62,8 @@ if (!body) return;
 
 const isOpen = card.classList.contains("open");
 
+const newMaxHeight = isOpen ? "0" : body.scrollHeight + "px";
+
 document.querySelectorAll("[data-accordion].open").forEach((other) => {
 if (other !== card) {
 other.classList.remove("open");
@@ -74,7 +76,7 @@ card.classList.remove("open");
 body.style.maxHeight = "0";
 } else {
 card.classList.add("open");
-body.style.maxHeight = body.scrollHeight + "px";
+body.style.maxHeight = newMaxHeight;
 }
 });
 });

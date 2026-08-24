@@ -124,7 +124,7 @@ const initSearch = () => {
                     if (!pf) return;
 
                     const results = await pf.search(query);
-                    const allData = await Promise.all(results.results.slice(0, 20).map((r) => r.data()));
+                    const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
 
                     const q = query.trim().toLowerCase();
                     const bookResults = allData.filter((item) => {
@@ -159,7 +159,7 @@ const initSearch = () => {
                 } catch (e) {
                     console.warn("Search error:", e);
                 }
-            }, 80);
+            }, 200);
         });
 
         input.addEventListener("focus", () => {

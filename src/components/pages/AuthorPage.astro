@@ -79,7 +79,11 @@ const isRecommendedAuthor = allBooksForAuthor.some((b) => b.data.recommendedAuth
     <script>
         import { initAllGrids } from "../../lib/bookGrid.js";
         import { initBookFilter } from "../../lib/bookFilter.js";
-        window.addEventListener("resize", initAllGrids);
+        let _gridRaf = null;
+        window.addEventListener("resize", () => {
+            if (_gridRaf) return;
+            _gridRaf = requestAnimationFrame(() => { _gridRaf = null; initAllGrids(); });
+        });
         document.addEventListener("astro:page-load", () => {
             initAllGrids();
             initBookFilter();

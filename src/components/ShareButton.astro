@@ -38,16 +38,13 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
 </div>
 
 <script define:vars={{ copyLabel: t.share.copy, copiedLabel: t.share.copied }}>
-let shareRefs = null;
-let shareDocBound = false;
-
 const initShare = () => {
 const block = document.querySelector(".share-block");
 if (!block || block.dataset.bound) return;
 block.dataset.bound = "1";
 const toggle = block?.querySelector(".share-toggle");
 const pop = block?.querySelector(".share-pop");
-shareRefs = { block, toggle, pop };
+window.__shareRefs = { block, toggle, pop };
 
 const openShareSheet = async () => {
 const text = toggle.dataset.copyText;
@@ -70,10 +67,10 @@ pop?.classList.toggle("open");
 }
 });
 
-if (!shareDocBound) {
-shareDocBound = true;
+if (!window.__shareDocBound) {
+window.__shareDocBound = true;
 document.addEventListener("click", (e) => {
-const refs = shareRefs;
+const refs = window.__shareRefs;
 if (refs && refs.block && !refs.block.contains(e.target)) {
 refs.pop?.classList.remove("open");
 }

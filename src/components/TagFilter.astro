@@ -79,14 +79,21 @@ const initFilter = () => {
         }
     });
 
-    bar.addEventListener("scroll", update, { passive: true });
+    bar.addEventListener("scroll", () => {
+        if (bar._scrollRaf) return;
+        bar._scrollRaf = requestAnimationFrame(() => { bar._scrollRaf = null; update(); });
+    }, { passive: true });
     update();
     setTimeout(update, 300);
     setTimeout(update, 1000);
 
     if (!windowFilterBound) {
         windowFilterBound = true;
-        window.addEventListener("resize", update);
+        let _filterResizeRaf = null;
+        window.addEventListener("resize", () => {
+            if (_filterResizeRaf) return;
+            _filterResizeRaf = requestAnimationFrame(() => { _filterResizeRaf = null; update(); });
+        });
         window.addEventListener("load", update);
     }
 };

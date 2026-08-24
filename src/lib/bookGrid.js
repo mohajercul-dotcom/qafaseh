@@ -16,6 +16,9 @@ export function initBookGrid(gridId) {
     const w = window.innerWidth;
     const cols = w > 900 ? 3 : w > 600 ? 2 : 1;
 
+    if (grid.__lastCols === cols) return;
+    grid.__lastCols = cols;
+
     grid.innerHTML = "";
 
     const columns = [];
@@ -41,6 +44,7 @@ export function initBookGrid(gridId) {
 export function initAllGrids() {
     document.querySelectorAll("[id^='books-']").forEach(grid => {
         grid.classList.remove("ready");
+        grid.__lastCols = null;
         initBookGrid(grid.id);
     });
 }
