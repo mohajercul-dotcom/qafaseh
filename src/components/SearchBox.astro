@@ -52,10 +52,17 @@ const initSearch = () => {
     };
 
     const base = document.querySelector("[data-search-input]")?.closest(".search")?.dataset.base || "/";
-    import(base + "pagefind/pagefind.js").then((mod) => {
+    const currentLang = document.documentElement.lang || "fa";
+
+    import(base + "pagefind/pagefind.js").then(async (mod) => {
         const pf = mod.default || mod;
-        if (typeof pf.init === "function") pf.init();
+        if (window.__pagefindLang && window.__pagefindLang !== currentLang && typeof pf.destroy === "function") {
+            try { await pf.destroy(); } catch(e) {}
+            window.__pagefind = null;
+        }
+        if (typeof pf.init === "function") await pf.init();
         window.__pagefind = pf;
+        window.__pagefindLang = currentLang;
     }).catch(() => {});
 
     document.querySelectorAll("[data-search-input]").forEach((input) => {
@@ -132,13 +139,17 @@ const initSearch = () => {
 
                     const loc = root?.dataset?.locale || "fa";
                     const searchLang = ["fa", "ar", "ur"].includes(loc) ? loc : "fa";
-                    const results = await pf.search(query, { lang: searchLang });
-                    const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
+                    const results = await pf.search(query);
+                    const allData = await Promise.all(results.results.slice(0, 20).map((r) => r.data()));
 
                     const q = query.trim().toLowerCase();
                     const bookResults = allData.filter((item) => {
-                        const u = item.url || "";
+                        const u = (item.url || "").replace(/\/+$/, "");
                         if (!u.includes("/books/") || !item.meta?.category) return false;
+                        if (searchLang === "fa" && /(^|\/)ar(\/|$)/.test(u)) return false;
+                        if (searchLang === "fa" && /(^|\/)ur(\/|$)/.test(u)) return false;
+                        if (searchLang === "ar" && !/(^|\/)ar(\/|$)/.test(u)) return false;
+                        if (searchLang === "ur" && !/(^|\/)ur(\/|$)/.test(u)) return false;
                         const fields = [
                             item.meta?.title || "",
                             item.meta?.author || ""
