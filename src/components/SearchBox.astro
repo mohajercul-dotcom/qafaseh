@@ -51,6 +51,13 @@ const initSearch = () => {
         return "";
     };
 
+    const base = document.querySelector("[data-search-input]")?.closest(".search")?.dataset.base || "/";
+    import(base + "pagefind/pagefind.js").then((mod) => {
+        const pf = mod.default || mod;
+        if (typeof pf.init === "function") pf.init();
+        window.__pagefind = pf;
+    }).catch(() => {});
+
     document.querySelectorAll("[data-search-input]").forEach((input) => {
         if (input.dataset.bound) return;
         input.dataset.bound = "1";
