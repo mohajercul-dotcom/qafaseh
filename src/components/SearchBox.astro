@@ -5,7 +5,7 @@ const { locale = "fa", pageType = "books" } = Astro.props;
 const t = getUi(locale);
 ---
 
-<div class="search" data-page-type={pageType} data-translator={t.search.translator} data-base={import.meta.env.BASE_URL || "/"}>
+<div class="search" data-page-type={pageType} data-translator={t.search.translator} data-base={import.meta.env.BASE_URL || "/"} data-locale={locale}>
 
     <div class="search-inner">
 
@@ -127,9 +127,12 @@ const initSearch = () => {
                     const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
 
                     const q = query.trim().toLowerCase();
+                    const loc = root?.dataset?.locale || "";
                     const bookResults = allData.filter((item) => {
                         const u = item.url || "";
                         if (!u.includes("/books/") || !item.meta?.category) return false;
+                        const locPrefix = loc === "fa" ? "/" : loc ? `/${loc}/` : "/";
+                        if (!u.startsWith(locPrefix)) return false;
                         const fields = [
                             item.meta?.title || "",
                             item.meta?.author || ""
