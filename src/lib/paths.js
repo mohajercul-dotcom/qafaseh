@@ -12,9 +12,12 @@ export async function allBooks() {
     return all;
 }
 
-export async function bookPaths() {
+export async function bookPaths(locale) {
     const books = await allBooks();
     return books.flatMap((book) => {
+        const bookLang = String(book.id).split("/")[0];
+        if (locale && bookLang !== locale) return [];
+
         const persian = slugify(book.data.title);
         const code = shortCode(book.id + book.data.title);
         const fileId = String(book.id).split("/").pop();

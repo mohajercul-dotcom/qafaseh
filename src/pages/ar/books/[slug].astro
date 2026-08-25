@@ -3,7 +3,7 @@ import BookPage from "../../../components/pages/BookPage.astro";
 import { bookPaths } from "../../../lib/paths.js";
 
 export function getStaticPaths() {
-    return bookPaths().then((paths) => paths.map((p) => ({ ...p, props: { ...p.props, locale: "ar" } })));
+    return bookPaths("ar").then((paths) => paths.map((p) => ({ ...p, props: { ...p.props, locale: "ar" } })));
 }
 
 const { book, mode, locale } = Astro.props;
