@@ -130,16 +130,15 @@ const initSearch = () => {
                     const pf = window.__pagefind;
                     if (!pf) return;
 
-                    const results = await pf.search(query);
+                    const loc = root?.dataset?.locale || "fa";
+                    const searchLang = ["fa", "ar", "ur"].includes(loc) ? loc : "fa";
+                    const results = await pf.search(query, { lang: searchLang });
                     const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
 
                     const q = query.trim().toLowerCase();
-                    const loc = root?.dataset?.locale || "";
                     const bookResults = allData.filter((item) => {
                         const u = item.url || "";
                         if (!u.includes("/books/") || !item.meta?.category) return false;
-                        const locPrefix = loc === "fa" ? "/" : loc ? `/${loc}/` : "/";
-                        if (!u.startsWith(locPrefix)) return false;
                         const fields = [
                             item.meta?.title || "",
                             item.meta?.author || ""
