@@ -53,17 +53,23 @@ const initSearch = () => {
 
     const base = document.querySelector("[data-search-input]")?.closest(".search")?.dataset.base || "/";
     const currentLang = document.documentElement.lang || "fa";
+    let pfReady = false;
 
-    import(base + "pagefind/pagefind.js").then(async (mod) => {
+    const ensurePf = async () => {
+        if (window.__pagefind && pfReady) return window.__pagefind;
+        const mod = await import(base + "pagefind/pagefind.js");
         const pf = mod.default || mod;
         if (window.__pagefindLang && window.__pagefindLang !== currentLang && typeof pf.destroy === "function") {
             try { await pf.destroy(); } catch(e) {}
             window.__pagefind = null;
+            pfReady = false;
         }
         if (typeof pf.init === "function") await pf.init();
         window.__pagefind = pf;
         window.__pagefindLang = currentLang;
-    }).catch(() => {});
+        pfReady = true;
+        return pf;
+    };
 
     document.querySelectorAll("[data-search-input]").forEach((input) => {
         if (input.dataset.bound) return;
@@ -128,19 +134,13 @@ const initSearch = () => {
                         return;
                     }
 
-                    if (!window.__pagefind) {
-                        const mod = await import(base + "pagefind/pagefind.js");
-                        const pf = mod.default || mod;
-                        if (typeof pf.init === "function") await pf.init();
-                        window.__pagefind = pf;
-                    }
-                    const pf = window.__pagefind;
+                    const pf = await ensurePf();
                     if (!pf) return;
 
                     const loc = root?.dataset?.locale || "fa";
                     const searchLang = ["fa", "ar", "ur"].includes(loc) ? loc : "fa";
                     const results = await pf.search(query);
-                    const allData = await Promise.all(results.results.slice(0, 20).map((r) => r.data()));
+                    const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
 
                     const q = query.trim().toLowerCase();
                     const bookResults = allData.filter((item) => {
@@ -183,6 +183,7 @@ const initSearch = () => {
         });
 
         input.addEventListener("focus", () => {
+            if (!pfReady) ensurePf();
             if (input.value.trim()) input.dispatchEvent(new Event("input"));
         });
     });
