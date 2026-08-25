@@ -73,7 +73,7 @@ export const uiAr: UiDict = {
         authorInTopics: (topics, n) => (n === 1 ? "في موضوع واحد" : `في ${topics} مواضيع`),
         newest: "أحدث الكتب",
         mostRead: "الأكثر قراءة",
-        totalBooks: "الكتب",
+        totalBooks: "کل الکتب",
         authorsCount: "المؤلفون",
         shiaBooks: "كتب الشيعة",
         atheismBooks: "كتب الإلحاد",
