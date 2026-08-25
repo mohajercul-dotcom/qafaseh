@@ -110,7 +110,8 @@ const todayPanels = [];
 
         <div class="hero-description">
             <p class="hero-desc-desktop" set:html={t.home.heroDescDesktop} />
-            <p class="hero-desc-mobile" set:html={t.home.heroDescMobile} />
+            <img class="hero-desc-mobile hero-svg-light" src={`/hero-desc-${locale}-light.svg`} alt={t.home.heroAlt} />
+            <img class="hero-desc-mobile hero-svg-dark" src={`/hero-desc-${locale}-dark.svg`} alt={t.home.heroAlt} />
         </div>
 
         <div class="hero-library">
@@ -384,6 +385,10 @@ color:var(--gray);
 display:none;
 }
 
+.hero-svg-dark{
+    display:none;
+}
+
 p{
 margin:0;
 }
@@ -431,6 +436,24 @@ margin:0;
 :global(.dark) .lib-dark{
     opacity:1;
     transform:scale(1);
+}
+
+.hero-svg-light{
+    opacity:1;
+    width:100%;
+}
+
+.hero-svg-dark{
+    opacity:0;
+    width:100%;
+}
+
+:global(.dark) .hero-svg-light{
+    opacity:0;
+}
+
+:global(.dark) .hero-svg-dark{
+    opacity:1;
 }
 
 @media(max-width:900px){
