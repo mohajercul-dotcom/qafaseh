@@ -53,22 +53,15 @@ const initSearch = () => {
 
     const base = document.querySelector("[data-search-input]")?.closest(".search")?.dataset.base || "/";
     const currentLang = document.documentElement.lang || "fa";
-    let pfReady = false;
 
-    const ensurePf = async () => {
-        if (window.__pagefind && pfReady) return window.__pagefind;
-        const mod = await import(base + "pagefind/pagefind.js");
-        const pf = mod.default || mod;
-        if (window.__pagefindLang && window.__pagefindLang !== currentLang && typeof pf.destroy === "function") {
-            try { await pf.destroy(); } catch(e) {}
-            window.__pagefind = null;
-            pfReady = false;
-        }
-        if (typeof pf.init === "function") await pf.init();
-        window.__pagefind = pf;
-        window.__pagefindLang = currentLang;
-        pfReady = true;
-        return pf;
+    let bookIndex = null;
+    const ensureIndex = async () => {
+        if (bookIndex) return bookIndex;
+        try {
+            const resp = await fetch(base + "search-index.json");
+            bookIndex = await resp.json();
+        } catch { bookIndex = []; }
+        return bookIndex;
     };
 
     document.querySelectorAll("[data-search-input]").forEach((input) => {
@@ -134,28 +127,15 @@ const initSearch = () => {
                         return;
                     }
 
-                    const pf = await ensurePf();
-                    if (!pf) return;
-
                     const loc = root?.dataset?.locale || "fa";
                     const searchLang = ["fa", "ar", "ur"].includes(loc) ? loc : "fa";
-                    const results = await pf.search(query);
-                    const allData = await Promise.all(results.results.slice(0, 7).map((r) => r.data()));
-
+                    const index = await ensureIndex();
                     const q = query.trim().toLowerCase();
-                    const bookResults = allData.filter((item) => {
-                        const u = (item.url || "").replace(/\/+$/, "");
-                        if (!u.includes("/books/") || !item.meta?.category) return false;
-                        if (searchLang === "fa" && /(^|\/)ar(\/|$)/.test(u)) return false;
-                        if (searchLang === "fa" && /(^|\/)ur(\/|$)/.test(u)) return false;
-                        if (searchLang === "ar" && !/(^|\/)ar(\/|$)/.test(u)) return false;
-                        if (searchLang === "ur" && !/(^|\/)ur(\/|$)/.test(u)) return false;
-                        const fields = [
-                            item.meta?.title || "",
-                            item.meta?.author || ""
-                        ].join(" ").toLowerCase();
+                    const bookResults = index.filter((item) => {
+                        if (item.l !== searchLang) return false;
+                        const fields = (item.t + " " + item.a).toLowerCase();
                         return fields.includes(q);
-                    }).slice(0, 7);
+                    }).slice(0, 10);
 
                     if (empty) empty.classList.toggle("show", bookResults.length === 0);
                     if (resultsBox) resultsBox.classList.toggle("open", bookResults.length > 0);
@@ -163,14 +143,11 @@ const initSearch = () => {
                     if (list) {
                         list.innerHTML = bookResults
                             .map((item) => {
-                                const author = item.meta?.author || "";
-                                const translator = item.meta?.translator || "";
-                                const authorLine = translator ? author + " — " + translatorLabel + " " + translator : author;
                                 return `
-                                <a class="result-item" href="${item.url}" ${cidAttr}>
+                                <a class="result-item" href="${item.u}" ${cidAttr}>
                                     <div class="result-content" ${cidAttr}>
-                                        <span class="result-title" ${cidAttr}>${item.meta?.title || ""}</span>
-                                        <span class="result-author" ${cidAttr}>${authorLine}</span>
+                                        <span class="result-title" ${cidAttr}>${item.t}</span>
+                                        <span class="result-author" ${cidAttr}>${item.a}</span>
                                     </div>
                                 </a>`;
                             })
@@ -179,11 +156,11 @@ const initSearch = () => {
                 } catch (e) {
                     console.warn("Search error:", e);
                 }
-            }, 200);
+            }, 100);
         });
 
         input.addEventListener("focus", () => {
-            if (!pfReady) ensurePf();
+            if (!bookIndex) ensureIndex();
             if (input.value.trim()) input.dispatchEvent(new Event("input"));
         });
     });
