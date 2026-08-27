@@ -79,6 +79,17 @@ const firstParagraph = (() => {
                     <TextSizeToggle target=".content" />
                 </div>
 
+                {book.data.disclaimer && (
+                    <div class="disclaimer-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span>{book.data.disclaimer}</span>
+                    </div>
+                )}
+
                 <article class="content" data-pagefind-ignore="index">
                     {hasIntro ? (
                         <Content />
@@ -700,6 +711,33 @@ display:flex;
 align-items:center;
 gap:12px;
 margin-top:12px;
+}
+
+.disclaimer-box{
+display:flex;
+align-items:flex-start;
+gap:10px;
+padding:12px 16px;
+margin-bottom:14px;
+background:color-mix(in srgb, #e67e22 8%, var(--card));
+border:1px solid color-mix(in srgb, #e67e22 25%, var(--border));
+border-radius:14px;
+font-size:13px;
+line-height:1.9;
+color:var(--text);
+
+svg{
+width:18px;
+height:18px;
+color:#e67e22;
+flex-shrink:0;
+margin-top:3px;
+}
+}
+
+:global(.dark) .disclaimer-box{
+background:color-mix(in srgb, #e67e22 6%, var(--card));
+border-color:color-mix(in srgb, #e67e22 18%, var(--border));
 }
 
 .author-btn{

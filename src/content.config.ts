@@ -24,6 +24,7 @@ const bookSchema = z.object({
     tags: z.array(z.string()).optional(),
     cardTags: z.array(z.string()).optional(),
     filterTags: z.array(z.string()).optional(),
+    disclaimer: z.string().optional(),
     pubDate: z.coerce.date().optional(),
 });
 
