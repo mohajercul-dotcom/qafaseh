@@ -104,7 +104,7 @@ const firstParagraph = (() => {
                     <ShareButton
                         title={book.data.title}
                         author={book.data.author}
-                        excerpt={firstParagraph}
+                        excerpt={book.data.shareText || firstParagraph}
                         url={siteUrl}
                         shortUrl={shortUrl}
                         locale={locale}
