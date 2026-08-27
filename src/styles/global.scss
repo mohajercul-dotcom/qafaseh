@@ -46,7 +46,7 @@ html.theme-anim,
 html.theme-anim *,
 html.theme-anim *::before,
 html.theme-anim *::after{
-transition:background-color .6s ease, background .6s ease, border-color .6s ease, color .6s ease, fill .6s ease, stroke .6s ease, opacity .6s ease, transform .6s ease !important;
+transition:background-color .45s ease, background .45s ease, border-color .45s ease, color .45s ease, fill .45s ease, stroke .45s ease !important;
 }
 
 *{
@@ -66,7 +66,7 @@ body{
 font-family:Vazirmatn,sans-serif;
 background:var(--bg);
 color:var(--text);
-transition:background .6s ease, color .6s ease;
+transition:background .45s ease, color .45s ease;
 overflow-anchor:none;
 }
 
@@ -118,11 +118,12 @@ background:var(--card);
 border:1px solid var(--border);
 border-radius:22px;
 padding:25px;
-transition:background .6s ease, border-color .6s ease, transform .3s ease;
+transition:background .45s ease, border-color .45s ease, transform .25s ease, box-shadow .25s ease;
 }
 
 .card:hover{
-transform:translateY(-4px);
+transform:translateY(-3px);
+box-shadow:0 8px 24px rgba(0,0,0,.06);
 }
 
 .widgets{
@@ -181,8 +182,8 @@ padding:5px 6px;
 ::view-transition-old(root),
 ::view-transition-new(root){
 mix-blend-mode:normal;
-animation-duration:.42s;
-animation-timing-function:cubic-bezier(.33,1,.68,1);
+animation-duration:.28s;
+animation-timing-function:cubic-bezier(.4,0,.2,1);
 }
 
 ::view-transition-old(root){
@@ -203,21 +204,21 @@ animation-name:vt-in-back;
 
 @keyframes vt-out{
 from{ transform:none; opacity:1; }
-to{ transform:translateX(-3.5%); opacity:0; }
+to{ transform:translateX(-1.2%); opacity:0; }
 }
 
 @keyframes vt-in{
-from{ transform:translateX(3.5%); opacity:0; }
+from{ transform:translateX(1.2%); opacity:0; }
 to{ transform:none; opacity:1; }
 }
 
 @keyframes vt-out-back{
 from{ transform:none; opacity:1; }
-to{ transform:translateX(3.5%); opacity:0; }
+to{ transform:translateX(1.2%); opacity:0; }
 }
 
 @keyframes vt-in-back{
-from{ transform:translateX(-3.5%); opacity:0; }
+from{ transform:translateX(-1.2%); opacity:0; }
 to{ transform:none; opacity:1; }
 }
 
@@ -257,21 +258,21 @@ html[dir="rtl"]{
   // RTL animations
   @keyframes vt-out-rtl{
     from{ transform:none; opacity:1; }
-    to{ transform:translateX(3.5%); opacity:0; }
+    to{ transform:translateX(1.2%); opacity:0; }
   }
 
   @keyframes vt-in-rtl{
-    from{ transform:translateX(-3.5%); opacity:0; }
+    from{ transform:translateX(-1.2%); opacity:0; }
     to{ transform:none; opacity:1; }
   }
 
   @keyframes vt-out-back-rtl{
     from{ transform:none; opacity:1; }
-    to{ transform:translateX(-3.5%); opacity:0; }
+    to{ transform:translateX(-1.2%); opacity:0; }
   }
 
   @keyframes vt-in-back-rtl{
-    from{ transform:translateX(3.5%); opacity:0; }
+    from{ transform:translateX(1.2%); opacity:0; }
     to{ transform:none; opacity:1; }
   }
 }

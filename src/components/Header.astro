@@ -209,7 +209,7 @@ height:80px;
 background:var(--card);
 border-bottom:1px solid var(--border);
 box-shadow:0 1px 3px rgba(0,0,0,.04);
-transition:background .6s ease, border-color .6s ease, box-shadow .6s ease;
+transition:background .45s ease, border-color .45s ease, box-shadow .45s ease;
 
 @media(max-width:900px){
 box-shadow:0 1px 3px rgba(0,0,0,.06);
@@ -465,12 +465,12 @@ overflow:visible;
 position:fixed;
 inset:0;
 background:rgba(0,0,0,.4);
-backdrop-filter:blur(4px);
--webkit-backdrop-filter:blur(4px);
+backdrop-filter:blur(3px);
+-webkit-backdrop-filter:blur(3px);
 z-index:55;
 opacity:0;
 visibility:hidden;
-transition:opacity .25s, visibility .25s;
+transition:opacity .22s, visibility .22s;
 pointer-events:none;
 
 &.open{
@@ -489,7 +489,7 @@ z-index:60;
 opacity:0;
 visibility:hidden;
 pointer-events:none;
-transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s, visibility .25s;
+transition:transform .28s cubic-bezier(.4,0,.2,1), opacity .22s, visibility .22s;
 width:calc(100% - 32px);
 max-width:300px;
 
@@ -726,15 +726,15 @@ fill:#fff;
 position:fixed;
 inset:0;
 background:rgba(0,0,0,.55);
-backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px);
+backdrop-filter:blur(5px);
+-webkit-backdrop-filter:blur(5px);
 display:flex;
 align-items:center;
 justify-content:center;
 z-index:1000;
 opacity:0;
 visibility:hidden;
-transition:opacity .35s ease, visibility .35s;
+transition:opacity .3s ease, visibility .3s;
 
 &.open{
 opacity:1;
@@ -754,7 +754,7 @@ text-align:center;
 box-shadow:0 30px 80px rgba(0,0,0,.4);
 opacity:0;
 transform:translateY(30px) scale(.92);
-transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+transition:transform .4s cubic-bezier(.4,0,.2,1), opacity .32s ease;
 
 .about-overlay.open &, .contact-overlay.open &, .lang-overlay.open &{
 opacity:1;
@@ -813,7 +813,7 @@ gap:12px;
 .social{
 width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
 background:var(--bg);border:1px solid var(--border);color:var(--gray);
-transition:transform .35s cubic-bezier(.34,1.56,.64,1), background .3s ease, color .3s ease, border-color .3s ease;
+transition:transform .28s cubic-bezier(.4,0,.2,1), background .28s ease, color .28s ease, border-color .28s ease;
 
 :global(svg){width:22px;height:22px;}
 
@@ -889,11 +889,11 @@ display:none !important;
 <style is:global>
 .bottom-link.spin .icon-moon,
 .bottom-link.spin .icon-sun{
-animation:mb-theme-spin .6s cubic-bezier(.34,1.56,.64,1);
+animation:mb-theme-spin .45s cubic-bezier(.4,0,.2,1);
 }
 @keyframes mb-theme-spin{
-0%{transform:scale(.9) rotate(0deg);}
-50%{transform:scale(1.15) rotate(20deg);}
+0%{transform:scale(.92) rotate(0deg);}
+60%{transform:scale(1.08) rotate(14deg);}
 100%{transform:scale(1) rotate(0deg);}
 }
 body.modal-open{overflow:hidden;}
