@@ -8,6 +8,7 @@ pages: 210
 volumes: 1
 recommended: true
 recommendedAuthor: true
+shareText: "پاسخی استدلالی درباره فضیلت ابوبکر و برتری او بر خلافت در برابر ادعاهای ابن مطهر حلی."
 pubDate: 2025-05-10T22:30:00
 ---
 
