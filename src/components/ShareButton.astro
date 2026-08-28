@@ -46,25 +46,16 @@ const toggle = block?.querySelector(".share-toggle");
 const pop = block?.querySelector(".share-pop");
 window.__shareRefs = { block, toggle, pop };
 
-const openShareSheet = async () => {
-const text = toggle.dataset.copyText;
-if (navigator.share) {
-try {
-await navigator.share({ text });
-return true;
-} catch (err) {
-if (err.name === "AbortError") return true;
-}
-}
-return false;
-};
-
 toggle?.addEventListener("click", async (e) => {
 e.stopPropagation();
-const shared = await openShareSheet();
-if (!shared) {
 pop?.classList.toggle("open");
-}
+const text = toggle.dataset.copyText;
+try {
+await navigator.clipboard.writeText(text);
+const label = toggle.querySelector("span");
+label.textContent = copiedLabel;
+setTimeout(() => (label.textContent = copyLabel), 2000);
+} catch {}
 });
 
 if (!window.__shareDocBound) {
