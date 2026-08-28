@@ -87,8 +87,9 @@ color:var(--logo-text);
 display:flex;
 align-items:center;
 justify-content:center;
-box-shadow:0 4px 14px color-mix(in srgb, var(--logo-bg) 35%, transparent);
-transition:background .6s ease, box-shadow .6s ease, color .6s ease;
+border:1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+box-shadow:0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent);
+transition:background .6s ease, box-shadow .6s ease, color .6s ease, border-color .6s ease;
 
 :global(svg){
 width:30px;

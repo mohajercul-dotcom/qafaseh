@@ -410,8 +410,9 @@ height:32px;
 border-radius:9px;
 background:var(--logo-bg);
 color:var(--logo-text);
-box-shadow:0 2px 8px color-mix(in srgb, var(--logo-bg) 30%, transparent);
-transition:background .6s ease, box-shadow .6s ease, color .6s ease;
+border:1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+box-shadow:0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
+transition:background .6s ease, box-shadow .6s ease, color .6s ease, border-color .6s ease;
 :global(svg){width:20px;height:20px;}
 }
 
