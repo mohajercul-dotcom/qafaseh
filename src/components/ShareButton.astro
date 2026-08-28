@@ -5,14 +5,7 @@ const { title, author, excerpt, url, shortUrl, locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
 const pageUrl = shortUrl || url || Astro.url.href;
-const shareText = excerpt ? `*${title}*\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `*${title}*\n\n${author}\n\n${pageUrl}`;
-const shareTextTg = excerpt ? `**${title}**\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `**${title}**\n\n${author}\n\n${pageUrl}`;
-const encodedText = encodeURIComponent(shareText);
-const encodedTextTg = encodeURIComponent(shareTextTg);
-
-const telegram = `https://t.me/share/url?text=${encodedTextTg}`;
-const whatsapp = `https://wa.me/?text=${encodedText}`;
-const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
+const shareText = excerpt ? `${title}\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `${title}\n\n${author}\n\n${pageUrl}`;
 ---
 
 <div class="share-block">
@@ -28,55 +21,36 @@ const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
         <span>{t.share.button}</span>
     </button>
 
-    <div class="share-pop">
-        <button class="pop-item copy" data-pop-copy>{t.share.copy}</button>
-        <a class="pop-item" href={telegram} target="_blank" rel="noopener">{t.share.telegram}</a>
-        <a class="pop-item" href={whatsapp} target="_blank" rel="noopener">{t.share.whatsapp}</a>
-        <a class="pop-item" href={twitter} target="_blank" rel="noopener">{t.share.x}</a>
-    </div>
-
 </div>
 
-<script define:vars={{ copyLabel: t.share.copy, copiedLabel: t.share.copied }}>
+<script define:vars={{ copyLabel: t.share.button, copiedLabel: t.share.copied }}>
 const initShare = () => {
 const block = document.querySelector(".share-block");
 if (!block || block.dataset.bound) return;
 block.dataset.bound = "1";
 const toggle = block?.querySelector(".share-toggle");
-const pop = block?.querySelector(".share-pop");
-window.__shareRefs = { block, toggle, pop };
+const label = toggle?.querySelector("span");
 
-toggle?.addEventListener("click", async (e) => {
-e.stopPropagation();
-pop?.classList.toggle("open");
-const text = toggle.dataset.copyText;
-try {
-await navigator.clipboard.writeText(text);
-const label = toggle.querySelector("span");
+const flashCopied = () => {
+if (!label) return;
 label.textContent = copiedLabel;
 setTimeout(() => (label.textContent = copyLabel), 2000);
-} catch {}
-});
+};
 
-if (!window.__shareDocBound) {
-window.__shareDocBound = true;
-document.addEventListener("click", (e) => {
-const refs = window.__shareRefs;
-if (refs && refs.block && !refs.block.contains(e.target)) {
-refs.pop?.classList.remove("open");
-}
-});
-}
-
-block?.querySelector("[data-pop-copy]")?.addEventListener("click", async () => {
+toggle?.addEventListener("click", async () => {
 const text = toggle.dataset.copyText;
+if (navigator.share) {
+try {
+await navigator.share({ text });
+return;
+} catch (err) {
+if (err.name === "AbortError") return;
+}
+}
 try {
 await navigator.clipboard.writeText(text);
-const btn = block.querySelector("[data-pop-copy]");
-btn.textContent = copiedLabel;
-setTimeout(() => (btn.textContent = copyLabel), 2000);
+flashCopied();
 } catch {}
-pop?.classList.remove("open");
 });
 };
 initShare();
@@ -112,51 +86,6 @@ height:18px;
 background:var(--accent);
 border-color:var(--accent);
 color:#fff;
-}
-}
-
-.share-pop{
-position:absolute;
-bottom:calc(100% + 8px);
-right:0;
-background:var(--card);
-border:1px solid var(--border);
-border-radius:12px;
-padding:6px;
-display:flex;
-flex-direction:column;
-min-width:140px;
-box-shadow:0 12px 32px rgba(0,0,0,.18);
-opacity:0;
-visibility:hidden;
-transform:translateY(6px);
-transition:opacity .2s ease, transform .2s ease, visibility .2s;
-z-index:60;
-
-&.open{
-opacity:1;
-visibility:visible;
-transform:translateY(0);
-}
-
-.pop-item{
-display:block;
-width:100%;
-text-align:right;
-padding:9px 14px;
-border:none;
-border-radius:8px;
-background:transparent;
-color:var(--text);
-font-size:13px;
-text-decoration:none;
-cursor:pointer;
-transition:background .2s ease;
-
-&:hover{
-background:color-mix(in srgb, var(--accent) 15%, transparent);
-color:var(--accent);
-}
 }
 }
 
