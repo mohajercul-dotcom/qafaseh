@@ -266,7 +266,7 @@ document.addEventListener("astro:page-load", () => {
 syncHeight();
 </script>
 
-<script is:inline define:vars={{ copyLabel: t.book.copy, copiedLabel: t.book.copied, bookLocale: locale }}>
+<script is:inline define:vars={{ copyLabel: t.book.copy, copiedLabel: t.book.copied, errLabel: t.book.error, bookLocale: locale }}>
 const setupFootnotes = () => {
     const refs = document.querySelectorAll(".content a[data-footnote-ref]");
     if (!refs.length) return;
@@ -362,9 +362,47 @@ const setupFootnotes = () => {
         });
     });
 
+    const fallbackCopy = (text, done) => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "0";
+        ta.style.left = "0";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        let ok = false;
+        try {
+            ok = document.execCommand("copy");
+        } catch (err) {
+            ok = false;
+        }
+        document.body.removeChild(ta);
+        done(ok);
+    };
+
+    const writeClipboard = (text, done) => {
+        window.focus();
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => done(true)).catch(() => fallbackCopy(text, done));
+        } else if (document.execCommand) {
+            fallbackCopy(text, done);
+        } else {
+            done(false);
+        }
+    };
+
     copyBtn.onclick = (e) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(fullText).then(() => {
+        writeClipboard(fullText, (ok) => {
+            if (!ok) {
+                copyBtn.textContent = errLabel;
+                setTimeout(() => (copyBtn.textContent = copyLabel), 1200);
+                return;
+            }
             copyBtn.textContent = copiedLabel;
             setTimeout(() => {
                 copyBtn.textContent = copyLabel;
