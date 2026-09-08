@@ -134,6 +134,8 @@ export const uiUr: UiDict = {
         pageUnit: "صفحہ",
         download: "کتاب ڈاؤن لوڈ کریں",
         fromTelegram: "ٹیلیگرام چینل سے",
+        fromArchive: "آرکائیو سائٹ سے",
+        fromServer: "خصوصی سرور سے",
         copy: "کاپی",
         copied: "کاپی ہو گیا ✓",
         error: "خرابی",

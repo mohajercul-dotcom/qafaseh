@@ -22,7 +22,9 @@ volumes: 2                           # اختياري — رقم
 language: "العربية"                  # اختياري
 
 # ───────── التحميل والغلاف ─────────
-download: "https://t.me/..."          # اختياري — رابط التحميل
+telegram: "https://t.me/..."                 # اختياري — التحميل من تيليغرام
+archive: "https://archive.org/details/..."   # اختياري — التحميل من الأرشيف
+server: "https://...internxt.com/"           # اختياري — التحميل من الخادم (مدفوع)
 format: "PDF"                         # اختياري
 cover: "/covers/nam-ketab.webp"      # اختياري
 

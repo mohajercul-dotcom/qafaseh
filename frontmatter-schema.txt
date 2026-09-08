@@ -14,7 +14,9 @@ volumes: 2                    # اختیاری — عدد
 language: "فارسی"            # اختیاری — زبان کتاب
 
 # ───────── دانلود و کاور ─────────
-download: "https://..."       # اختیاری — لینک دانلود
+telegram: "https://t.me/..."                 # اختیاری — دکمه دانلود از تلگرام
+archive: "https://archive.org/details/..."   # اختیاری — دکمه دانلود از سایت آرشیو
+server: "https://...internxt.com/..."        # اختیاری — دکمه دانلود از سرور پولی
 format: "PDF"                 # اختیاری
 cover: "/covers/name.webp"   # اختیاری — مسیر کاور
 

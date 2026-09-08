@@ -133,6 +133,8 @@ export const uiFa: UiDict = {
         pageUnit: "صفحه",
         download: "دانلود کتاب",
         fromTelegram: "از کانال تلگرام",
+        fromArchive: "از سایت آرشیو",
+        fromServer: "از سرور اختصاصی",
         copy: "کپی",
         copied: "کپی شد ✓",
         error: "خطا",

@@ -134,6 +134,8 @@ export const uiAr: UiDict = {
         pageUnit: "صفحة",
         download: "تحميل الكتاب",
         fromTelegram: "من قناة تيليغرام",
+        fromArchive: "من موقع الأرشيف",
+        fromServer: "من الخادم المخصص",
         copy: "نسخ",
         copied: "تم النسخ ✓",
         error: "خطأ",

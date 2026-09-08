@@ -36,6 +36,22 @@ const firstParagraph = (() => {
         .replace(/https?:\/\/[^\s)]+/g, "")
         .trim();
 })();
+
+const downloadSources = [
+    { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram },
+    { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive },
+    { key: "server", href: book.data.server, cls: "server", label: t.book.fromServer },
+].filter((s) => s.href);
+
+const downloadIcon = (type) => {
+    const common = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+    const icons = {
+        telegram: `<svg ${common}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+        archive: `<svg ${common}><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
+        server: `<svg ${common}><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+    };
+    return icons[type] || "";
+};
 ---
 
 {mode === "redirect" ? (
@@ -164,19 +180,15 @@ const firstParagraph = (() => {
 
                 <div class="download-box">
 
-                    <a class="download-btn" href={book.data.download || "#"} target="_blank" rel="noopener">
-                        <span class="dl-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                        </span>
-                        <span class="dl-text">
-                            <strong>{t.book.download}</strong>
-                            <small>{book.data.format || "PDF"} — {t.book.fromTelegram}</small>
-                        </span>
-                    </a>
+                    {downloadSources.map((src) => (
+                        <a class={`download-btn ${src.cls}`} href={src.href} target="_blank" rel="noopener">
+                            <span class="dl-icon" set:html={downloadIcon(src.key)} />
+                            <span class="dl-text">
+                                <strong>{t.book.download}</strong>
+                                <small>{book.data.format || "PDF"} — {src.label}</small>
+                            </span>
+                        </a>
+                    ))}
 
                 </div>
 
@@ -658,22 +670,23 @@ color:var(--text);
 }
 
 .download-btn{
+--c:var(--accent);
 display:flex;
 align-items:center;
 justify-content:center;
 gap:12px;
 width:100%;
-background:var(--accent);
+background:var(--c);
 color:#fff;
 padding:16px 20px;
 border-radius:14px;
 text-decoration:none;
-box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+box-shadow:0 8px 24px color-mix(in srgb, var(--c) 35%, transparent);
 transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
 
 &:hover{
 transform:translateY(-3px);
-box-shadow:0 14px 32px color-mix(in srgb, var(--accent) 45%, transparent);
+box-shadow:0 14px 32px color-mix(in srgb, var(--c) 45%, transparent);
 filter:brightness(1.05);
 }
 
@@ -698,6 +711,10 @@ opacity:.8;
 }
 }
 }
+
+.download-btn.tg{--c:#229ED9;}
+.download-btn.archive{--c:#6B8F52;}
+.download-btn.server{--c:#B8860B;}
 
 .volumes-note{
 text-align:center;
@@ -799,6 +816,7 @@ margin-bottom:7px;
 width:auto;
 max-width:260px;
 margin:0 auto;
+padding:13px 18px;
 }
 }
 

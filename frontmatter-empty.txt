@@ -5,7 +5,9 @@ translator: ""
 pages:
 volumes:
 language: ""
-download: ""
+telegram: ""
+archive: ""
+server: ""
 format: ""
 cover: ""
 today:

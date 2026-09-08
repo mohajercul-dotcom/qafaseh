@@ -22,7 +22,9 @@ volumes: 2                        # اختیاری — عدد
 language: "فارسی"                 # اختیاری
 
 # ───────── دانلود و کاور ─────────
-download: "https://t.me/..."       # اختیاری — لینک دانلود
+telegram: "https://t.me/..."                 # اختیاری — دانلود از تلگرام
+archive: "https://archive.org/details/..."   # اختیاری — دانلود از آرشیو
+server: "https://...internxt.com/"           # اختیاری — دانلود از سرور (پولی)
 format: "PDF"                      # اختیاری
 cover: "/covers/nam-ketab.webp"   # اختیاری
 

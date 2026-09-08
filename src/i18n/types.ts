@@ -94,6 +94,8 @@ export interface UiDict {
         pageUnit: string;
         download: string;
         fromTelegram: string;
+        fromArchive: string;
+        fromServer: string;
         copy: string;
         copied: string;
         error: string;

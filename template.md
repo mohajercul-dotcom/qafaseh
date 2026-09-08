@@ -8,7 +8,7 @@ pages: 210
 volumes: 1
 language: "فارسی"
 cover: "/covers/cover-name.jpg"
-download: "https://t.me/..."
+telegram: "https://t.me/..."
 format: "PDF"
 description: "توضیح کوتاه کتاب"
 caption: "توضیح ویژه برای کتاب ویژه روز"

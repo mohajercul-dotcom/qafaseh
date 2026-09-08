@@ -20,7 +20,7 @@ pages: 280
 volumes: 2
 shareText: "آشنایی مستدل و روان با عقاید، تاریخچه و مبانی فکری تشیع از منظر اهل سنت."
 pubDate: "2025-07-15"
-download: "https://t.me/example"
+telegram: "https://t.me/example"
 format: "PDF"
 cover: ""
 ---
