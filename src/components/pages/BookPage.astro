@@ -276,13 +276,11 @@ const setupFootnotes = () => {
         const id = ref.id.replace("fnref-", "fn-");
         const li = document.getElementById(id);
         if (!li) return "";
-        let t = li.textContent;
-        const backref = li.querySelector("a[data-footnote-backref]");
-        if (backref) {
-            t = t.replace(backref.textContent, "").trim();
-        }
-        t = t.replace(/\s*↩\s*$/, "").trim();
-        return t;
+        const clone = li.cloneNode(true);
+        const backref = clone.querySelector("a[data-footnote-backref]");
+        if (backref) backref.remove();
+        clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
+        return clone.textContent.replace(/\s*↩\s*$/, "").trim();
     };
 
     const hideTooltip = () => {
@@ -412,6 +410,7 @@ line-height:1.9;
 font-weight:500;
 color:var(--gray);
 text-align:right;
+white-space:pre-line;
 }
 
 .fn-footer{
