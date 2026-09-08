@@ -41,7 +41,7 @@ const downloadSources = [
     { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram },
     { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive },
     { key: "server", href: book.data.server, cls: "server", label: t.book.fromServer },
-].filter((s) => s.href);
+];
 
 const downloadIcon = (type) => {
     const common = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
@@ -180,15 +180,24 @@ const downloadIcon = (type) => {
 
                 <div class="download-box">
 
-                    {downloadSources.map((src) => (
-                        <a class={`download-btn ${src.cls}`} href={src.href} target="_blank" rel="noopener">
-                            <span class="dl-icon" set:html={downloadIcon(src.key)} />
-                            <span class="dl-text">
-                                <strong>{t.book.download}</strong>
-                                <small>{book.data.format || "PDF"} — {src.label}</small>
-                            </span>
-                        </a>
-                    ))}
+                    {downloadSources.map((src) => {
+                        const disabled = !src.href;
+                        return (
+                            <a
+                                class={`download-btn ${src.cls}${disabled ? " disabled" : ""}`}
+                                href={disabled ? undefined : src.href}
+                                target="_blank"
+                                rel="noopener"
+                                aria-disabled={disabled}
+                            >
+                                <span class="dl-icon" set:html={downloadIcon(src.key)} />
+                                <span class="dl-text">
+                                    <strong>{t.book.download}</strong>
+                                    <small>{book.data.format || "PDF"} — {src.label}</small>
+                                </span>
+                            </a>
+                        );
+                    })}
 
                 </div>
 
@@ -715,6 +724,7 @@ opacity:.8;
 .download-btn.tg{--c:#229ED9;}
 .download-btn.archive{--c:#6B8F52;}
 .download-btn.server{--c:#B8860B;}
+.download-btn.disabled{--c:var(--gray);box-shadow:none;opacity:.55;pointer-events:none;}
 
 .volumes-note{
 text-align:center;
