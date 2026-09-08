@@ -366,7 +366,12 @@ const setupFootnotes = () => {
         e.stopPropagation();
         navigator.clipboard.writeText(fullText).then(() => {
             copyBtn.textContent = copiedLabel;
-            setTimeout(() => (copyBtn.textContent = copyLabel), 1500);
+            setTimeout(() => {
+                copyBtn.textContent = copyLabel;
+                hideTooltip();
+                activeRef?.classList.remove("active");
+                activeRef = null;
+            }, 1000);
         });
     };
 
