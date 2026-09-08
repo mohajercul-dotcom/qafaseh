@@ -93,6 +93,7 @@ export interface UiDict {
         volumeUnit: string;
         pageUnit: string;
         download: string;
+        downloadVerb: string;
         fromTelegram: string;
         fromArchive: string;
         fromServer: string;

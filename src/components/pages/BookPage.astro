@@ -7,6 +7,8 @@ import { render } from "astro:content";
 import { slugify, shortCode } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
 import { localizePath, toLocaleDigits, bookDescription } from "../../lib/i18n.js";
+import IconFromFile from "../icons/IconFromFile.astro";
+import { existsSync } from "node:fs";
 
 const { book, mode = "page", locale = "fa" } = Astro.props;
 const t = getUi(locale);
@@ -52,6 +54,8 @@ const downloadIcon = (type) => {
     };
     return icons[type] || "";
 };
+
+const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, import.meta.url));
 ---
 
 {mode === "redirect" ? (
@@ -179,26 +183,30 @@ const downloadIcon = (type) => {
                 </div>
 
                 <div class="download-box">
+                    <div class="dl-title">{t.book.download}</div>
+                    <div class="dl-row">
 
-                    {downloadSources.map((src) => {
-                        const disabled = !src.href;
-                        return (
-                            <a
-                                class={`download-btn ${src.cls}${disabled ? " disabled" : ""}`}
-                                href={disabled ? undefined : src.href}
-                                target="_blank"
-                                rel="noopener"
-                                aria-disabled={disabled}
-                            >
-                                <span class="dl-icon" set:html={downloadIcon(src.key)} />
-                                <span class="dl-text">
-                                    <strong>{t.book.download}</strong>
-                                    <small>{book.data.format || "PDF"} — {src.label}</small>
-                                </span>
-                            </a>
-                        );
-                    })}
+                        {downloadSources.map((src) => {
+                            const disabled = !src.href;
+                            const tip = disabled ? "" : `${t.book.downloadVerb} ${book.data.format || "PDF"} ${src.label}`;
+                            return (
+                                <a
+                                    class={`dl-btn ${src.cls}${disabled ? " disabled" : ""}`}
+                                    href={disabled ? undefined : src.href}
+                                    target="_blank"
+                                    rel="noopener"
+                                    aria-disabled={disabled}
+                                    data-tip={tip || undefined}
+                                    aria-label={tip || src.label}
+                                >
+                                    {hasIcon(src.key)
+                                        ? <IconFromFile src={`${src.key}.svg`} />
+                                        : <span set:html={downloadIcon(src.key)} />}
+                                </a>
+                            );
+                        })}
 
+                    </div>
                 </div>
 
             </aside>
@@ -678,53 +686,79 @@ color:var(--text);
 }
 }
 
-.download-btn{
+.dl-title{
+font-size:12px;
+font-weight:500;
+color:var(--gray);
+text-align:center;
+}
+
+.dl-row{
+display:flex;
+gap:10px;
+}
+
+.dl-btn{
 --c:var(--accent);
+position:relative;
+flex:1;
 display:flex;
 align-items:center;
 justify-content:center;
-gap:12px;
-width:100%;
+height:52px;
 background:var(--c);
 color:#fff;
-padding:16px 20px;
-border-radius:14px;
+border-radius:12px;
 text-decoration:none;
-box-shadow:0 8px 24px color-mix(in srgb, var(--c) 35%, transparent);
+box-shadow:0 6px 18px color-mix(in srgb, var(--c) 30%, transparent);
 transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
 
-&:hover{
-transform:translateY(-3px);
-box-shadow:0 14px 32px color-mix(in srgb, var(--c) 45%, transparent);
-filter:brightness(1.05);
-}
-
-.dl-icon svg{
+svg{
 width:24px;
 height:24px;
-}
 
-.dl-text{
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-line-height:1.4;
-
-strong{
-font-size:15px;
-}
-
-small{
-font-size:11px;
-opacity:.8;
-}
+*{
+fill:currentColor;
+stroke:currentColor;
 }
 }
 
-.download-btn.tg{--c:#229ED9;}
-.download-btn.archive{--c:#6B8F52;}
-.download-btn.server{--c:#B8860B;}
-.download-btn.disabled{--c:var(--gray);box-shadow:none;opacity:.55;pointer-events:none;}
+&:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 24px color-mix(in srgb, var(--c) 40%, transparent);
+filter:brightness(1.05);
+}
+}
+
+.dl-btn.tg{--c:#229ED9;}
+.dl-btn.archive{--c:#6B8F52;}
+.dl-btn.server{--c:#B8860B;}
+.dl-btn.disabled{--c:var(--gray);box-shadow:none;opacity:.5;pointer-events:none;}
+
+@media(hover:hover) and (pointer:fine){
+.dl-btn[data-tip]::after{
+content:attr(data-tip);
+position:absolute;
+bottom:calc(100% + 8px);
+left:50%;
+transform:translateX(-50%);
+background:var(--text);
+color:var(--card);
+font-size:12px;
+white-space:nowrap;
+padding:6px 10px;
+border-radius:8px;
+pointer-events:none;
+opacity:0;
+transition:opacity .2s ease, transform .2s ease;
+z-index:20;
+}
+
+.dl-btn[data-tip]:hover::after{
+opacity:1;
+transform:translateX(-50%) translateY(-2px);
+}
+}
 
 .volumes-note{
 text-align:center;
@@ -822,11 +856,8 @@ gap:10px;
 margin-bottom:7px;
 }
 
-.download-btn{
-width:auto;
-max-width:260px;
-margin:0 auto;
-padding:13px 18px;
+.dl-btn{
+height:46px;
 }
 }
 
