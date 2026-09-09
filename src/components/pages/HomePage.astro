@@ -268,13 +268,13 @@ const a = authors[localDay % authors.length];
 if (!a) return;
 const info = a.bio ? a.bio : a.summary;
 panel.innerHTML =
-`<div class="author-side">` +
-`<span class="writer-icon" aria-hidden="true"></span>` +
-`<a class="author-btn" href="${esc(a.href)}">${esc(payload.view)}</a>` +
-`</div>` +
 `<div class="author-text">` +
 `<span class="author-name">${esc(a.name)}</span>` +
 `<p class="author-bio">${esc(info)}</p>` +
+`</div>` +
+`<div class="author-side">` +
+`<span class="writer-icon" aria-hidden="true"></span>` +
+`<a class="author-btn" href="${esc(a.href)}">${esc(payload.view)}</a>` +
 `</div>`;
 };
 render();
