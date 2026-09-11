@@ -5,6 +5,7 @@ language: "العربية"
 pages: 258
 volumes: 1
 format: "PDF"
+cover: "/covers/sham-awarez.webp"
 today: true
 recommended: true
 recommendedAuthor: true
