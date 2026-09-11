@@ -66,7 +66,7 @@ export const uiFa: UiDict = {
         heroDescMobile:
             "<strong>مرجعی تخصصی</strong> برای معـــرفی <br/>کتاب‌ها در حوزه اسلام، ادیان و <br/>مکاتب فکری؛ با هدف تسهــیل <br/>پژوهش و دســـترسی به منابع <br/>معتبر اهل سنت",
         suggested: "کتاب پیشنهادی",
-        viewBook: "مشاهده کتاب",
+        viewBook: "بیشتر",
         translatorPrefix: "مترجم:",
         authorOfDay: "نویسنده‌ی روز",
         authorBooks: (count) => `${count} کتاب`,

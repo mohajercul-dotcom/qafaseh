@@ -66,7 +66,7 @@ export const uiAr: UiDict = {
         heroDescMobile:
             "<strong>منصـــــة متخصصــة</strong> للتعريف <br/>بالكـتب والمصــادر في مجالات <br/>الإســـــلام والأديان والمذاهب <br/>الفكرية، مع عـناية خاصة بكتب <br/>أهل السنة و الجماعة",
         suggested: "الكتاب المقترح",
-        viewBook: "عرض الكتاب",
+        viewBook: "المزيد",
         translatorPrefix: "المترجم:",
         authorOfDay: "كاتب اليوم",
         authorBooks: (count, n) => (n === 1 ? "كتاب واحد" : `${count} كتب`),

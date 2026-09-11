@@ -66,7 +66,7 @@ export const uiUr: UiDict = {
         heroDescMobile:
             "اسلام، ادیان اور فکری مکاتب<br/>سے متعلق کتبوں کے تعارف<br/>کے لیے ایک جامع اور معتبر<br/>علمی پلیٹ فارم، جس کا<br/>مقصد تحقیق کو آسان بنانا ہے",
         suggested: "تجویز کردہ کتاب",
-        viewBook: "کتاب دیکھیں",
+        viewBook: "مزید",
         translatorPrefix: "مترجم:",
         authorOfDay: "آج کا مصنف",
         authorBooks: (count, n) => (n === 1 ? "ایک کتاب" : `${count} کتابیں`),
