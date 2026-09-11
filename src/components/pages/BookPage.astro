@@ -40,9 +40,9 @@ const firstParagraph = (() => {
 })();
 
 const downloadSources = [
-    { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram },
-    { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive },
-    { key: "server", href: book.data.server, cls: "server", label: t.book.fromServer },
+    { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram, short: t.book.dlTelegram },
+    { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive, short: t.book.dlArchive },
+    { key: "server", href: book.data.server, cls: "server", label: t.book.fromServer, short: t.book.dlServer },
 ];
 
 const downloadIcon = (type) => {
@@ -209,6 +209,7 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
                                     {hasIcon(src.key)
                                         ? <IconFromFile src={`${src.key}.svg`} />
                                         : <span set:html={downloadIcon(src.key)} />}
+                                    <span class="dl-label">{src.short}</span>
                                 </a>
                             );
                         })}
@@ -799,6 +800,10 @@ filter:brightness(1.05);
 .dl-btn.server{--c:#B8860B;}
 .dl-btn.disabled{--c:var(--gray);box-shadow:none;opacity:.5;pointer-events:none;}
 
+.dl-label{
+display:none;
+}
+
 @media(hover:hover) and (pointer:fine){
 .dl-btn[data-tip]::after{
 content:attr(data-tip);
@@ -921,7 +926,17 @@ margin-bottom:7px;
 }
 
 .dl-btn{
-height:46px;
+height:auto;
+flex-direction:column;
+gap:5px;
+padding:8px 0;
+}
+
+.dl-label{
+display:block;
+font-size:10px;
+font-weight:600;
+color:rgba(255,255,255,.9);
 }
 }
 

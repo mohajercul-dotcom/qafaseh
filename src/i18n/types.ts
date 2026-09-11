@@ -97,6 +97,9 @@ export interface UiDict {
         fromTelegram: string;
         fromArchive: string;
         fromServer: string;
+        dlTelegram: string;
+        dlArchive: string;
+        dlServer: string;
         copy: string;
         copied: string;
         error: string;
