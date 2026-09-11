@@ -131,7 +131,7 @@ export const uiFa: UiDict = {
         language: "زبان",
         volumeUnit: "جلد",
         pageUnit: "صفحه",
-        download: "دانلود کتاب از…",
+        download: "دانلود کتاب از...",
         downloadVerb: "دانلود",
         fromTelegram: "از تلگرام",
         fromArchive: "از آرشیو",

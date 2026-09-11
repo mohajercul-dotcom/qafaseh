@@ -132,7 +132,7 @@ export const uiAr: UiDict = {
         language: "اللغة",
         volumeUnit: "مجلد",
         pageUnit: "صفحة",
-        download: "تحميل الكتاب من..",
+        download: "تحميل الكتاب من...",
         downloadVerb: "تحميل",
         fromTelegram: "من تيليغرام",
         fromArchive: "من الأرشيف",
