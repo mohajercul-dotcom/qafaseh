@@ -91,7 +91,21 @@ const todayPanels = [];
                 const cover = b.data.cover
                     ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
                     : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
-                todayPanels.push(`<div class="today-link"><div class="today-info"><h2>${escHtml(b.data.title)}</h2><p class="today-author">${escHtml(b.data.author)}</p>${desc ? `<p class="today-desc">${escHtml(desc)}</p>` : ""}<div class="today-actions"><a class="today-cta" href="${escHtml(localizePath(locale, `/books/${slugify(b.data.title)}`))}">${escHtml(t.home.viewBook)}</a></div></div>${cover}</div>`);
+                todayPanels.push(
+    '<div class="today-link">' +
+    `<h2 class="today-title">${escHtml(b.data.title)}</h2>` +
+    '<div class="today-body">' +
+    '<div class="today-info">' +
+    `<p class="today-author">${escHtml(b.data.author)}</p>` +
+    (desc ? `<p class="today-desc">${escHtml(desc)}</p>` : "") +
+    '</div>' +
+    '<div class="today-side">' +
+    cover +
+    `<a class="today-cta" href="${escHtml(localizePath(locale, "/books/" + slugify(b.data.title)))}">${escHtml(t.home.viewBook)}</a>` +
+    '</div>' +
+    '</div>' +
+    '</div>'
+);
                 any = true;
             }
         }
@@ -698,6 +712,7 @@ font-weight:700;
 padding:8px 10px;
 border-radius:20px;
 text-decoration:none;
+margin-top:auto;
 transition:transform .2s ease, box-shadow .2s ease;
 
 &:hover{
@@ -715,18 +730,41 @@ position:relative;
 z-index:2;
 background:var(--card);
 display:flex;
-gap:22px;
+flex-direction:column;
+gap:16px;
 text-decoration:none;
+flex:1;
+
+.today-title{
+font-size:20px;
+font-weight:800;
+color:var(--text);
+line-height:1.5;
+margin:0;
+text-align:right;
+}
+
+.today-body{
+display:flex;
+gap:22px;
 align-items:stretch;
 flex:1;
+min-height:0;
+}
+
+.today-side{
+width:130px;
+flex-shrink:0;
+display:flex;
+flex-direction:column;
+align-items:stretch;
+gap:14px;
 
 .cover-photo,
 .cover-img{
 width:130px;
-flex-shrink:0;
-order:2;
-align-self:flex-start;
 transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
 }
 
 &:hover .cover-photo,
@@ -739,21 +777,13 @@ flex:1;
 min-width:0;
 display:flex;
 flex-direction:column;
-order:1;
-
-h2{
-font-size:20px;
-font-weight:800;
-color:var(--text);
-line-height:1.6;
-margin-bottom:6px;
-}
+gap:8px;
 
 .today-author{
 color:var(--accent);
 font-size:13px;
 font-weight:600;
-margin:0 0 10px;
+margin:0;
 }
 
 .today-desc{
@@ -761,26 +791,21 @@ flex:1;
 color:var(--gray);
 font-size:13px;
 line-height:1.9;
-margin:0 0 14px;
+margin:0;
 text-align:justify;
 }
 
-.today-actions{
-display:flex;
-align-items:center;
-gap:14px;
-margin-top:auto;
-}
-
 .today-cta{
-display:inline-block;
+display:block;
+text-align:center;
 background:var(--accent);
 color:#fff;
 font-size:13px;
 font-weight:700;
-padding:8px 22px;
+padding:8px 10px;
 border-radius:20px;
 text-decoration:none;
+margin-top:auto;
 transition:transform .2s ease, box-shadow .2s ease;
 
 &:hover{
@@ -862,16 +887,20 @@ padding-top:10px;
 
 @media(max-width:900px){
 .today-link{
-gap:14px;
+gap:10px;
 
-.cover-photo,
-.cover-img{
+.today-title{
+font-size:15px;
+}
+
+.today-side{
 width:100px;
 }
-
-h2{
-font-size:14px;
 }
+
+.today-side .cover-photo,
+.today-side .cover-img{
+width:100px;
 }
 
 .author-side{
