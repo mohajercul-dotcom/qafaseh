@@ -6,7 +6,7 @@ import TextSizeToggle from "../TextSizeToggle.astro";
 import { render } from "astro:content";
 import { slugify, shortCode } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
-import { localizePath, toLocaleDigits, bookDescription } from "../../lib/i18n.js";
+import { localizePath, toLocaleDigits, bookDescription, bookSiteLang } from "../../lib/i18n.js";
 import IconFromFile from "../icons/IconFromFile.astro";
 import { existsSync } from "node:fs";
 
@@ -15,8 +15,9 @@ const t = getUi(locale);
 
 const category = book.category;
 const canonicalSlug = slugify(book.data.title);
-const canonicalUrl = `/books/${canonicalSlug}`;
-const localizedUrl = localizePath(locale, canonicalUrl);
+const bookLang = bookSiteLang(book);
+const canonicalUrl = localizePath(bookLang, `/books/${canonicalSlug}`);
+const localizedUrl = canonicalUrl;
 const shortSlug = shortCode(book.id + book.data.title);
 const siteBase = import.meta.env.SITE || Astro.url.origin;
 const shortUrl = new URL(`/books/${shortSlug}`, siteBase).href;
@@ -41,7 +42,7 @@ const firstParagraph = (() => {
 
 const downloadSources = [
     { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram, short: t.book.dlTelegram },
-    { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive, short: t.book.dlArchive },
+    { key: "archive", href: book.data.archive, cls: "archive", label: t.book.fromArchive, short: "Archive" },
     { key: "server", href: book.data.server, cls: "server", label: t.book.fromServer, short: t.book.dlServer },
 ];
 

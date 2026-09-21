@@ -42,11 +42,19 @@ export async function bookPaths(locale) {
     const books = await allBooks();
     return books.flatMap((book) => {
         const bookLang = bookSiteLang(book);
-        if (locale && bookLang !== locale) return [];
 
         const persian = slugify(book.data.title);
         const code = shortCode(book.id + book.data.title);
         const fileId = String(book.id).split("/").pop();
+        if (locale && bookLang !== locale) {
+            if (locale === "fa") {
+                return [
+                    { params: { slug: code }, props: { book, mode: "redirect" } },
+                    { params: { slug: fileId }, props: { book, mode: "redirect" } },
+                ];
+            }
+            return [];
+        }
         return [
             { params: { slug: persian }, props: { book, mode: "page" } },
             { params: { slug: code }, props: { book, mode: "redirect" } },
