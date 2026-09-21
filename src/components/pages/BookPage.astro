@@ -41,9 +41,7 @@ const firstParagraph = (() => {
         .trim();
 })();
 
-const ogImage = book.data.cover
-    ? (book.data.cover.startsWith("http") ? book.data.cover : siteBase + book.data.cover)
-    : "";
+const ogImage = "";
 const ogDesc = bookDescription(book, locale) || firstParagraph || t.siteDescription;
 const ogUrl = siteBase + canonicalUrl;
 
