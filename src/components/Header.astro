@@ -1,0 +1,1138 @@
+---
+import SearchBox from "./SearchBox.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import IconButton from "./IconButton.astro";
+import Logo from "./Logo.astro";
+import IconFromFile from "./icons/IconFromFile.astro";
+import VaraqIcon from "./icons/VaraqIcon.astro";
+import { getUi } from "../i18n/index.js";
+import { localizePath, switchLocalePath } from "../lib/i18n.js";
+
+const path = Astro.url.pathname;
+
+const locale = Astro.currentLocale;
+const t = getUi(locale);
+
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+
+const menuItems = categoryKeys.map((key) => ({
+    key,
+    href: localizePath(locale, `/${key}`),
+    label: t.menu[key].label,
+    tip: t.menu[key].tip,
+}));
+
+const authorsItem = {
+    key: "authors",
+    href: localizePath(locale, "/authors"),
+    label: t.menu.authors.label,
+    tip: t.menu.authors.tip,
+};
+
+const faqHref = localizePath(locale, "/faq");
+const homeHref = localizePath(locale, "/");
+
+const switchPaths = {
+    fa: switchLocalePath(path, locale, "fa"),
+    ar: switchLocalePath(path, locale, "ar"),
+    ur: switchLocalePath(path, locale, "ur"),
+};
+---
+
+<header data-pagefind-ignore>
+
+<div class="container nav">
+
+<nav class="right-menu">
+<Logo locale={locale} />
+{menuItems.map((item) => (
+<a class:list={["menu-link", { active: path === item.href || path.startsWith(item.href + "/") }]}
+href={item.href} data-tip={item.tip}>{item.label}</a>
+))}
+<a class:list={["menu-link", { active: path === authorsItem.href || path.startsWith(authorsItem.href + "/") }]}
+href={authorsItem.href} data-tip={authorsItem.tip}>{authorsItem.label}</a>
+</nav>
+
+<SearchBox locale={locale} pageType={path.includes("/faq") ? "faq" : "books"} />
+
+<div class="left-menu">
+<button class="icon-button" data-tip={t.nav.languageTip} id="btnLangDesktop">
+<IconFromFile src="lang.svg" />
+</button>
+<ThemeToggle tip={t.nav.themeTip} />
+<a class="icon-button" data-tip={t.nav.faqTip} id="btnFaqDesktop" href={faqHref}>
+<IconFromFile src="faq.svg" />
+</a>
+<IconButton icon="grid.svg" href="https://mohajercul.vercel.app/" title={t.nav.projectsTip} />
+<button class="icon-button" data-tip={t.nav.install} id="btnInstallDesktop">
+<IconFromFile src="download.svg" />
+</button>
+<button class="icon-button" data-tip={t.nav.about} id="btnAboutDesktop">
+<IconFromFile src="info.svg" />
+</button>
+<button class="icon-button" data-tip={t.nav.contact} id="btnContactDesktop">
+<IconFromFile src="mail.svg" />
+</button>
+</div>
+
+</div>
+
+<nav class="bottom-nav" aria-label={t.nav.dasteh}>
+
+<a class="bottom-link" href={homeHref} data-tip={t.nav.homeTip}>
+<span class="bottom-icon home-icon"><VaraqIcon /></span>
+<span>{t.nav.home}</span>
+</a>
+
+<button class="bottom-link" id="btnDasteh" data-tip={t.nav.dastehTip}>
+<span class="bottom-icon">
+<IconFromFile src="hamburger.svg" />
+</span>
+<span>{t.nav.dasteh}</span>
+</button>
+
+<button class="bottom-link" id="themeToggleBottom" data-tip={t.nav.themeTip}>
+<span class="bottom-icon">
+<span class="icon-sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+<span class="icon-moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span>
+</span>
+<span>{t.nav.theme}</span>
+</button>
+
+<button class="bottom-link" id="btnLangBottom" data-tip={t.nav.languageTip}>
+<span class="bottom-icon">
+<IconFromFile src="lang.svg" />
+</span>
+<span>{t.nav.language}</span>
+</button>
+
+</nav>
+
+<div class="mobile-search">
+<SearchBox locale={locale} pageType={path.includes("/faq") ? "faq" : "books"} />
+<a class="icon-button mobile-faq" data-tip={t.nav.faqTip} id="btnFaqMobile" href={faqHref}>
+<IconFromFile src="faq.svg" />
+</a>
+<button class="icon-button mobile-bisher" data-tip={t.nav.moreTip} id="btnBisher">
+<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+</button>
+</div>
+
+</header>
+
+<div class="mb-overlay" id="mbOverlay"></div>
+
+<div class="mb-popup" id="popupDasteh">
+<div class="mb-popup-grid" data-cols="2">
+{[...menuItems, authorsItem].map((item) => (
+<a class:list={["mb-bubble", { active: path === item.href || path.startsWith(item.href + "/") }]} href={item.href}>{item.label}</a>
+))}
+</div>
+</div>
+
+<div class="mb-popup" id="popupBisher">
+<div class="mb-popup-grid" data-cols="1">
+<a class="mb-bubble" href="https://mohajercul.vercel.app/" target="_blank" rel="noopener">
+<span class="mb-icon-circle"><IconFromFile src="grid.svg" /></span>
+{t.nav.projects}
+</a>
+<button class="mb-bubble" id="btnAboutMobile">
+<span class="mb-icon-circle"><IconFromFile src="info.svg" /></span>
+{t.nav.about}
+</button>
+<button class="mb-bubble" id="btnContactMobile">
+<span class="mb-icon-circle"><IconFromFile src="mail.svg" /></span>
+{t.nav.contact}
+</button>
+<button class="mb-bubble" id="btnInstall">
+<span class="mb-icon-circle">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+</span>
+{t.nav.install}
+</button>
+</div>
+</div>
+
+<div class="about-overlay" id="aboutOverlay">
+<div class="about-modal" role="dialog" aria-modal="true" aria-label={t.nav.about}>
+<button class="modal-close" id="aboutClose" title={t.aboutModal.close}>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="modal-icon"><IconFromFile src="info.svg" /></div>
+<h3>{t.aboutModal.title}</h3>
+<p>{t.aboutModal.p1}</p>
+<div class="socials">
+<a class="social instagram" href="#" title={t.aboutModal.instagram}><IconFromFile src="instagram.svg" /></a>
+<a class="social telegram" href="#" title={t.aboutModal.telegram}><IconFromFile src="telegram.svg" /></a>
+<a class="social tiktok" href="#" title={t.aboutModal.tiktok}><IconFromFile src="tiktok.svg" /></a>
+</div>
+</div>
+</div>
+
+<div class="contact-overlay" id="contactOverlay">
+<div class="contact-modal" role="dialog" aria-modal="true" aria-label={t.nav.contact}>
+<button class="modal-close" id="contactClose" title={t.contactModal.close}>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="modal-icon"><IconFromFile src="mail.svg" /></div>
+<h3>{t.contactModal.title}</h3>
+<p style="font-size:14px;color:var(--gray);margin-bottom:24px;">{t.contactModal.intro}</p>
+<div class="contact-list">
+{t.contactModal.labels.map((label) => (
+<a class="contact-item" href="https://t.me/" target="_blank" rel="noopener">
+<span class="contact-icon"><IconFromFile src="telegram.svg" /></span>
+<span class="contact-text"><span class="contact-label">{label}</span></span>
+<span class="contact-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></span>
+</a>
+))}
+</div>
+</div>
+</div>
+
+<div class="mb-popup" id="popupLang">
+<div class="mb-popup-grid" data-cols="1">
+<a class:list={["mb-bubble lang-opt", { active: locale === "fa" }]} href={switchPaths.fa} data-lang="fa">{t.lang.fa}</a>
+<a class:list={["mb-bubble lang-opt", { active: locale === "ar" }]} href={switchPaths.ar} data-lang="ar">{t.lang.ar}</a>
+<a class:list={["mb-bubble lang-opt", { active: locale === "ur" }]} href={switchPaths.ur} data-lang="ur">{t.lang.ur}</a>
+</div>
+</div>
+
+<style lang="scss">
+
+header{
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:50;
+height:80px;
+background:var(--card);
+border-bottom:1px solid var(--border);
+box-shadow:0 1px 3px rgba(0,0,0,.04);
+transition:background .45s ease, border-color .45s ease, box-shadow .45s ease;
+
+@media(max-width:900px){
+box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+
+.nav{
+height:100%;
+display:grid;
+grid-template-columns:auto 1fr auto;
+align-items:center;
+gap:20px;
+}
+
+.right-menu{
+display:flex;
+gap:6px;
+list-style:none;
+justify-content:flex-start;
+align-items:center;
+flex-shrink:0;
+
+:global(.logo){
+margin-left:4px;
+}
+
+.menu-link{
+position:relative;
+font-size:16px;
+color:var(--text);
+padding:7px 8px;
+border-radius:12px;
+border:1px solid transparent;
+background:transparent;
+transition:color .2s, background .3s ease, border-color .3s ease;
+
+        &.active{
+        color:var(--accent);
+        background:color-mix(in srgb, var(--accent) 12%, transparent);
+        border-color:color-mix(in srgb, var(--accent) 30%, transparent);
+        }
+
+&::after{
+content:attr(data-tip);
+position:absolute;
+top:calc(100% + 10px);
+right:50%;
+transform:translateX(50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, transform .25s ease, visibility .25s;
+z-index:50;
+}
+
+&::before{
+content:"";
+position:absolute;
+top:calc(100% + 4px);
+right:50%;
+transform:translateX(50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-bottom-color:var(--text);
+border-top:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
+&:hover{
+color:var(--accent);
+
+&::after{
+opacity:1;
+visibility:visible;
+}
+
+&::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+}
+
+.left-menu{
+display:flex;
+justify-content:flex-end;
+gap:12px;
+flex-shrink:0;
+}
+
+.bottom-nav{
+display:none;
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+z-index:50;
+background:var(--card);
+border-top:1px solid var(--border);
+box-shadow:0 -1px 6px rgba(0,0,0,.06);
+padding:6px 4px 8px;
+justify-content:space-around;
+align-items:center;
+gap:2px;
+overflow:visible;
+}
+
+.bottom-link{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:2px;
+padding:6px 10px;
+border:none;
+background:transparent;
+color:var(--gray);
+font-size:10px;
+font-family:inherit;
+cursor:pointer;
+border-radius:10px;
+transition:color .2s, background .2s;
+min-width:56px;
+text-decoration:none;
+position:relative;
+white-space:nowrap;
+
+&.active{
+color:var(--accent);
+background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+&:hover{
+color:var(--accent);
+}
+
+.bottom-icon{
+display:flex;
+align-items:center;
+justify-content:center;
+width:22px;
+height:22px;
+position:relative;
+
+:global(svg){
+width:22px;
+height:22px;
+display:block;
+}
+
+.icon-sun,.icon-moon{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+}
+
+.icon-sun{
+opacity:0;
+transform:scale(.4) rotate(-90deg);
+
+:global(svg){transform:rotate(-90deg);}
+}
+
+:global(.dark) & .icon-sun{
+opacity:1;
+transform:scale(1) rotate(0);
+color:var(--accent);
+
+:global(svg){transform:rotate(0);}
+}
+
+:global(.dark) & .icon-moon{
+opacity:0;
+transform:scale(.4) rotate(90deg);
+
+:global(svg){transform:rotate(90deg);}
+}
+}
+
+.home-icon{
+width:32px;
+height:32px;
+border-radius:9px;
+background:var(--logo-bg);
+color:var(--logo-text);
+border:1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+box-shadow:0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
+transition:background .6s ease, box-shadow .6s ease, color .6s ease, border-color .6s ease;
+:global(svg){width:20px;height:20px;}
+}
+
+span{
+font-size:10px;
+line-height:1.2;
+}
+}
+
+.mobile-search{
+display:none;
+padding:12px 16px;
+background:var(--card);
+border-bottom:1px solid var(--border);
+position:relative;
+z-index:51;
+align-items:center;
+gap:8px;
+
+:global(.search){
+flex:1;
+min-width:0;
+width:auto;
+}
+
+.mobile-faq{
+flex-shrink:0;
+
+&::after,&::before{
+display:none !important;
+}
+}
+
+.mobile-bisher{
+flex-shrink:0;
+}
+}
+
+@media(max-width:900px){
+height:auto;
+padding:0;
+overflow:visible;
+.nav{display:none;}
+.mobile-search{display:flex;}
+.bottom-nav{display:flex;}
+.icon-button{width:38px;height:38px;}
+}
+}
+
+.mb-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.4);
+backdrop-filter:blur(3px);
+-webkit-backdrop-filter:blur(3px);
+z-index:55;
+opacity:0;
+visibility:hidden;
+transition:opacity .22s, visibility .22s;
+pointer-events:none;
+
+&.open{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+}
+
+.mb-popup{
+position:fixed;
+bottom:72px;
+left:50%;
+transform:translateX(-50%) translateY(12px);
+z-index:60;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:transform .28s cubic-bezier(.4,0,.2,1), opacity .22s, visibility .22s;
+width:calc(100% - 32px);
+max-width:300px;
+
+&.open{
+transform:translateX(-50%) translateY(0);
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+
+&#popupBisher{
+width:190px;
+bottom:auto;
+top:70px;
+transform:translateX(0) translateY(-12px);
+
+&.open{
+transform:translateX(0) translateY(0);
+}
+
+.mb-popup-grid{
+gap:7px;
+padding:12px;
+}
+
+.mb-bubble{
+padding:10px 10px;
+gap:8px;
+font-size:13px;
+border-radius:13px;
+
+.mb-icon-circle{
+width:34px;
+height:34px;
+
+:global(svg){width:17px;height:17px;}
+}
+}
+}
+
+&#popupLang{
+width:190px;
+}
+
+#popupLang .mb-bubble{
+justify-content:center;
+font-size:13px;
+padding:10px 10px;
+}
+
+@media(max-width:900px){
+&#popupLang{
+width:170px;
+}
+
+#popupLang .mb-bubble{
+padding:8px 8px;
+font-size:12px;
+}
+}
+}
+
+.mb-popup-grid{
+display:grid;
+gap:10px;
+padding:16px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:20px;
+box-shadow:0 -4px 24px rgba(0,0,0,.12);
+backdrop-filter:none;
+-webkit-backdrop-filter:none;
+
+&[data-cols="2"]{
+grid-template-columns:1fr 1fr;
+}
+
+&[data-cols="1"]{
+grid-template-columns:1fr;
+}
+}
+
+.mb-bubble{
+display:flex;
+align-items:center;
+direction:rtl;
+justify-content:flex-start;
+gap:10px;
+padding:14px 12px;
+background:color-mix(in srgb, var(--accent) 8%, transparent);
+border:1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+border-radius:16px;
+color:var(--text);
+font-size:14px;
+font-weight:500;
+text-decoration:none;
+font-family:inherit;
+cursor:pointer;
+transition:background .2s, color .2s, border-color .2s;
+width:100%;
+box-sizing:border-box;
+
+.mb-icon-circle{
+display:flex;
+align-items:center;
+justify-content:center;
+width:40px;
+height:40px;
+border-radius:50%;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+flex-shrink:0;
+
+:global(svg){
+width:20px;
+height:20px;
+color:var(--gray);
+transition:color .2s;
+}
+}
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+border-color:color-mix(in srgb, var(--accent) 40%, transparent);
+color:var(--accent);
+.mb-icon-circle{
+background:color-mix(in srgb, var(--accent) 25%, transparent);
+:global(svg){color:var(--accent);}
+}
+}
+
+&.active{
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+border-color:color-mix(in srgb, var(--accent) 35%, transparent);
+color:var(--accent);
+font-weight:700;
+
+.mb-icon-circle{
+background:color-mix(in srgb, var(--accent) 20%, transparent);
+:global(svg){color:var(--accent);}
+}
+}
+
+}
+
+#btnFaqDesktop :global(svg),
+#btnFaqMobile :global(svg){
+fill:var(--gray);
+width:22px;
+height:22px;
+transition:fill .3s ease;
+}
+
+.icon-button{
+position:relative;
+width:42px;
+height:42px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--bg);
+border:1px solid var(--border);
+color:var(--gray);
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease;
+
+:global(svg){
+width:20px;
+height:20px;
+color:currentColor;
+}
+
+&::after{
+content:attr(data-tip);
+position:absolute;
+top:calc(100% + 10px);
+left:50%;
+transform:translateX(-50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
+&::before{
+content:"";
+position:absolute;
+top:calc(100% + 4px);
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-bottom-color:var(--text);
+border-top:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+z-index:50;
+}
+
+&:hover{
+background:var(--accent);
+:global(svg){color:#fff;}
+
+&::after{
+opacity:1;
+visibility:visible;
+}
+
+&::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+
+#btnFaqDesktop:hover :global(svg),
+#btnFaqMobile:hover :global(svg),
+#btnLangDesktop:hover :global(svg){
+fill:#fff;
+}
+
+.about-overlay,.contact-overlay,.lang-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(5px);
+-webkit-backdrop-filter:blur(5px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:1000;
+opacity:0;
+visibility:hidden;
+transition:opacity .3s ease, visibility .3s;
+
+&.open{
+opacity:1;
+visibility:visible;
+}
+}
+
+.about-modal,.contact-modal,.lang-modal{
+position:relative;
+width:420px;
+max-width:calc(100vw - 40px);
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:44px 32px 36px;
+text-align:center;
+box-shadow:0 30px 80px rgba(0,0,0,.4);
+opacity:0;
+transform:translateY(30px) scale(.92);
+transition:transform .4s cubic-bezier(.4,0,.2,1), opacity .32s ease;
+
+.about-overlay.open &, .contact-overlay.open &, .lang-overlay.open &{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+.modal-close{
+position:absolute;
+top:16px;
+left:16px;
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+background:var(--text);
+color:var(--bg);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:background .3s ease, color .3s ease, transform .3s ease;
+
+svg{width:18px;height:18px;}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+transform:rotate(90deg);
+}
+}
+
+.modal-icon{
+width:64px;
+height:64px;
+margin:0 auto 18px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:color-mix(in srgb, var(--accent) 15%, transparent);
+color:var(--accent);
+
+:global(svg){width:30px;height:30px;}
+}
+
+h3{font-size:20px;font-weight:900;margin-bottom:12px;}
+p{font-size:14px;line-height:2;color:var(--gray);margin-bottom:0;text-align:justify;& + p{margin-top:14px;}}
+}
+
+.socials{
+margin-top:24px;
+display:flex;
+justify-content:center;
+gap:12px;
+
+.social{
+width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+background:var(--bg);border:1px solid var(--border);color:var(--gray);
+transition:transform .28s cubic-bezier(.4,0,.2,1), background .28s ease, color .28s ease, border-color .28s ease;
+
+:global(svg){width:22px;height:22px;}
+
+&:hover{transform:translateY(-4px) scale(1.08);}
+&.instagram:hover{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-color:transparent;color:#fff;}
+&.telegram:hover{background:#229ED9;border-color:transparent;color:#fff;}
+&.tiktok:hover{background:#000;border-color:transparent;color:#25F4EE;}
+}
+}
+
+.contact-list{
+display:flex;flex-direction:column;gap:10px;text-align:right;
+}
+
+.contact-item{
+display:flex;align-items:center;gap:12px;padding:14px 16px;
+background:var(--bg);border:1px solid var(--border);border-radius:16px;
+color:var(--text);text-decoration:none;
+transition:background .2s, border-color .2s, transform .2s;
+
+&:hover{
+background:color-mix(in srgb, var(--accent) 8%, transparent);
+border-color:color-mix(in srgb, var(--accent) 30%, transparent);
+transform:translateX(-4px);
+}
+}
+
+.contact-icon{
+display:flex;align-items:center;justify-content:center;
+width:40px;height:40px;border-radius:50%;
+background:color-mix(in srgb, var(--accent) 12%, transparent);color:var(--accent);flex-shrink:0;
+
+:global(svg){width:20px;height:20px;}
+}
+
+.contact-text{flex:1;}
+.contact-label{font-size:14px;font-weight:600;}
+.contact-arrow{
+color:var(--gray);flex-shrink:0;
+
+transition:color .2s, transform .2s;
+
+.contact-item:hover &{color:var(--accent);transform:translateX(-4px);}
+}
+
+#btnLangDesktop :global(svg){
+fill:var(--gray);
+width:20px;
+height:20px;
+}
+
+#btnLangBottom :global(svg){
+fill:var(--gray);
+width:22px;
+height:22px;
+transition:fill .2s;
+}
+
+#btnLangBottom:hover :global(svg){
+fill:var(--accent);
+}
+
+.mobile-faq,.mobile-bisher{
+flex-shrink:0;
+
+&::after,&::before{
+display:none !important;
+}
+}
+
+</style>
+
+<style is:global>
+.bottom-link.spin .icon-moon,
+.bottom-link.spin .icon-sun{
+animation:mb-theme-spin .45s cubic-bezier(.4,0,.2,1);
+}
+@keyframes mb-theme-spin{
+0%{transform:scale(.92) rotate(0deg);}
+60%{transform:scale(1.08) rotate(14deg);}
+100%{transform:scale(1) rotate(0deg);}
+}
+body.modal-open{overflow:hidden;}
+</style>
+<script is:inline>
+if (!window.__headerDelegateBound) {
+window.__headerDelegateBound = true;
+
+function closeAllPopups(){
+    document.getElementById("popupDasteh")?.classList.remove("open");
+    document.getElementById("popupBisher")?.classList.remove("open");
+    document.getElementById("popupLang")?.classList.remove("open");
+    document.getElementById("mbOverlay")?.classList.remove("open");
+    document.body.classList.remove("modal-open");
+}
+
+function closeOverlay(id){
+    document.getElementById(id)?.classList.remove("open");
+    document.body.classList.remove("modal-open");
+}
+
+document.addEventListener("click", (e) => {
+    const target = e.target;
+
+    if (target.closest("#btnDasteh")) {
+        e.stopPropagation();
+        const popup = document.getElementById("popupDasteh");
+        const overlay = document.getElementById("mbOverlay");
+        const wasOpen = popup?.classList.contains("open");
+        closeAllPopups();
+        if (!wasOpen) {
+            popup?.classList.add("open");
+            overlay?.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnBisher")) {
+        e.stopPropagation();
+        const popup = document.getElementById("popupBisher");
+        const overlay = document.getElementById("mbOverlay");
+        const wasOpen = popup?.classList.contains("open");
+        closeAllPopups();
+        if (!wasOpen) {
+            const btn = document.getElementById("btnBisher");
+            const rect = btn.getBoundingClientRect();
+            const popupW = 190;
+            const center = rect.left + rect.width / 2;
+            let left = center - popupW / 2;
+            left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+            popup.style.left = left + "px";
+            popup.style.right = "auto";
+            popup.style.top = (rect.bottom + 8) + "px";
+            popup.classList.add("open");
+            overlay?.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnAboutMobile")) {
+        closeAllPopups();
+        const aboutOverlay = document.getElementById("aboutOverlay");
+        if (aboutOverlay) {
+            aboutOverlay.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnContactMobile")) {
+        closeAllPopups();
+        const contactOverlay = document.getElementById("contactOverlay");
+        if (contactOverlay) {
+            contactOverlay.classList.add("open");
+            document.body.classList.add("modal-open");
+        }
+        return;
+    }
+
+    if (target.closest("#btnAboutDesktop")) {
+        document.getElementById("aboutOverlay")?.classList.add("open");
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    if (target.closest("#btnContactDesktop")) {
+        document.getElementById("contactOverlay")?.classList.add("open");
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    if (target.closest("#aboutClose") || (target.id === "aboutOverlay")) {
+        closeOverlay("aboutOverlay");
+        return;
+    }
+
+    if (target.closest("#contactClose") || (target.id === "contactOverlay")) {
+        closeOverlay("contactOverlay");
+        return;
+    }
+
+    if (target.id === "mbOverlay") {
+        closeAllPopups();
+        return;
+    }
+
+    if (target.closest(".mb-bubble[href]")) {
+        closeAllPopups();
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeOverlay("aboutOverlay");
+        closeOverlay("contactOverlay");
+        closeAllPopups();
+    }
+});
+
+const handleLangPopup = (btn) => {
+    closeAllPopups();
+    const popup = document.getElementById("popupLang");
+    const overlay = document.getElementById("mbOverlay");
+    if (!popup) return;
+    const popupW = 190;
+    const rect = btn.getBoundingClientRect();
+    const fromBottom = rect.top > window.innerHeight * 0.6;
+    const center = rect.left + rect.width / 2;
+    let left = center - popupW / 2;
+    left = Math.max(16, Math.min(left, window.innerWidth - popupW - 16));
+    if (fromBottom) {
+        popup.style.top = "auto";
+        popup.style.bottom = "72px";
+        popup.style.right = "auto";
+        popup.style.left = left + "px";
+        popup.style.transform = "translateX(0) translateY(12px)";
+    } else {
+        popup.style.bottom = "auto";
+        popup.style.top = (rect.bottom + 8) + "px";
+        popup.style.right = "auto";
+        popup.style.left = left + "px";
+        popup.style.transform = "translateX(0) translateY(-12px)";
+    }
+    popup.classList.add("open");
+    requestAnimationFrame(() => {
+        popup.style.transform = "translateX(0) translateY(0)";
+    });
+    overlay?.classList.add("open");
+    document.body.classList.add("modal-open");
+};
+
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#btnLangDesktop")) {
+        handleLangPopup(document.getElementById("btnLangDesktop"));
+    }
+    if (e.target.closest("#btnLangBottom")) {
+        handleLangPopup(document.getElementById("btnLangBottom"));
+    }
+    if (e.target.closest(".lang-opt")) {
+        localStorage.setItem("qafaseh-lang", e.target.closest(".lang-opt").dataset.lang || "none");
+    }
+});
+
+const handleThemeToggle = () => {
+    const themeBtn = document.getElementById("themeToggleBottom");
+    if (!themeBtn) return;
+    const html = document.documentElement;
+    html.classList.add("theme-anim");
+    themeBtn.classList.remove("spin");
+    void themeBtn.offsetWidth;
+    themeBtn.classList.add("spin");
+    const isDark = html.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    window.setTimeout(() => {
+        html.classList.remove("theme-anim");
+        themeBtn.classList.remove("spin");
+    }, 650);
+};
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#themeToggleBottom")) {
+        handleThemeToggle();
+    }
+});
+
+const handleInstall = async () => {
+    if (window.__deferredPrompt) {
+        window.__deferredPrompt.prompt();
+        const { outcome } = await window.__deferredPrompt.userChoice;
+        window.__deferredPrompt = null;
+        return;
+    }
+    const isMobile = window.innerWidth <= 900;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    let msg = "";
+    if (isIOS) {
+        msg = "در سافاری روی دکمه «اشتراک‌گذاری» و سپس «افزودن به صفحه اصلی» بزنید.";
+    } else if (/Android/.test(navigator.userAgent)) {
+        msg = "در منوی مرورگر (سه‌نقطه) گزینه «افزودن به صفحه اصلی» را بزنید.";
+    } else {
+        msg = "در آدرس‌بار روی آیکون نصب (⊕) کلیک کنید یا از منوی مرورگر گزینه «Install» را بزنید.";
+    }
+    let toast = document.getElementById("installToast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "installToast";
+        toast.style.cssText = "position:fixed;bottom:"+(isMobile?"90px":"24px")+(isMobile?";left:16px;right:16px":";left:50%;transform:translateX(-50%)")+"z-index:200;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:14px 18px;font-size:13px;line-height:1.8;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;direction:rtl;";
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 5000);
+};
+document.addEventListener("click", (e) => {
+    if (e.target.closest("#btnInstall") || e.target.closest("#btnInstallDesktop")) {
+        handleInstall();
+    }
+});
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    window.__deferredPrompt = e;
+});
+
+const setActiveLink = () => {
+    const currentPath = window.location.pathname;
+    document.querySelectorAll(".bottom-link").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href && (href === "/" ? currentPath === "/" : currentPath.startsWith(href))) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+};
+
+setActiveLink();
+document.addEventListener("astro:page-load", setActiveLink);
+}
+</script>

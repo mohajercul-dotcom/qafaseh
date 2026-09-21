@@ -1,0 +1,417 @@
+---
+import "../styles/global.scss";
+import { ClientRouter } from "astro:transitions";
+import Header from "../components/Header.astro";
+import IconFromFile from "../components/icons/IconFromFile.astro";
+import { getUi } from "../i18n/index.js";
+import { localizePath, switchLocalePath } from "../lib/i18n.js";
+
+const locale = Astro.currentLocale;
+const t = getUi(locale);
+const isRTL = locale === "ar" || locale === "fa" || locale === "ur";
+
+const title = t.siteTitle;
+const description = t.siteDescription;
+
+const switchPaths = {
+    fa: switchLocalePath(Astro.url.pathname, locale, "fa"),
+    ar: switchLocalePath(Astro.url.pathname, locale, "ar"),
+    ur: switchLocalePath(Astro.url.pathname, locale, "ur"),
+};
+---
+
+<!DOCTYPE html>
+
+<html lang={locale} dir={isRTL ? "rtl" : "ltr"} data-lang={locale}>
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#c8a45c" />
+
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Regular.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Medium.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Vazirmatn-Bold.woff2" crossorigin />
+
+<link rel="modulepreload" href="/pagefind/pagefind.js" />
+
+<ClientRouter />
+
+<title>{title}</title>
+
+<meta name="description" content={description} />
+
+</head>
+
+<body>
+
+<Header />
+
+<div class="pagefind-meta-slot"><slot name="pagefind-meta" /></div>
+
+<main class="container" data-pagefind-ignore>
+
+<slot />
+
+</main>
+
+<div class="lang-modal" id="langModal" role="dialog" aria-modal="true" aria-label="Language" data-pagefind-ignore>
+    <div class="lang-modal-card">
+        <div class="lang-options">
+            <a href={switchPaths.fa} data-lang="fa"><span class="lang-name">{t.lang.fa}</span></a>
+            <a href={switchPaths.ar} data-lang="ar"><span class="lang-name">{t.lang.ar}</span></a>
+            <a href={switchPaths.ur} data-lang="ur"><span class="lang-name">{t.lang.ur}</span></a>
+        </div>
+    </div>
+</div>
+
+<button class:list={["back-to-top", { "is-home": ["/","/fa/","/ar/","/ur/"].includes(Astro.url.pathname) }]} id="backToTop" data-tip={t.backToTop} aria-label={t.backToTop} data-pagefind-ignore>
+<IconFromFile src="scroll-top.svg" />
+</button>
+
+ <script is:inline>
+
+const savedTheme = localStorage.getItem("theme");
+
+if(savedTheme === "dark"){
+document.documentElement.classList.add("dark");
+}
+
+const setHeaderOffset = () => {
+    const header = document.querySelector("header");
+    const main = document.querySelector("main");
+    if (header && main) {
+        const isMobile = window.innerWidth <= 900;
+        const extra = isMobile ? 5 : 0;
+        const bottomPad = isMobile ? 90 : 50;
+        main.style.paddingTop = (header.offsetHeight + extra) + "px";
+        main.style.paddingBottom = bottomPad + "px";
+    }
+};
+setHeaderOffset();
+
+const resetScrollIfNeeded = () => {
+    const restoring = !!(history.state && (history.state.scrollY > 0 || history.state.scrollX > 0));
+    if (!restoring) {
+        window.scrollTo(0, 0);
+    }
+};
+
+if (!window.__headerOffsetBound) {
+window.__headerOffsetBound = true;
+window.addEventListener("resize", setHeaderOffset);
+document.addEventListener("astro:after-swap", () => {
+    resetScrollIfNeeded();
+    setHeaderOffset();
+});
+document.addEventListener("astro:page-load", resetScrollIfNeeded);
+}
+
+if (!window.__pageLoadCleanupBound) {
+window.__pageLoadCleanupBound = true;
+document.addEventListener("astro:page-load", () => {
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("theme-anim");
+    document.querySelectorAll(".mb-popup.open, .mb-overlay.open").forEach((el) => el.classList.remove("open"));
+});
+}
+
+if (!window.__themeSyncBound) {
+window.__themeSyncBound = true;
+const syncTheme = () => {
+    document.documentElement.classList.toggle("dark", localStorage.getItem("theme") === "dark");
+};
+syncTheme();
+document.addEventListener("astro:before-swap", (e) => {
+    const defaultSwap = e.swap;
+    e.swap = () => {
+        defaultSwap();
+        syncTheme();
+    };
+});
+document.addEventListener("astro:page-load", syncTheme);
+}
+
+const initLangModal = () => {
+    const modal = document.getElementById("langModal");
+    if (!modal || localStorage.getItem("qafaseh-lang")) return;
+    modal.classList.add("show");
+    document.body.classList.add("modal-open");
+    modal.querySelectorAll("[data-lang]").forEach((a) => {
+        a.addEventListener("click", () => {
+            localStorage.setItem("qafaseh-lang", a.dataset.lang);
+        });
+    });
+};
+initLangModal();
+document.addEventListener("astro:page-load", initLangModal);
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
+
+</script>
+
+<script is:inline>
+(function(){
+const showIfScrolled = () => {
+const b = window.__bttBtn;
+if (b) b.classList.toggle("show", window.scrollY > 400);
+};
+
+const bind = () => {
+const btn = document.getElementById("backToTop");
+if (!btn || btn.dataset.bound) return;
+btn.dataset.bound = "1";
+window.__bttBtn = btn;
+
+btn.onpointerdown = (e) => {
+btn.classList.add("active-touch");
+};
+
+btn.onpointerup = (e) => {
+btn.classList.remove("active-touch");
+btn.blur();
+};
+
+btn.onpointercancel = (e) => {
+btn.classList.remove("active-touch");
+btn.blur();
+};
+
+btn.addEventListener("click", (e) => {
+window.scrollTo({top:0, behavior:"smooth"});
+btn.blur();
+});
+};
+
+if (!window.__bttScrollBound) {
+window.__bttScrollBound = true;
+window.addEventListener("scroll", showIfScrolled, {passive:true});
+}
+
+bind();
+showIfScrolled();
+document.addEventListener("astro:page-load", () => {
+bind();
+showIfScrolled();
+});
+})();
+</script>
+
+</body>
+
+</html>
+
+<style lang="scss">
+
+html{
+background:var(--bg);
+}
+
+main{
+padding:80px 0 50px;
+}
+
+@media(max-width:900px){
+main{
+height:auto;
+padding-top:7px;
+padding-bottom:80px;
+}
+}
+
+.lang-modal{
+position:fixed;
+inset:0;
+z-index:200;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(6px);
+-webkit-backdrop-filter:blur(6px);
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .3s ease, visibility .3s;
+
+&.show{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+
+.lang-modal-card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:24px;
+max-width:320px;
+width:100%;
+text-align:center;
+box-shadow:0 24px 64px rgba(0,0,0,.3);
+transform:translateY(16px) scale(.97);
+transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+
+.lang-modal.show &{
+transform:translateY(0) scale(1);
+}
+}
+
+.lang-options{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-bottom:16px;
+
+a{
+display:flex;
+align-items:center;
+justify-content:center;
+padding:11px 16px;
+border-radius:14px;
+border:1px solid var(--border);
+background:color-mix(in srgb, var(--accent) 6%, transparent);
+color:var(--text);
+text-decoration:none;
+font-size:15px;
+font-weight:700;
+transition:background .25s ease, border-color .25s ease, transform .2s ease;
+
+&:hover{
+background:var(--accent);
+border-color:var(--accent);
+color:#fff;
+transform:translateY(-2px);
+}
+}
+}
+}
+
+.back-to-top{
+position:fixed;
+bottom:24px;
+left:24px;
+right:auto;
+z-index:70;
+width:48px;
+height:48px;
+border-radius:14px;
+border:1px solid rgba(255,255,255,.45);
+background:rgba(255,255,255,.92);
+backdrop-filter:blur(10px);
+-webkit-backdrop-filter:blur(10px);
+box-shadow:0 2px 6px rgba(0,0,0,.08), 0 12px 36px rgba(0,0,0,.1), inset 0 1px 0 rgba(255,255,255,.45);
+color:var(--accent);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+-webkit-tap-highlight-color:transparent;
+opacity:0;
+visibility:hidden;
+transform:translateY(16px);
+transition:opacity .28s ease, visibility .28s, transform .28s cubic-bezier(.4,0,.2,1), background .28s ease, border-color .28s ease, color .28s ease;
+
+:global(svg){
+width:22px;
+height:22px;
+}
+
+&.show{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+
+&:hover{
+@media(hover:hover){
+background:var(--accent);
+border-color:transparent;
+color:#fff;
+}
+}
+
+&.active-touch{
+background:var(--accent)!important;
+border-color:transparent!important;
+color:#fff!important;
+transform:scale(.92);
+}
+
+&:active{
+transform:scale(.92);
+}
+
+:global(.dark) &{
+background:rgba(44,40,35,.65);
+border-color:rgba(255,255,255,.2);
+box-shadow:0 2px 8px rgba(255,255,255,.06), 0 12px 36px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+@media(min-width:901px){
+&::after{
+content:attr(data-tip);
+position:absolute;
+bottom:calc(100% + 10px);
+left:50%;
+transform:translateX(-50%);
+background:var(--text);
+color:var(--bg);
+font-size:11px;
+font-weight:500;
+padding:5px 12px;
+border-radius:8px;
+white-space:nowrap;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+}
+
+&::before{
+content:"";
+position:absolute;
+bottom:calc(100% + 4px);
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border:6px solid transparent;
+border-top-color:var(--text);
+border-bottom:none;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:opacity .25s ease, visibility .25s;
+}
+
+&:hover::after,
+&:hover::before{
+opacity:1;
+visibility:visible;
+}
+}
+}
+
+@media(max-width:900px){
+.back-to-top{
+bottom:100px;
+left:16px;
+width:44px;
+height:44px;
+}
+}
+
+.back-to-top.is-home{
+display:none;
+}
+
+</style>

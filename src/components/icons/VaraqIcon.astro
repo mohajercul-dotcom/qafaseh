@@ -1,0 +1,7 @@
+---
+import { readFileSync } from "node:fs";
+
+const svg = readFileSync(new URL("../../../public/icons/varaq.svg", import.meta.url), "utf-8");
+---
+
+<Fragment set:html={svg} />

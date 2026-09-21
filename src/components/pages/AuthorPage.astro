@@ -1,0 +1,158 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import BookCard from "../BookCard.astro";
+import TagFilter from "../TagFilter.astro";
+import { allBooks } from "../../lib/paths.js";
+import { slugify, normalizeAuthor } from "../../lib/books.js";
+import { getUi } from "../../i18n/index.js";
+import { localizePath, bookDescription, bookSiteLang } from "../../lib/i18n.js";
+
+const { name, locale = "fa" } = Astro.props;
+const t = getUi(locale);
+
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+const collections = categoryKeys.map((key) => ({ name: key, label: t.menu[key].label }));
+
+const all = await allBooks();
+
+const groups = categoryKeys
+    .map((key) => ({
+        key,
+        label: t.menu[key].label,
+        books: all
+            .filter(
+                (book) => book.category === key && bookSiteLang(book) === locale && normalizeAuthor(book.data.author) === name
+            )
+            .sort((a, b) => a.data.title.localeCompare(b.data.title, locale)),
+    }))
+    .filter((group) => group.books.length > 0);
+
+const allBooksForAuthor = groups.flatMap((group) =>
+    group.books.map((book) => ({ ...book, category: group.key }))
+);
+const total = allBooksForAuthor.length;
+const isRecommendedAuthor = allBooksForAuthor.some((b) => b.data.recommendedAuthor);
+---
+
+<MainLayout>
+
+    <section class="author-header">
+
+        <h1>
+            {name}
+            {isRecommendedAuthor && (
+                <span class="recommended-tick" aria-label="پیشنهاد قفسه">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+            )}
+        </h1>
+
+    </section>
+
+    <TagFilter
+        tags={groups.map((g) => g.label)}
+        counts={Object.fromEntries(groups.map((g) => [g.label, g.books.length]))}
+        totalCount={total}
+        totalCountLabel={t.authors.total}
+        gridId="books-author"
+        byCategory
+        locale={locale}
+    />
+    <div class="books" id="books-author" data-cols="3">
+        {allBooksForAuthor.map((book) => (
+            <div class="book-item" data-cat={t.menu[book.category].label} {...book.data.recommended ? { "data-recommended": "" } : {}}>
+                <BookCard
+                    title={book.data.title}
+                    author={book.data.author}
+                    description={bookDescription(book, locale)}
+                    language={book.data.language}
+                    href={localizePath(locale, `/books/${slugify(book.data.title)}`)}
+                    tags={book.data.filterTags ?? book.data.tags ?? []}
+                    cardTags={book.data.cardTags ?? book.data.tags ?? []}
+                    locale={locale}
+                    recommended={book.data.recommended}
+                />
+            </div>
+        ))}
+    </div>
+
+    <script>
+        import { initAllGrids } from "../../lib/bookGrid.js";
+        import { initBookFilter } from "../../lib/bookFilter.js";
+        let _gridRaf = null;
+        window.addEventListener("resize", () => {
+            if (_gridRaf) return;
+            _gridRaf = requestAnimationFrame(() => { _gridRaf = null; initAllGrids(); });
+        });
+        document.addEventListener("astro:page-load", () => {
+            initAllGrids();
+            initBookFilter();
+        });
+    </script>
+
+</MainLayout>
+
+<style lang="scss">
+
+.author-header{
+padding:40px 0;
+text-align:center;
+
+h1{
+font-size:40px;
+font-weight:900;
+position:relative;
+display:inline-block;
+}
+}
+
+.recommended-tick{
+display:inline-flex;
+vertical-align:middle;
+margin-right:8px;
+width:30px;
+height:30px;
+background:linear-gradient(135deg, #c8a45c 50%, transparent 50%);
+border-radius:14px 0 0 0;
+position:relative;
+
+svg{
+position:absolute;
+top:4px;
+left:3px;
+width:12px;
+height:12px;
+color:#fff;
+}
+}
+
+:global(.dark) .recommended-tick{
+background:linear-gradient(135deg, #b8943c 50%, transparent 50%);
+}
+
+.books{
+display:flex;
+gap:16px;
+padding:20px 0 40px;
+opacity:0;
+transition:opacity .2s;
+
+&.ready{
+opacity:1;
+}
+}
+
+:global(.book-col){
+flex:1;
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+@media(max-width:900px){
+.books{
+flex-direction:column;
+}
+}
+
+</style>

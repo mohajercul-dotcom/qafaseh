@@ -1,0 +1,439 @@
+---
+import { getUi } from "../i18n/index.js";
+
+const { locale = "fa", pageType = "books" } = Astro.props;
+const t = getUi(locale);
+---
+
+<div class="search" data-page-type={pageType} data-translator={t.search.translator} data-base={import.meta.env.BASE_URL || "/"} data-locale={locale}>
+
+    <div class="search-inner">
+
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+
+        <input
+        type="text"
+        placeholder={t.search.placeholder}
+        autocomplete="off"
+        spellcheck="false"
+        data-search-input
+        />
+
+        <button class="search-clear" data-search-clear title={t.search.clear}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+
+    </div>
+
+    <div class="search-results" data-search-results>
+
+        <div class="results-header">{t.search.placeholder}</div>
+
+        <p class="results-empty" data-results-empty>{t.search.empty}</p>
+
+        <div class="results-list" data-results-list></div>
+
+    </div>
+
+<script is:inline type="module">
+const initSearch = () => {
+    const langClass = (lang) => {
+        const l = String(lang || "");
+        if (l.includes("فارسی") || l.includes("persian")) return "fa";
+        if (l.includes("اردو") || l.includes("urdu")) return "ur";
+        if (l.includes("عربی") || l.includes("arabic")) return "ar";
+        return "";
+    };
+
+    const base = document.querySelector("[data-search-input]")?.closest(".search")?.dataset.base || "/";
+    const currentLang = document.documentElement.lang || "fa";
+
+    let bookIndex = null;
+    const ensureIndex = async () => {
+        if (bookIndex) return bookIndex;
+        try {
+            const resp = await fetch(base + "search-index.json");
+            bookIndex = await resp.json();
+        } catch { bookIndex = []; }
+        return bookIndex;
+    };
+
+    document.querySelectorAll("[data-search-input]").forEach((input) => {
+        if (input.dataset.bound) return;
+        input.dataset.bound = "1";
+
+        const cidAttr = "data-astro-cid-" + (input.getAttributeNames().find((n) => n.startsWith("data-astro-cid-")) || "").replace("data-astro-cid-", "");
+
+        input.addEventListener("input", () => {
+            const root = input.closest(".search");
+            clearTimeout(input._searchTimeout);
+            input._searchTimeout = setTimeout(async () => {
+                const list = root?.querySelector("[data-results-list]");
+                const base = root?.dataset.base || "/";
+                const translatorLabel = root?.dataset.translator || "";
+                const resultsBox = root?.querySelector("[data-search-results]");
+                const empty = root?.querySelector("[data-results-empty]");
+                const clearBtn = root?.querySelector("[data-search-clear]");
+                const query = input.value;
+                const pageType = root?.dataset.pageType || "books";
+
+                if (!query.trim()) {
+                    if (list) list.innerHTML = "";
+                    if (resultsBox) resultsBox.classList.remove("open");
+                    if (empty) empty.classList.remove("show");
+                    if (clearBtn) clearBtn.classList.remove("show");
+                    return;
+                }
+
+                if (clearBtn) clearBtn.classList.add("show");
+
+                try {
+                    if (pageType === "faq") {
+                        const faqItems = document.querySelectorAll("[data-faq]");
+                        const matches = [];
+                        faqItems.forEach((item) => {
+                            const q3 = item.querySelector(".faq-question h3");
+                            const a3 = item.querySelector(".faq-answer");
+                            const qText = q3 ? q3.textContent.toLowerCase() : "";
+                            const aText = a3 ? a3.textContent.toLowerCase() : "";
+                            if (qText.includes(q) || aText.includes(q)) {
+                                matches.push({
+                                    question: q3 ? q3.textContent.trim() : "",
+                                    answer: a3 ? a3.textContent.trim().slice(0, 120) : ""
+                                });
+                            }
+                        });
+
+                        if (empty) empty.classList.toggle("show", matches.length === 0);
+                        if (resultsBox) resultsBox.classList.toggle("open", matches.length > 0);
+
+                        if (list) {
+                            list.innerHTML = matches.slice(0, 7)
+                                .map((m) => `
+                                <div class="result-item faq-result" ${cidAttr}>
+                                    <div class="result-content" ${cidAttr}>
+                                        <span class="result-title" ${cidAttr}>${m.question}</span>
+                                        <span class="result-author" ${cidAttr}>${m.answer}…</span>
+                                    </div>
+                                </div>`)
+                                .join("");
+                        }
+                        return;
+                    }
+
+                    const loc = root?.dataset?.locale || "fa";
+                    const searchLang = ["fa", "ar", "ur"].includes(loc) ? loc : "fa";
+                    const index = await ensureIndex();
+                    const q = query.trim().toLowerCase();
+                    const bookResults = index.filter((item) => {
+                        if (item.l !== searchLang) return false;
+                        const fields = (item.t + " " + item.a).toLowerCase();
+                        return fields.includes(q);
+                    }).slice(0, 10);
+
+                    if (empty) empty.classList.toggle("show", bookResults.length === 0);
+                    if (resultsBox) resultsBox.classList.toggle("open", bookResults.length > 0);
+
+                    if (list) {
+                        list.innerHTML = bookResults
+                            .map((item) => {
+                                return `
+                                <a class="result-item" href="${item.u}" ${cidAttr}>
+                                    <div class="result-content" ${cidAttr}>
+                                        <span class="result-title" ${cidAttr}>${item.t}</span>
+                                        <span class="result-author" ${cidAttr}>${item.a}</span>
+                                    </div>
+                                </a>`;
+                            })
+                            .join("");
+                    }
+                } catch (e) {
+                    console.warn("Search error:", e);
+                }
+            }, 100);
+        });
+
+        input.addEventListener("focus", () => {
+            if (!bookIndex) ensureIndex();
+            if (input.value.trim()) input.dispatchEvent(new Event("input"));
+        });
+    });
+
+    document.querySelectorAll("[data-search-clear]").forEach((btn) => {
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = "1";
+        btn.addEventListener("click", () => {
+            const root = btn.closest(".search");
+            const input = root?.querySelector("[data-search-input]");
+            const list = root?.querySelector("[data-results-list]");
+            const resultsBox = root?.querySelector("[data-search-results]");
+            const empty = root?.querySelector("[data-results-empty]");
+            if (input) input.value = "";
+            if (list) list.innerHTML = "";
+            if (resultsBox) resultsBox.classList.remove("open");
+            if (empty) empty.classList.remove("show");
+            btn.classList.remove("show");
+            if (input) input.focus();
+        });
+    });
+
+    if (!window.__searchDocBound) {
+        window.__searchDocBound = true;
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".search")) {
+                document.querySelectorAll("[data-search-results]").forEach((el) => el.classList.remove("open"));
+            }
+        });
+    }
+};
+
+initSearch();
+document.addEventListener("astro:page-load", initSearch);
+</script>
+
+</div>
+
+<style lang="scss">
+
+.search{
+position:relative;
+width:100%;
+}
+
+.search-inner{
+position:relative;
+display:flex;
+align-items:center;
+background:rgba(255,255,255,.9);
+-webkit-backdrop-filter:blur(16px);
+backdrop-filter:blur(16px);
+border:1px solid rgba(200,164,92,.3);
+border-radius:16px;
+padding:0 20px;
+transition:all .25s cubic-bezier(.16,1,.3,1);
+
+&:focus-within{
+border-color:var(--accent);
+box-shadow:0 15px 40px rgba(200,164,92,.15),0 0 0 4px rgba(200,164,92,.1);
+background:#fff;
+}
+
+:global(.dark) &{
+background:rgba(30,28,25,.9);
+border-color:rgba(200,164,92,.2);
+
+&:focus-within{
+background:rgba(35,33,30,.95);
+border-color:var(--accent);
+box-shadow:0 15px 40px rgba(200,164,92,.08),0 0 0 4px rgba(200,164,92,.08);
+}
+}
+}
+
+.search-icon{
+width:18px;
+height:18px;
+color:#9a8c78;
+margin-left:12px;
+flex-shrink:0;
+pointer-events:none;
+
+:global(.dark) &{
+color:#a89a82;
+}
+}
+
+input{
+flex:1;
+border:none;
+background:transparent;
+outline:none;
+height:48px;
+font-size:15px;
+color:var(--text);
+font-weight:500;
+text-align:right;
+
+&::placeholder{
+color:#b5a895;
+}
+}
+
+.search-clear{
+flex-shrink:0;
+width:28px;
+height:28px;
+border-radius:50%;
+border:none;
+background:var(--card);
+color:var(--gray);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+opacity:0;
+visibility:hidden;
+transition:opacity .2s ease, visibility .2s, background .3s ease, color .3s ease;
+
+svg{
+width:13px;
+height:13px;
+}
+
+&.show{
+opacity:1;
+visibility:visible;
+}
+
+&:hover{
+background:var(--accent);
+color:#fff;
+}
+}
+
+.search-results{
+position:absolute;
+top:calc(100% + 12px);
+right:0;
+left:0;
+background:rgba(255,255,255,.98);
+-webkit-backdrop-filter:blur(20px);
+backdrop-filter:blur(20px);
+border:1px solid rgba(200,164,92,.2);
+border-radius:20px;
+box-shadow:0 20px 50px rgba(0,0,0,.1);
+z-index:500;
+overflow:hidden;
+opacity:0;
+visibility:hidden;
+transform:translateY(10px);
+transition:opacity .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), visibility .2s;
+
+&.open{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+
+:global(.dark) &{
+background:rgba(30,28,25,.98);
+border-color:rgba(200,164,92,.15);
+box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+}
+
+.results-header{
+padding:10px 20px;
+font-size:11px;
+font-weight:700;
+color:#9a8c78;
+background:#faf8f5;
+border-bottom:1px solid #f2eee9;
+letter-spacing:.5px;
+
+:global(.dark) &{
+background:rgba(200,164,92,.08);
+border-bottom-color:rgba(200,164,92,.12);
+color:#b8a882;
+}
+}
+
+.results-empty{
+display:none;
+padding:20px;
+text-align:center;
+color:var(--gray);
+font-size:13px;
+
+&.show{
+display:block;
+}
+}
+
+.results-list{
+max-height:400px;
+overflow-y:auto;
+padding:8px;
+
+&::-webkit-scrollbar{
+width:5px;
+}
+
+&::-webkit-scrollbar-thumb{
+background:rgba(200,164,92,.3);
+border-radius:10px;
+}
+}
+
+.result-item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:8px 10px;
+border-radius:10px;
+text-decoration:none;
+transition:all .15s ease;
+margin-bottom:2px;
+gap:8px;
+cursor:pointer;
+
+&:last-child{
+margin-bottom:0;
+}
+
+&:hover{
+background:rgba(200,164,92,.1);
+transform:translateX(-3px);
+}
+}
+
+.result-cat{
+font-size:11px;
+font-weight:600;
+padding:5px 12px;
+border-radius:8px;
+background:rgba(200,164,92,.15);
+color:#785a28;
+white-space:nowrap;
+}
+
+.result-content{
+flex:1;
+text-align:right;
+min-width:0;
+display:flex;
+align-items:baseline;
+gap:6px;
+white-space:nowrap;
+overflow:hidden;
+}
+
+.result-title{
+font-size:13px;
+font-weight:700;
+color:var(--text);
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.result-author{
+font-size:11px;
+color:#8c7e6a;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+flex-shrink:0;
+
+:global(.dark) &{
+color:#a09480;
+}
+}
+
+</style>

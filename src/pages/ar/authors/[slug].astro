@@ -1,0 +1,11 @@
+---
+import AuthorPage from "../../../components/pages/AuthorPage.astro";
+import { authorPaths } from "../../../lib/paths.js";
+
+export function getStaticPaths() {
+    return authorPaths().then((paths) => paths.map((p) => ({ ...p, props: { ...p.props, locale: "ar" } })));
+}
+
+const { name, locale } = Astro.props;
+---
+<AuthorPage name={name} locale={locale} />

@@ -1,0 +1,92 @@
+---
+import { getUi } from "../i18n/index.js";
+
+const { title, author, excerpt, url, shortUrl, locale = "fa" } = Astro.props;
+const t = getUi(locale);
+
+const pageUrl = shortUrl || url || Astro.url.href;
+const shareText = excerpt ? `${title}\n\n${excerpt}\n\n${t.share.continueReading}\n\n${pageUrl}` : `${title}\n\n${author}\n\n${pageUrl}`;
+---
+
+<div class="share-block">
+
+    <button class="share-toggle" data-copy-text={shareText}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        <span>{t.share.button}</span>
+    </button>
+
+</div>
+
+<script define:vars={{ copyLabel: t.share.button, copiedLabel: t.share.copied }}>
+const initShare = () => {
+const block = document.querySelector(".share-block");
+if (!block || block.dataset.bound) return;
+block.dataset.bound = "1";
+const toggle = block?.querySelector(".share-toggle");
+const label = toggle?.querySelector("span");
+
+const flashCopied = () => {
+if (!label) return;
+label.textContent = copiedLabel;
+setTimeout(() => (label.textContent = copyLabel), 2000);
+};
+
+toggle?.addEventListener("click", async () => {
+const text = toggle.dataset.copyText;
+if (navigator.share) {
+try {
+await navigator.share({ text });
+return;
+} catch (err) {
+if (err.name === "AbortError") return;
+}
+}
+try {
+await navigator.clipboard.writeText(text);
+flashCopied();
+} catch {}
+});
+};
+initShare();
+document.addEventListener("astro:page-load", initShare);
+</script>
+
+<style lang="scss">
+
+.share-block{
+position:relative;
+}
+
+.share-toggle{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:10px 18px;
+border-radius:12px;
+border:1px solid var(--border);
+background:var(--card);
+color:var(--text);
+font-size:13px;
+font-weight:500;
+cursor:pointer;
+transition:background .3s ease, border-color .3s ease, color .3s ease;
+
+svg{
+width:18px;
+height:18px;
+}
+
+&:hover{
+background:var(--accent);
+border-color:var(--accent);
+color:#fff;
+}
+}
+
+</style>

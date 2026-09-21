@@ -1,0 +1,285 @@
+---
+import { getUi } from "../i18n/index.js";
+import { bookLocale } from "../lib/i18n.js";
+
+const { title, author, description, language, href, tags = [], cardTags, locale = "fa", recommended = false } = Astro.props;
+const t = getUi(locale);
+const langCode = bookLocale({ data: { language } });
+const chips = cardTags ?? tags;
+---
+
+<div class="book-card" data-accordion data-tags={tags.join(",")}>
+
+    {recommended && (
+        <span class="recommended-tick" aria-label="پیشنهاد قفسه">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+    )}
+
+    <div class="card-main">
+
+        <div class="card-info">
+            <h3>{title}</h3>
+            <p class="author">{author}</p>
+        </div>
+
+        <div class="card-right">
+            {language && (
+                <span class:list={["lang-badge", langCode]}>
+                    {language}
+                </span>
+            )}
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+    </div>
+
+    <div class="accordion-body">
+        <p class:list={["desc", { "no-intro": !description }]}>{description || t.book.noIntro}</p>
+        <div class="desc-row">
+            <a class="more-btn" href={href}>{t.bookCard.more}</a>
+        </div>
+        {chips.length > 0 && (
+            <div class="tags-line">
+                {chips.map((tag) => (
+                    <span class="tag-chip">#{tag}</span>
+                ))}
+            </div>
+        )}
+    </div>
+
+</div>
+
+<script>
+const initAccordions = () => {
+document.querySelectorAll("[data-accordion]").forEach((card) => {
+if (card.dataset.bound) return;
+card.dataset.bound = "1";
+card.addEventListener("click", (e) => {
+if (e.target.closest(".more-btn")) return;
+const body = card.querySelector(".accordion-body");
+if (!body) return;
+
+const isOpen = card.classList.contains("open");
+
+const newMaxHeight = isOpen ? "0" : body.scrollHeight + "px";
+
+document.querySelectorAll("[data-accordion].open").forEach((other) => {
+if (other !== card) {
+other.classList.remove("open");
+other.querySelector(".accordion-body").style.maxHeight = "0";
+}
+});
+
+if (isOpen) {
+card.classList.remove("open");
+body.style.maxHeight = "0";
+} else {
+card.classList.add("open");
+body.style.maxHeight = newMaxHeight;
+}
+});
+});
+};
+initAccordions();
+document.addEventListener("astro:page-load", initAccordions);
+</script>
+
+<style lang="scss">
+
+.book-card{
+position:relative;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+cursor:pointer;
+transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease, background .6s ease;
+
+&:hover{
+transform:translateY(-5px);
+border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
+box-shadow:0 14px 34px color-mix(in srgb, var(--accent) 16%, transparent), 0 4px 10px rgba(0,0,0,.06);
+}
+}
+
+.card-main{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+}
+
+.card-info{
+flex:1;
+min-width:0;
+
+h3{
+font-size:17px;
+margin-bottom:6px;
+transition:color .25s ease;
+
+.book-card:hover &{
+color:var(--accent);
+}
+}
+}
+
+.author{
+color:var(--accent);
+font-size:13px;
+margin-bottom:0;
+}
+
+.card-right{
+display:flex;
+align-items:center;
+gap:8px;
+flex-shrink:0;
+}
+
+.lang-badge{
+font-size:11px;
+font-weight:700;
+padding:4px 10px;
+border-radius:20px;
+white-space:nowrap;
+}
+
+.lang-badge.fa{
+background:color-mix(in srgb, #2b9348 18%, transparent);
+color:#2b9348;
+}
+
+.lang-badge.ar{
+background:color-mix(in srgb, #e07b39 18%, transparent);
+color:#e07b39;
+}
+
+.lang-badge.ur{
+background:color-mix(in srgb, #3b82f6 18%, transparent);
+color:#3b82f6;
+}
+
+:global(.dark) .lang-badge.fa{
+background:color-mix(in srgb, #4ade80 18%, transparent);
+color:#4ade80;
+}
+
+:global(.dark) .lang-badge.ar{
+background:color-mix(in srgb, #fb923c 18%, transparent);
+color:#fb923c;
+}
+
+:global(.dark) .lang-badge.ur{
+background:color-mix(in srgb, #60a5fa 18%, transparent);
+color:#60a5fa;
+}
+
+.chevron{
+color:var(--gray);
+flex-shrink:0;
+transition:transform .3s ease, color .2s;
+
+.book-card:hover &{
+color:var(--accent);
+}
+
+.book-card.open &{
+transform:rotate(180deg);
+color:var(--accent);
+}
+}
+
+.accordion-body{
+max-height:0;
+overflow:hidden;
+transition:max-height .35s ease;
+}
+
+.desc{
+color:var(--gray);
+font-size:13px;
+line-height:1.8;
+margin:0;
+padding-top:14px;
+
+&.no-intro{
+font-style:italic;
+opacity:.8;
+}
+}
+
+.desc-row{
+display:flex;
+justify-content:flex-end;
+align-items:center;
+margin-top:8px;
+}
+
+.more-btn{
+padding:5px 14px;
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+color:var(--accent);
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+text-decoration:none;
+transition:background .2s, transform .2s, color .2s;
+flex-shrink:0;
+
+&:hover{
+background:var(--accent);
+color:#fff;
+}
+
+&:active{
+background:var(--accent);
+opacity:.7;
+transform:scale(.95);
+}
+}
+
+.tags-line{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+border-top:1px solid var(--border);
+padding-top:12px;
+margin-top:12px;
+}
+
+.tag-chip{
+padding:3px 12px;
+border-radius:20px;
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+color:var(--accent);
+font-size:11px;
+font-weight:600;
+}
+
+.recommended-tick{
+position:absolute;
+top:-1px;
+left:-1px;
+width:38px;
+height:38px;
+background:linear-gradient(135deg, #c8a45c 50%, transparent 50%);
+z-index:2;
+border-radius:18px 0 0 0;
+
+svg{
+position:absolute;
+top:5px;
+left:4px;
+width:14px;
+height:14px;
+color:#fff;
+}
+}
+
+:global(.dark) .recommended-tick{
+background:linear-gradient(135deg, #b8943c 50%, transparent 50%);
+}
+
+</style>
