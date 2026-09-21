@@ -144,6 +144,8 @@ export const uiUr: UiDict = {
         copied: "کاپی ہو گیا ✓",
         error: "خرابی",
         noIntro: "اس کتاب کے لیے ابھی تک اردو زبان میں تعارف نہیں لکھا گیا",
+        bioAuthor: "مصنف کا مختصر تعارف",
+        bioBook: "کتاب کا مختصر تعارف",
     },
     share: {
         button: "شیئر کریں",

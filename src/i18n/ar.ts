@@ -144,6 +144,8 @@ export const uiAr: UiDict = {
         copied: "تم النسخ ✓",
         error: "خطأ",
         noIntro: "لم تُكتب بعد مقدمة لهذا الكتاب باللغة العربية",
+        bioAuthor: "نُبذةٌ عنِ المُؤلِّفِ",
+        bioBook: "نُبذةٌ عنِ الكِتابِ",
     },
     share: {
         button: "مشاركة",

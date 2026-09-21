@@ -500,7 +500,57 @@ if (!window.__fnPageLoadBound) {
 }
 </script>
 
+<script is:inline define:vars={{ bioAuthor: t.book.bioAuthor, bioBook: t.book.bioBook }}>
+const initBioTags = () => {
+    const content = document.querySelector(".content");
+    if (!content || content.dataset.bioTags) return;
+    const ps = [...content.querySelectorAll("p")].filter((p) => !p.closest("[data-footnotes]"));
+    if (!ps.length) return;
+    const make = (text) => {
+        const span = document.createElement("span");
+        span.className = "section-tag";
+        span.textContent = text;
+        return span;
+    };
+    content.dataset.bioTags = "1";
+    if (ps[0]) ps[0].parentNode.insertBefore(make(bioAuthor), ps[0]);
+    if (ps[2]) ps[2].parentNode.insertBefore(make(bioBook), ps[2]);
+};
+initBioTags();
+if (!window.__bioTagsBound) {
+    window.__bioTagsBound = true;
+    document.addEventListener("astro:page-load", initBioTags);
+}
+</script>
+
 <style lang="scss" is:global>
+
+.section-tag{
+display:inline-flex;
+align-items:center;
+gap:6px;
+margin:0 0 10px;
+font-size:11px;
+font-weight:700;
+color:var(--accent);
+background:color-mix(in srgb, var(--accent) 12%, transparent);
+border:1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+padding:4px 14px;
+border-radius:20px;
+user-select:none;
+
+&::before{
+content:"";
+width:6px;
+height:6px;
+border-radius:50%;
+background:var(--accent);
+}
+
+:global(.dark) &{
+background:color-mix(in srgb, var(--accent) 18%, transparent);
+}
+}
 
 .fn-tooltip{
 position:fixed;

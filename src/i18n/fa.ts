@@ -143,6 +143,8 @@ export const uiFa: UiDict = {
         copied: "کپی شد ✓",
         error: "خطا",
         noIntro: "برای این کتاب هنوز معرفی به زبان فارسی نوشته نشده است",
+        bioAuthor: "مختصری از نویسنده",
+        bioBook: "مختصری از کتاب",
     },
     share: {
         button: "اشتراک‌گذاری",
