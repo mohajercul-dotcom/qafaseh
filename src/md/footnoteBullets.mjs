@@ -21,14 +21,13 @@ export const footnoteBulletsPlugin = {
 
             const commitSegment = () => {
                 if (cur[0]?.type === "text") {
-                    cur[0] = { ...cur[0], value: cur[0].value.replace(/^\s*•\s*/, "") };
+                    cur[0] = { ...cur[0], value: cur[0].value.replace(/^\s+/, "") };
                 }
                 const joined = cur.reduce((s, c) => s + (c.type === "text" ? c.value : ""), "");
                 if (joined.trim()) segments.push(cur);
                 cur = [];
             };
 
-            console.error("FN visit", JSON.stringify(node.children));
             for (const child of node.children ?? []) {
                 if (child.type === "text") {
                     const parts = String(child.value).split("•");
@@ -45,7 +44,20 @@ export const footnoteBulletsPlugin = {
             }
             commitSegment();
 
-            if (!foundBullet) return;
+            if (!foundBullet) {
+                ctx.replaceNode(node, {
+                    type: "element",
+                    tagName: "ul",
+                    properties: { className: ["footnote-sources"] },
+                    children: [{
+                        type: "element",
+                        tagName: "li",
+                        properties: {},
+                        children: [{ type: "text", value: "• " }, ...(node.children ?? [])],
+                    }],
+                });
+                return;
+            }
 
             const ul = {
                 type: "element",
@@ -55,7 +67,7 @@ export const footnoteBulletsPlugin = {
                     type: "element",
                     tagName: "li",
                     properties: {},
-                    children: nodes,
+                    children: [{ type: "text", value: "• " }, ...nodes],
                 })),
             };
             ctx.replaceNode(node, ul);

@@ -317,10 +317,10 @@ const setupFootnotes = () => {
         const backref = clone.querySelector("a[data-footnote-backref]");
         if (backref) backref.remove();
         clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
-        clone.querySelectorAll(".footnote-sources > li").forEach((src, i) => {
-            if (i === 0) return;
-            src.parentNode.insertBefore(document.createTextNode("\n"), src);
-        });
+        const sources = clone.querySelectorAll(".footnote-sources > li");
+        if (sources.length) {
+            return Array.from(sources).map((src) => src.textContent.trim()).join("\n");
+        }
         return clone.textContent.replace(/\s*↩\s*$/, "").trim();
     };
 
