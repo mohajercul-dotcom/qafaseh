@@ -123,6 +123,7 @@ const initSearch = () => {
                                     </div>
                                 </div>`)
                                 .join("");
+                            if (window.__localizeNodeDigits) window.__localizeNodeDigits(list);
                         }
                         return;
                     }
@@ -152,6 +153,7 @@ const initSearch = () => {
                                 </a>`;
                             })
                             .join("");
+                        if (window.__localizeNodeDigits) window.__localizeNodeDigits(list);
                     }
                 } catch (e) {
                     console.warn("Search error:", e);

@@ -25,8 +25,12 @@ export function localeFromPath(pathname) {
     return locales.includes(first) ? first : defaultLocale;
 }
 
+export function localeDigitBase(locale) {
+    return locale === "ar" ? 0x0660 : 0x06f0;
+}
+
 export function toLocaleDigits(value, locale) {
-    const base = locale === "ar" ? 0x0660 : 0x06f0;
+    const base = localeDigitBase(locale);
     return String(value).replace(/\d/g, (d) => String.fromCodePoint(base + Number(d)));
 }
 

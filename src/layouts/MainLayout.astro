@@ -159,6 +159,37 @@ if ("serviceWorker" in navigator) {
 
 <script is:inline>
 (function(){
+const localizeDigits = (root) => {
+    if (typeof NodeFilter === "undefined") return;
+    const locale = document.documentElement.lang || "fa";
+    const base = locale === "ar" ? 0x0660 : 0x06f0;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const targets = [];
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const value = node.nodeValue;
+        if (!value || !/\d/.test(value)) continue;
+        const el = node.parentElement;
+        if (el && el.closest("script,style,code,pre,kbd,samp,textarea,input,select,option,svg")) continue;
+        targets.push(node);
+    }
+    for (const node of targets) {
+        node.nodeValue = node.nodeValue.replace(/\d/g, (d) => String.fromCodePoint(base + Number(d)));
+    }
+};
+window.__localizeNodeDigits = localizeDigits;
+const run = () => localizeDigits(document.body);
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+} else {
+    run();
+}
+document.addEventListener("astro:page-load", run);
+})();
+</script>
+
+<script is:inline>
+(function(){
 const showIfScrolled = () => {
 const b = window.__bttBtn;
 if (b) b.classList.toggle("show", window.scrollY > 400);
