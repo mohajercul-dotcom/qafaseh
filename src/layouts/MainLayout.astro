@@ -4,14 +4,27 @@ import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import IconFromFile from "../components/icons/IconFromFile.astro";
 import { getUi } from "../i18n/index.js";
-import { localizePath, switchLocalePath } from "../lib/i18n.js";
+import { localizePath, switchLocalePath, locales } from "../lib/i18n.js";
 
 const locale = Astro.currentLocale;
 const t = getUi(locale);
 const isRTL = locale === "ar" || locale === "fa" || locale === "ur";
 
-const title = t.siteTitle;
-const description = t.siteDescription;
+const props = Astro.props || {};
+const pageTitle = props.title || "";
+const title = pageTitle ? `${pageTitle} — ${t.siteTitle}` : t.siteTitle;
+const description = props.description || t.siteDescription;
+
+const siteBase = (import.meta.env.SITE || "https://qafaseh.vercel.app").replace(/\/+$/, "");
+const og = props.og || {};
+const ogTitle = og.title || title;
+const ogDesc = og.description || description;
+const ogType = og.type || "website";
+const ogImage = og.image ? (og.image.startsWith("http") ? og.image : siteBase + og.image) : "";
+const ogUrl = og.url || siteBase + Astro.url.pathname;
+const ogLocales = { fa: "fa_IR", ar: "ar_SA", ur: "ur_PK" };
+const ogLocale = ogLocales[locale] || "fa_IR";
+const ogAlt = locales.filter((l) => l !== locale).map((l) => ogLocales[l]).join(",");
 
 const switchPaths = {
     fa: switchLocalePath(Astro.url.pathname, locale, "fa"),
@@ -45,6 +58,19 @@ const switchPaths = {
 <title>{title}</title>
 
 <meta name="description" content={description} />
+
+<meta property="og:title" content={ogTitle} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={ogUrl} />
+<meta property="og:description" content={ogDesc} />
+<meta property="og:site_name" content={t.siteTitle} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:locale:alternate" content={ogAlt} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={ogDesc} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
 
 </head>
 

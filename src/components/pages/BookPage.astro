@@ -34,11 +34,18 @@ const firstParagraph = (() => {
         .filter((p) => p.trim() && !p.trim().startsWith("#") && !p.trim().startsWith("---"));
     const first = paragraphs[0] || "";
     return first
+        .replace(/\n/g, " ")
         .replace(/[#*_`~\[\]]/g, "")
         .replace(/\^\d+/g, "")
         .replace(/https?:\/\/[^\s)]+/g, "")
         .trim();
 })();
+
+const ogImage = book.data.cover
+    ? (book.data.cover.startsWith("http") ? book.data.cover : siteBase + book.data.cover)
+    : "";
+const ogDesc = bookDescription(book, locale) || firstParagraph || t.siteDescription;
+const ogUrl = siteBase + canonicalUrl;
 
 const downloadSources = [
     { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram, short: t.book.dlTelegram },
@@ -66,6 +73,17 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>{book.data.title} — {t.siteTitle}</title>
             <link rel="canonical" href={canonicalUrl} />
+            <meta name="description" content={ogDesc} />
+            <meta property="og:title" content={book.data.title} />
+            <meta property="og:type" content="book" />
+            <meta property="og:url" content={ogUrl} />
+            <meta property="og:description" content={ogDesc} />
+            <meta property="og:site_name" content={t.siteTitle} />
+            {ogImage && <meta property="og:image" content={ogImage} />}
+            <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+            <meta name="twitter:title" content={book.data.title} />
+            <meta name="twitter:description" content={ogDesc} />
+            {ogImage && <meta name="twitter:image" content={ogImage} />}
             <meta http-equiv="refresh" content={`0; url=${localizedUrl}`} />
             <script is:inline data-url={localizedUrl}>
                 const el = document.currentScript;
@@ -82,7 +100,17 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
         </body>
     </html>
 ) : (
-    <MainLayout>
+    <MainLayout
+        title={book.data.title}
+        description={ogDesc}
+        og={{
+            title: book.data.title,
+            description: ogDesc,
+            type: "book",
+            image: ogImage,
+            url: ogUrl,
+        }}
+    >
 
         <Fragment slot="pagefind-meta">
         <span data-pagefind-meta="title" style="display:none">{book.data.title}</span>
@@ -370,17 +398,18 @@ const setupFootnotes = () => {
         });
     });
 
-    const fallbackCopy = (text, done) => {
-        if (!text) return done(false);
+    const syncCopy = (text) => {
+        if (!text) return false;
         const ta = document.createElement("textarea");
+        ta.setAttribute("readonly", "");
+        ta.contentEditable = "true";
         ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.top = "-10000px";
-        ta.style.left = "0";
-        ta.style.width = "1px";
-        ta.style.height = "1px";
+        ta.style.cssText =
+        "position:fixed;top:0;left:-9999px;right:auto;width:1px;height:1px;padding:0;border:0;font-size:16px;opacity:0;-webkit-user-select:all;user-select:all;";
         document.body.appendChild(ta);
-        ta.focus();
+        const sel = window.getSelection();
+        const prev = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+        ta.focus({ preventScroll: true });
         ta.select();
         ta.setSelectionRange(0, ta.value.length);
         let ok = false;
@@ -390,22 +419,32 @@ const setupFootnotes = () => {
             ok = false;
         }
         document.body.removeChild(ta);
-        done(ok && text.length > 0);
+        if (prev && sel) {
+            sel.removeAllRanges();
+            sel.addRange(prev);
+        }
+        return ok;
     };
 
-    const writeClipboard = (text, done) => {
-        window.focus();
+    const copyText = (text, done) => {
         if (text == null || text.length === 0) return done(false);
+        let ok = false;
+        try {
+            ok = syncCopy(text);
+        } catch (err) {
+            ok = false;
+        }
+        if (ok) return done(true);
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => done(true)).catch(() => fallbackCopy(text, done));
+            navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(false));
         } else {
-            fallbackCopy(text, done);
+            done(false);
         }
     };
 
     copyBtn.onclick = (e) => {
         e.stopPropagation();
-        writeClipboard(fullText, (ok) => {
+        copyText(fullText, (ok) => {
             if (!ok) {
                 copyBtn.textContent = errLabel;
                 setTimeout(() => (copyBtn.textContent = copyLabel), 1200);
