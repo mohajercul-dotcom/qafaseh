@@ -333,8 +333,8 @@ const setupFootnotes = () => {
     const arrow = tooltip.querySelector(".fn-arrow");
 
     const textOf = (ref) => {
-        const id = ref.id.replace("fnref-", "fn-");
-        const li = document.getElementById(id);
+        const target = (ref.getAttribute("href") || "").replace(/^#/, "") || ref.id.replace("fnref-", "fn-");
+        const li = document.getElementById(target);
         if (!li) return "";
         const clone = li.cloneNode(true);
         const backref = clone.querySelector("a[data-footnote-backref]");
@@ -342,7 +342,7 @@ const setupFootnotes = () => {
         clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
         const sources = clone.querySelectorAll(".footnote-sources > li");
         if (sources.length) {
-            return Array.from(sources).map((src) => src.textContent.trim()).join("\n");
+            return Array.from(sources).map((src) => src.textContent.trim().replace(/^•\s*/, "")).join("\n");
         }
         return clone.textContent.replace(/\s*↩\s*$/, "").trim();
     };
@@ -366,7 +366,7 @@ const setupFootnotes = () => {
         const showBelow = spaceAbove < tooltipH + 70 && window.innerHeight - rect.bottom < tooltipH + 70;
         const top = showBelow
             ? Math.max(12, Math.min(rect.bottom + 10, window.innerHeight - tooltipH - 12))
-            : Math.max(12, rect.top - tooltipH - 10);
+            : Math.max(12, Math.min(rect.top - tooltipH - 10, window.innerHeight - tooltipH - 12));
         tooltip.classList.toggle("below", showBelow);
         tooltip.style.left = left + "px";
         tooltip.style.top = top + "px";
@@ -400,13 +400,11 @@ const setupFootnotes = () => {
         if (!text) return false;
         const ta = document.createElement("textarea");
         ta.setAttribute("readonly", "");
-        ta.contentEditable = "true";
+        ta.setAttribute("tabindex", "-1");
         ta.value = text;
         ta.style.cssText =
-        "position:fixed;top:10px;left:10px;width:1px;height:1px;padding:0;border:0;font-size:16px;opacity:0;-webkit-user-select:all;user-select:all;";
+        "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;margin:0;border:0;outline:none;font-size:16px;opacity:0;background:transparent;-webkit-user-select:text;user-select:text;";
         document.body.appendChild(ta);
-        const sel = window.getSelection();
-        const prev = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
         ta.focus({ preventScroll: true });
         ta.select();
         ta.setSelectionRange(0, ta.value.length);
@@ -417,41 +415,23 @@ const setupFootnotes = () => {
             ok = false;
         }
         document.body.removeChild(ta);
-        if (prev && sel) {
-            sel.removeAllRanges();
-            sel.addRange(prev);
+        if (document.activeElement && document.activeElement === ta) {
+            (document.body || document.documentElement).focus();
         }
         return ok;
     };
 
     const copyText = (text, done) => {
         if (text == null || text.length === 0) return done(false);
-        let settled = false;
-        const finish = (ok) => {
-            if (settled) return;
-            settled = true;
-            done(ok);
-        };
 
-        let asyncUsed = false;
-        if (navigator.clipboard && window.isSecureContext) {
-            asyncUsed = true;
-            navigator.clipboard.writeText(text).then(() => finish(true)).catch(() => {
-                let ok = false;
-                try {
-                    ok = syncCopy(text);
-                } catch (err) {
-                    ok = false;
-                }
-                finish(ok);
-            });
+        const modernAvailable = !!navigator.clipboard && !!navigator.clipboard.writeText && (window.isSecureContext !== false);
+        if (modernAvailable) {
+            navigator.clipboard.writeText(text)
+                .then(() => done(true))
+                .catch(() => done(syncCopy(text)));
+            return;
         }
-
-        try {
-            if (syncCopy(text)) return finish(true);
-        } catch (err) {}
-
-        if (!asyncUsed) finish(false);
+        done(syncCopy(text));
     };
 
     copyBtn.onclick = (e) => {
@@ -592,13 +572,17 @@ transform:translateY(0) scale(1);
 
 .fn-text{
 display:block;
-padding:10px 14px 6px;
+padding:14px 14px 8px;
 font-size:12.5px;
 line-height:1.9;
 font-weight:500;
 color:var(--gray);
 text-align:right;
 white-space:pre-line;
+max-height:38vh;
+overflow-y:auto;
+overscroll-behavior:contain;
+-webkit-overflow-scrolling:touch;
 }
 
 .fn-footer{
