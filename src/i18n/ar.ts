@@ -135,7 +135,7 @@ export const uiAr: UiDict = {
         download: "تحميل الكتاب من...",
         downloadVerb: "تحميل",
         fromTelegram: "من تيليغرام",
-        fromArchive: "من الأرشيف",
+        fromArchive: "من Archive",
         fromServer: "من الخادم",
         dlTelegram: "تيليغرام",
         dlArchive: "الأرشيف",

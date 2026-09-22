@@ -135,7 +135,7 @@ export const uiUr: UiDict = {
         download: "کتاب ڈاؤن لوڈ کریں",
         downloadVerb: "ڈاؤن لوڈ",
         fromTelegram: "ٹیلیگرام سے",
-        fromArchive: "آرکائیو سے",
+        fromArchive: "Archive سے",
         fromServer: "سرور سے",
         dlTelegram: "ٹیلیگرام",
         dlArchive: "آرکائیو",

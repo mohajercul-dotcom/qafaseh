@@ -134,7 +134,7 @@ export const uiFa: UiDict = {
         download: "دانلود کتاب از...",
         downloadVerb: "دانلود",
         fromTelegram: "از تلگرام",
-        fromArchive: "از آرشیو",
+        fromArchive: "از Archive",
         fromServer: "از سرور",
         dlTelegram: "تلگرام",
         dlArchive: "آرشیو",
