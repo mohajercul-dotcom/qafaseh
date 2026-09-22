@@ -403,7 +403,7 @@ const setupFootnotes = () => {
         ta.contentEditable = "true";
         ta.value = text;
         ta.style.cssText =
-        "position:fixed;top:0;left:-9999px;right:auto;width:1px;height:1px;padding:0;border:0;font-size:16px;opacity:0;-webkit-user-select:all;user-select:all;";
+        "position:fixed;top:10px;left:10px;width:1px;height:1px;padding:0;border:0;font-size:16px;opacity:0;-webkit-user-select:all;user-select:all;";
         document.body.appendChild(ta);
         const sel = window.getSelection();
         const prev = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
@@ -426,18 +426,32 @@ const setupFootnotes = () => {
 
     const copyText = (text, done) => {
         if (text == null || text.length === 0) return done(false);
-        let ok = false;
-        try {
-            ok = syncCopy(text);
-        } catch (err) {
-            ok = false;
-        }
-        if (ok) return done(true);
+        let settled = false;
+        const finish = (ok) => {
+            if (settled) return;
+            settled = true;
+            done(ok);
+        };
+
+        let asyncUsed = false;
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(false));
-        } else {
-            done(false);
+            asyncUsed = true;
+            navigator.clipboard.writeText(text).then(() => finish(true)).catch(() => {
+                let ok = false;
+                try {
+                    ok = syncCopy(text);
+                } catch (err) {
+                    ok = false;
+                }
+                finish(ok);
+            });
         }
+
+        try {
+            if (syncCopy(text)) return finish(true);
+        } catch (err) {}
+
+        if (!asyncUsed) finish(false);
     };
 
     copyBtn.onclick = (e) => {
