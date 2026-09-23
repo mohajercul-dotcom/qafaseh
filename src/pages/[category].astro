@@ -2,7 +2,7 @@
 import CategoryPage from "../components/pages/CategoryPage.astro";
 
 export function getStaticPaths() {
-    const categories = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+    const categories = ["shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"];
     return categories.map((category) => ({ params: { category }, props: { category, locale: "fa" } }));
 }
 

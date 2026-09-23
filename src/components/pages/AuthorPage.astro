@@ -10,7 +10,7 @@ import { localizePath, bookDescription, bookSiteLang } from "../../lib/i18n.js";
 const { name, locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
-const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"];
 const collections = categoryKeys.map((key) => ({ name: key, label: t.menu[key].label }));
 
 const all = await allBooks();

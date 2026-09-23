@@ -17,7 +17,10 @@ server: ""
 format: ""
 cover: ""
 
-categories: [""]
+categories: [
+    # همهٔ دسته‌های معتبر (دقیقاً همین انگلیسی) — فقط یکی را نگه دار:
+    "shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"
+]
 
 today: false
 recommended: false

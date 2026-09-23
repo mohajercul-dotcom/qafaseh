@@ -52,7 +52,7 @@
 | atheism | `elhad-l/d.svg` | `ar/elhad-l/d.svg` | `ur/elhad-l/d.svg` | الحاد | الإلحاد | الحاد |
 | aqeedah | `aqideh-l/d.svg` | `ar/aqideh-l/d.svg` | `ur/aqideh-l/d.svg` | عقیده | العقيدة | عقیدہ |
 | adyan | `adyan-l/d.svg` | `ar/adyan-l/d.svg` | `ur/adyan-l/d.svg` | ادیان | الأديان | ادیان |
-| maqabeh | `makateb-l/d.svg` | `ar/makateb-l/d.svg` | `ur/makateb-l/d.svg` | مکاتب فکری | المذاهب الفكرية | فکری مکاتب |
+| nazaheb | `makateb-l/d.svg` | `ar/makateb-l/d.svg` | `ur/makateb-l/d.svg` | مکاتب فکری | المذاهب الفكرية | فکری مکاتب |
 | fraq | `feraq-l/d.svg` | `ar/feraq-l/d.svg` | `ur/feraq-l/d.svg` | فرق | الفرق | فرقے |
 | daavat | `davat-l/d.svg` | `ar/davat-l/d.svg` | `ur/davat-l/d.svg` | دعوت | الدعوة | دعوت |
 

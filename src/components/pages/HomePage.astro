@@ -17,7 +17,7 @@ const totalBooks = localBooks.length;
 const authorNames = new Set(localBooks.map((b) => normalizeAuthor(b.data.author)));
 const totalAuthors = authorNames.size;
 
-const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"];
 const counts = {};
 for (const key of categoryKeys) counts[key] = localBooks.filter((b) => b.category === key).length;
 
@@ -865,7 +865,7 @@ transition:transform .4s ease;
 &.atheism{ background:linear-gradient(160deg,#2b2f36,#101318); }
 &.aqeedah{ background:linear-gradient(160deg,#6b4f1d,#3a2a0d); }
 &.adyan{ background:linear-gradient(160deg,#4a5d3a,#23301c); }
-&.maqabeh{ background:linear-gradient(160deg,#5b3a6b,#2c1a36); }
+&.nazaheb{ background:linear-gradient(160deg,#5b3a6b,#2c1a36); }
 &.fraq{ background:linear-gradient(160deg,#6b1d3a,#380d1e); }
 &.daavat{ background:linear-gradient(160deg,#1d6b55,#0d382c); }
 

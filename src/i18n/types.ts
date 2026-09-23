@@ -1,4 +1,4 @@
-export type CategoryKey = "shiite" | "atheism" | "aqeedah" | "adyan" | "maqabeh" | "fraq" | "daavat";
+export type CategoryKey = "shiite" | "atheism" | "aqeedah" | "adyan" | "nazaheb" | "fraq" | "daavat";
 
 export interface UiDict {
     siteTitle: string;

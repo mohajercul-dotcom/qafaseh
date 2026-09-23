@@ -9,7 +9,7 @@ import { localizePath, toLocaleDigits, bookSiteLang, localizeAsset } from "../..
 const { locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
-const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+const categoryKeys = ["shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"];
 
 const all = (await allBooks()).filter((b) => bookSiteLang(b) === locale);
 

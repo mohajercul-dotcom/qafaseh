@@ -4,7 +4,7 @@ import { bookSiteLang } from "./i18n.js";
 
 const langNames = ["fa", "ar", "ur"];
 
-export const categoryNames = ["shiite", "atheism", "aqeedah", "adyan", "maqabeh", "fraq", "daavat"];
+export const categoryNames = ["shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"];
 
 export function bookCategories(book) {
     if (!Array.isArray(book.data?.categories)) return [];
