@@ -342,7 +342,7 @@ const setupFootnotes = () => {
         clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
         const sources = clone.querySelectorAll(".footnote-sources > li");
         if (sources.length) {
-            return Array.from(sources).map((src) => src.textContent.trim().replace(/^•\s*/, "")).join("\n");
+            return Array.from(sources).map((src) => src.textContent.trim().replace(/^•\s*/, "")).filter(Boolean).join("\n");
         }
         return clone.textContent.replace(/\s*↩\s*$/, "").trim();
     };
@@ -374,86 +374,116 @@ const setupFootnotes = () => {
         arrow.style.left = Math.max(8, Math.min(rect.left + rect.width / 2 - left - 7, tooltipW - 16)) + "px";
     };
 
-    let activeRef = null;
-    let fullText = "";
-
     refs.forEach((ref) => {
         if (ref.dataset.fnBound) return;
         ref.dataset.fnBound = "1";
         ref.addEventListener("click", (e) => {
             e.preventDefault();
-            if (activeRef === ref && tooltip.classList.contains("show")) {
+            e.stopPropagation();
+
+            const currentTooltipVisible = tooltip.classList.contains("show");
+            const isSameRef = tooltip.dataset.activeRef === (ref.getAttribute("href") || ref.id);
+
+            if (currentTooltipVisible && isSameRef) {
                 hideTooltip();
-                activeRef = null;
-            } else {
-                if (activeRef) activeRef.classList.remove("active");
-                hideTooltip();
-                showTooltip(ref);
-                ref.classList.add("active");
-                activeRef = ref;
-                fullText = textOf(ref);
+                delete tooltip.dataset.activeRef;
+                return;
             }
+
+            refs.forEach((r) => r.classList.remove("active"));
+            showTooltip(ref);
+            ref.classList.add("active");
+            tooltip.dataset.activeRef = ref.getAttribute("href") || ref.id;
         });
     });
 
-    const syncCopy = (text) => {
-        if (!text) return false;
-        const ta = document.createElement("textarea");
-        ta.setAttribute("readonly", "");
-        ta.setAttribute("tabindex", "-1");
-        ta.value = text;
-        ta.style.cssText =
-        "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;margin:0;border:0;outline:none;font-size:16px;opacity:0;background:transparent;-webkit-user-select:text;user-select:text;";
-        document.body.appendChild(ta);
-        ta.focus({ preventScroll: true });
-        ta.select();
-        ta.setSelectionRange(0, ta.value.length);
-        let ok = false;
+    const copyWithClipboardAPI = async (text) => {
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") return false;
+        if (window.isSecureContext === false) return false;
         try {
-            ok = document.execCommand("copy");
+            await navigator.clipboard.writeText(text);
+            return true;
         } catch (err) {
-            ok = false;
+            return false;
         }
-        document.body.removeChild(ta);
-        if (document.activeElement && document.activeElement === ta) {
-            (document.body || document.documentElement).focus();
-        }
-        return ok;
     };
 
-    const copyText = (text, done) => {
-        if (text == null || text.length === 0) return done(false);
+    const copyWithExecCommand = (text) => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.setAttribute("aria-hidden", "true");
+        textarea.style.cssText =
+            "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;margin:0;border:0;outline:none;opacity:0;pointer-events:none;font-size:16px;";
+        document.body.appendChild(textarea);
+        textarea.focus({ preventScroll: true });
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        let success = false;
+        try {
+            success = document.execCommand("copy");
+        } catch (err) {
+            success = false;
+        }
+        textarea.remove();
+        return success;
+    };
 
-        const modernAvailable = !!navigator.clipboard && !!navigator.clipboard.writeText && (window.isSecureContext !== false);
-        if (modernAvailable) {
-            navigator.clipboard.writeText(text)
-                .then(() => done(true))
-                .catch(() => done(syncCopy(text)));
+    const copyText = async (text) => {
+        if (!text || !text.trim()) return false;
+
+        /*
+         * 1) Legacy synchronous copy FIRST — inside the same user gesture.
+         *    On iOS/WebView execCommand must stay within the tap gesture;
+         *    awaiting Clipboard API first would drop it outside that context.
+         */
+        try {
+            if (copyWithExecCommand(text)) return true;
+        } catch (err) {}
+
+        /*
+         * 2) Modern Clipboard API as fallback.
+         */
+        return copyWithClipboardAPI(text);
+    };
+
+    copyBtn.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (copyBtn.dataset.copying === "1") return;
+        copyBtn.dataset.copying = "1";
+
+        const activeRef = Array.from(refs).find((ref) => ref.classList.contains("active"));
+        const text = activeRef ? textOf(activeRef) : "";
+
+        if (!text) {
+            copyBtn.dataset.copying = "0";
+            copyBtn.textContent = errLabel;
+            setTimeout(() => (copyBtn.textContent = copyLabel), 1200);
             return;
         }
-        done(syncCopy(text));
-    };
 
-    copyBtn.onclick = (e) => {
-        e.stopPropagation();
-        copyText(fullText, (ok) => {
-            if (!ok) {
-                copyBtn.textContent = errLabel;
-                setTimeout(() => (copyBtn.textContent = copyLabel), 1200);
-                return;
-            }
-            copyBtn.textContent = copiedLabel;
-            setTimeout(() => {
-                copyBtn.textContent = copyLabel;
-                hideTooltip();
-                activeRef?.classList.remove("active");
-                activeRef = null;
-            }, 1000);
-        });
+        const ok = await copyText(text);
+        copyBtn.dataset.copying = "0";
+
+        if (!ok) {
+            copyBtn.textContent = errLabel;
+            setTimeout(() => (copyBtn.textContent = copyLabel), 1200);
+            return;
+        }
+
+        copyBtn.textContent = copiedLabel;
+        setTimeout(() => {
+            copyBtn.textContent = copyLabel;
+            hideTooltip();
+            delete tooltip.dataset.activeRef;
+        }, 1000);
     };
 
     const hideFn = () => {
-        document.querySelector(".fn-tooltip")?.classList.remove("show");
+        tooltip.classList.remove("show");
+        delete tooltip.dataset.activeRef;
         document.querySelectorAll("[data-footnote-ref].active").forEach((r) => r.classList.remove("active"));
     };
 
@@ -465,9 +495,7 @@ const setupFootnotes = () => {
             }
         });
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-                hideFn();
-            }
+            if (e.key === "Escape") hideFn();
         });
     }
     if (!window.__fnScrollBound) {
@@ -484,7 +512,7 @@ const setupFootnotes = () => {
 };
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupFootnotes);
+    document.addEventListener("DOMContentLoaded", setupFootnotes, { once: true });
 } else {
     setupFootnotes();
 }
