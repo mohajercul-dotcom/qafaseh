@@ -2,10 +2,9 @@
 import { getUi } from "../i18n/index.js";
 import { bookLocale } from "../lib/i18n.js";
 
-const { title, author, description, language, href, tags = [], cardTags, locale = "fa", recommended = false } = Astro.props;
+const { title, author, description, language, href, tags = [], locale = "fa", recommended = false } = Astro.props;
 const t = getUi(locale);
 const langCode = bookLocale({ data: { language } });
-const chips = cardTags ?? tags;
 ---
 
 <div class="book-card" data-accordion data-tags={tags.join(",")}>
@@ -39,13 +38,6 @@ const chips = cardTags ?? tags;
         <div class="desc-row">
             <a class="more-btn" href={href}>{t.bookCard.more}</a>
         </div>
-        {chips.length > 0 && (
-            <div class="tags-line">
-                {chips.map((tag) => (
-                    <span class="tag-chip">#{tag}</span>
-                ))}
-            </div>
-        )}
     </div>
 
 </div>
@@ -239,24 +231,6 @@ background:var(--accent);
 opacity:.7;
 transform:scale(.95);
 }
-}
-
-.tags-line{
-display:flex;
-flex-wrap:wrap;
-gap:6px;
-border-top:1px solid var(--border);
-padding-top:12px;
-margin-top:12px;
-}
-
-.tag-chip{
-padding:3px 12px;
-border-radius:20px;
-background:color-mix(in srgb, var(--accent) 12%, transparent);
-color:var(--accent);
-font-size:11px;
-font-weight:600;
 }
 
 .recommended-tick{

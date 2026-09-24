@@ -68,7 +68,6 @@ const isRecommendedAuthor = allBooksForAuthor.some((b) => b.data.recommendedAuth
                     language={book.data.language}
                     href={localizePath(locale, `/books/${slugify(book.data.title)}`)}
                     tags={book.data.filterTags ?? book.data.tags ?? []}
-                    cardTags={book.data.cardTags ?? book.data.tags ?? []}
                     locale={locale}
                     recommended={book.data.recommended}
                 />

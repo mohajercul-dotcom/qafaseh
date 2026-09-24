@@ -35,7 +35,6 @@ descriptionAr: ""
 descriptionUr: ""
 
 tags: [""]
-cardTags: [""]
 filterTags: [""]
 
 disclaimer: ""

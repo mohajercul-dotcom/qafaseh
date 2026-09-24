@@ -342,7 +342,7 @@ const setupFootnotes = () => {
         clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
         const sources = clone.querySelectorAll(".footnote-sources > li");
         if (sources.length) {
-            return Array.from(sources).map((src) => src.textContent.trim().replace(/^•\s*/, "")).filter(Boolean).join("\n");
+            return Array.from(sources).map((src) => src.textContent.trim()).filter(Boolean).join("\n");
         }
         return clone.textContent.replace(/\s*↩\s*$/, "").trim();
     };

@@ -25,7 +25,6 @@ const bookSchema = z.object({
     descriptionUr: z.string().optional(),
     categories: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
-    cardTags: z.array(z.string()).optional(),
     filterTags: z.array(z.string()).optional(),
     disclaimer: z.string().optional(),
     shareText: z.string().optional(),
