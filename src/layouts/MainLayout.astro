@@ -15,7 +15,7 @@ const pageTitle = props.title || "";
 const title = pageTitle ? `${pageTitle} — ${t.siteTitle}` : t.siteTitle;
 const description = props.description || t.siteDescription;
 
-const siteBase = (import.meta.env.SITE || "https://qafaseh.vercel.app").replace(/\/+$/, "");
+const siteBase = (import.meta.env.SITE || "https://www.qafaseh.us").replace(/\/+$/, "");
 const og = props.og || {};
 const ogTitle = og.title || title;
 const ogDesc = og.description || description;

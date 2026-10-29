@@ -1,4 +1,4 @@
-# robots.txt — https://qafaseh.vercel.app
+# robots.txt — https://www.qafaseh.us
 # ═══════════════════════════════════════════
 
 # ─── اجازه خزش به همه ربات‌ها ───
@@ -13,7 +13,7 @@ Disallow: /page/
 Disallow: /*?*
 
 # ─── فایل سایت‌مپ ───
-Sitemap: https://qafaseh.vercel.app/sitemap-index.xml
+Sitemap: https://www.qafaseh.us/sitemap-index.xml
 
 # ─── کاهش سرعت خزش ربات‌ها (اختیاری) ───
 # Crawl-delay: 1

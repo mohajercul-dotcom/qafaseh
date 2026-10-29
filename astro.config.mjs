@@ -6,7 +6,7 @@ import { footnoteBulletsPlugin } from './src/md/footnoteBullets.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://qafaseh.vercel.app',
+  site: 'https://www.qafaseh.us',
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'load',
@@ -31,7 +31,7 @@ export default defineConfig({
       lastmod: new Date(),
       serialize(item) {
         // صفحه اصلی اولویت بالاتر
-        if (item.url === 'https://qafaseh.vercel.app/') {
+        if (item.url === 'https://www.qafaseh.us/') {
           item.priority = 1.0;
           item.changefreq = 'daily';
         }
