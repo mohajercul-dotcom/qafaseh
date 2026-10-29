@@ -506,6 +506,11 @@ $card-grads: (#c44536, #8a2e22), (#2c7a68, #1a4d41), (#b67c3c, #7a5328), (#5b629
   }
 }
 
+/* Qafaseh card: match the dominant background tone of its logo. */
+.grid > a:nth-child(2) .card-bg-pastel {
+  background: #cdb99b;
+}
+
 .card-overlay {
   position: absolute;
   top: 33.333%;
@@ -1037,6 +1042,14 @@ body.dark .modal .modal-close {
   &:active { transform: scale(0.97); }
 }
 
+.download-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .download-icon { width: 18px; height: 18px; color: #fff; }
 
 /* ─── Links ─── */
@@ -1377,8 +1390,8 @@ body.dark .modal .modal-close {
   .grid { grid-template-columns: 1fr; gap: 10px; }
   .card-pastel { height: auto; flex-direction: row; align-items: stretch; justify-content: flex-start; }
   .card-pastel .card-section-top { flex: none; width: 33%; display: flex; align-items: center; justify-content: center; padding: 12px; }
-  .card-pastel .card-logo { padding: 0; width: 100%; }
-  .card-pastel .card-logo img { width: 100%; height: auto; max-height: none; max-width: 100px; }
+  .card-pastel .card-logo { padding: 0; width: 100%; min-height: 96px; display: flex; align-items: center; justify-content: center; }
+  .card-pastel .card-logo img { display: block; width: 100%; height: 96px; max-height: none; max-width: 100px; object-fit: contain; }
   .card-pastel .card-section-btm { flex: 1; display: flex; align-items: center; }
   .card-pastel .card-body {
     padding: 12px 8px 12px 12px;

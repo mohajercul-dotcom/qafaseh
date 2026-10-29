@@ -21,6 +21,11 @@ const { frontmatter, Content } = project;
 const p = frontmatter;
 const hasPdfs = p.pdfs && p.pdfs.filter((f: any) => f.file).length > 0;
 const firstPdf = hasPdfs ? p.pdfs.filter((f: any) => f.file)[0] : null;
+const downloadLinks = [
+  { key: "telegram", label: "تلگرام", href: p.downloads?.telegram ?? p.telegram },
+  { key: "archive", label: "آرشیو", href: p.downloads?.archive ?? p.archive },
+  { key: "server", label: "سرور", href: p.downloads?.server ?? p.server },
+].filter((link: any) => typeof link.href === "string" && link.href.trim() !== "" && link.href !== "#");
 ---
 
 <!doctype html>
@@ -60,6 +65,23 @@ const firstPdf = hasPdfs ? p.pdfs.filter((f: any) => f.file)[0] : null;
         <div class="project-content" id={`${p.slug}-content`}>
           <Content />
         </div>
+
+        {downloadLinks.length > 0 && (
+          <div class="project-download">
+            <div class="download-info">
+              <h4>دریافت کتاب</h4>
+              <p>نسخه‌های موجود این کتاب را دریافت کنید.</p>
+            </div>
+            <div class="download-actions">
+              {downloadLinks.map((link: any) => (
+                <a href={link.href} target="_blank" rel="noopener" class="download-btn" data-download-type={link.key}>
+                  <DownloadIcon class="download-icon" />
+                  <span>{link.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {hasPdfs && (
           <div class="project-download">
