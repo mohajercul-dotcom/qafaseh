@@ -222,12 +222,14 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
 
                         {downloadSources.map((src) => {
                             const disabled = !src.href;
+                            const isServerDownload = src.key === "server";
                             const tip = disabled ? "" : `${t.book.downloadVerb} ${book.data.format || "PDF"} ${src.label}`;
                             return (
                                 <a
                                     class={`dl-btn ${src.cls}${disabled ? " disabled" : ""}`}
                                     href={disabled ? undefined : src.href}
-                                    target="_blank"
+                                    target={isServerDownload || disabled ? undefined : "_blank"}
+                                    download={isServerDownload && !disabled ? true : undefined}
                                     rel="noopener"
                                     aria-disabled={disabled}
                                     data-tip={tip || undefined}
