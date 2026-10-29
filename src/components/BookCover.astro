@@ -1,13 +1,15 @@
 ---
 import { getUi } from "../i18n/index.js";
+import { assetUrl } from "../lib/assets.js";
 
 const { title, author, category, cover, locale = "fa" } = Astro.props;
 const t = getUi(locale);
+const coverSrc = assetUrl(cover);
 ---
 
 {
-    cover ? (
-        <img class="cover-img" src={cover} alt={title} loading="lazy" decoding="async" />
+    coverSrc ? (
+        <img class="cover-img" src={coverSrc} alt={title} loading="lazy" decoding="async" />
     ) : (
         <div class:list={["cover-photo", category]}>
 

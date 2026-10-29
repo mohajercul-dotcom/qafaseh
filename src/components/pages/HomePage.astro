@@ -5,6 +5,7 @@ import { statSync } from "node:fs";
 import { slugify, normalizeAuthor } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
 import { localizePath, toLocaleDigits, bookDescription, bookSiteLang, localizeAsset } from "../../lib/i18n.js";
+import { assetUrl } from "../../lib/assets.js";
 
 const { locale = "fa" } = Astro.props;
 const t = getUi(locale);
@@ -89,7 +90,7 @@ const todayPanels = [];
                 const b = q.shift();
                 const desc = b.data.caption || bookDescription(b, locale);
                 const cover = b.data.cover
-                    ? `<img class="cover-img" src="${escHtml(b.data.cover)}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
+                    ? `<img class="cover-img" src="${escHtml(assetUrl(b.data.cover))}" alt="${escHtml(b.data.title)}" loading="lazy" decoding="async">`
                     : `<div class="cover-photo ${b.category}"><div class="cover-inner"><span class="cover-cat">${escHtml(t.menu[b.category].label)}</span><h2>${escHtml(b.data.title)}</h2><div class="cover-footer"><span class="cover-author">${escHtml(t.home.translatorPrefix)} ${escHtml(b.data.author)}</span></div></div></div>`;
                 todayPanels.push(
     '<div class="today-link">' +

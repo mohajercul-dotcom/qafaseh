@@ -7,6 +7,7 @@ import { render } from "astro:content";
 import { slugify, shortCode } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
 import { localizePath, toLocaleDigits, bookDescription, bookSiteLang } from "../../lib/i18n.js";
+import { assetUrl } from "../../lib/assets.js";
 import IconFromFile from "../icons/IconFromFile.astro";
 import { existsSync } from "node:fs";
 
@@ -41,7 +42,7 @@ const firstParagraph = (() => {
         .trim();
 })();
 
-const ogImage = "";
+const ogImage = assetUrl(book.data.cover);
 const ogDesc = bookDescription(book, locale) || firstParagraph || t.siteDescription;
 const ogUrl = siteBase + canonicalUrl;
 
