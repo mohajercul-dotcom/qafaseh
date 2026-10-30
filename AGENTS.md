@@ -10,26 +10,30 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 ## Assets
 
-Book covers are served from Cloudflare R2 (`qafaseh-assets` bucket) through
-`https://cdn.qafaseh.us`, not from this repository. Pages builds must define the
-`PUBLIC_ASSETS_BASE` variable (production and preview):
+Book covers are served from Cloudflare R2 through `https://cdn.qafaseh.us`, not
+from this repository. All covers live at the root of the `covers` bucket (one
+level, no prefixes). Pages builds must define the `PUBLIC_ASSETS_BASE` variable
+(production and preview):
 
 ```
 PUBLIC_ASSETS_BASE=https://cdn.qafaseh.us
 ```
 
-Frontmatter keeps repo-relative paths (`cover: "/covers/etqadat.png"`); the
-`assetUrl()` helper in `src/lib/assets.js` prefixes them at build time. When the
-variable is unset, files under `public/` are used instead (local development
-works without configuration).
+Frontmatter stores the file name (`cover: "/etqadat.png"`); the `assetUrl()`
+helper in `src/lib/assets.js` prefixes it with the asset base at build time.
+When the variable is unset the path is used as-is, so local development works
+from `public/` without configuration.
 
 Upload or replace a cover with:
 
 ```bash
-npx wrangler r2 object put "qafaseh-assets/covers/<file>" --file "<file>" \
+npx wrangler r2 object put "covers/<file>" --file "<file>" \
   --content-type "image/png" \
   --cache-control "public, max-age=31536000, immutable" --remote
 ```
+
+Old `/covers/<file>` URLs keep working through `public/_redirects`, which sends
+them to `https://cdn.qafaseh.us/<file>` with a 301.
 
 ## Documentation
 

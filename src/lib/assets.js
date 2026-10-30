@@ -3,9 +3,10 @@
 //
 //   PUBLIC_ASSETS_BASE=https://cdn.qafaseh.us
 //
-// Frontmatter keeps using repo-relative paths (`/covers/etqadat.webp`); only the
-// resolved URL changes. When the variable is empty, assets are served from
-// `public/` exactly as before, so local development needs no configuration.
+// Frontmatter stores the file name (`/etqadat.webp`), which matches the object
+// key at the root of the R2 bucket; only the resolved URL changes. When the
+// variable is empty, paths resolve against `public/` exactly as before, so local
+// development needs no configuration.
 const RAW_BASE = import.meta.env.PUBLIC_ASSETS_BASE || "";
 const BASE = RAW_BASE.replace(/\/+$/, "");
 

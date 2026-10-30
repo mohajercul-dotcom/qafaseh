@@ -20,7 +20,7 @@ telegram: "https://t.me/..."                 # دکمه دانلود از تلگ
 archive: "https://archive.org/details/..."   # دکمه دانلود از آرشیو
 server: "https://...internxt.com/..."        # دکمه دانلود از سرور (پولی)
 format: "PDF"                                # اختیاری — فرمت فایل
-cover: "/covers/name.webp"                   # اختیاری — مسیر کاور
+cover: "/name.webp"                   # اختیاری — مسیر کاور
 
 # ───────── دسته‌بندی (الزامی) ─────────
 # فقط همین کلیدها معتبرند و باید دقیقاً همین انگلیسی بیایند، وگرنه کتاب در هیچ دسته‌ای ظاهر نمی‌شود:
@@ -102,7 +102,7 @@ telegram: "https://t.me/..."
 archive: "https://archive.org/details/..."
 server: ""
 format: "PDF"
-cover: "/covers/sham.webp"
+cover: "/sham.webp"
 categories: ["shiite"]
 today: true
 recommended: true
