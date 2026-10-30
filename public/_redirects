@@ -1,1 +1,5 @@
-/covers/*  https://cdn.qafaseh.us/:splat  301
+# Short, conventional sitemap address (Astro emits the index + numbered files).
+/sitemap.xml       /sitemap-index.xml   301
+
+# Covers live on the R2 CDN.
+/covers/*          https://cdn.qafaseh.us/:splat  301

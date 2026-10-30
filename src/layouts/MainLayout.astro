@@ -26,6 +26,15 @@ const ogLocales = { fa: "fa_IR", ar: "ar_SA", ur: "ur_PK" };
 const ogLocale = ogLocales[locale] || "fa_IR";
 const ogAlt = locales.filter((l) => l !== locale).map((l) => ogLocales[l]).join(",");
 
+// One canonical host for every page (www), plus hreflang alternates so Google
+// treats the three language versions as translations of the same page.
+const canonicalUrl = siteBase + Astro.url.pathname;
+const hreflang = { fa: "fa", ar: "ar", ur: "ur" };
+const alternates = locales.map((l) => ({
+    locale: l,
+    href: siteBase + switchLocalePath(Astro.url.pathname, locale, l),
+}));
+
 const switchPaths = {
     fa: switchLocalePath(Astro.url.pathname, locale, "fa"),
     ar: switchLocalePath(Astro.url.pathname, locale, "ar"),
@@ -58,6 +67,17 @@ const switchPaths = {
 <title>{title}</title>
 
 <meta name="description" content={description} />
+<meta name="robots" content={props.noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1"} />
+
+{!props.noindex && (
+    <>
+        <link rel="canonical" href={canonicalUrl} />
+        {alternates.map((alt) => (
+            <link rel="alternate" hreflang={hreflang[alt.locale]} href={alt.href} />
+        ))}
+        <link rel="alternate" hreflang="x-default" href={siteBase + switchLocalePath(Astro.url.pathname, locale, "fa")} />
+    </>
+)}
 
 <meta property="og:title" content={ogTitle} />
 <meta property="og:type" content={ogType} />
@@ -71,6 +91,8 @@ const switchPaths = {
 <meta name="twitter:title" content={ogTitle} />
 <meta name="twitter:description" content={ogDesc} />
 {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+<slot name="head" />
 
 </head>
 

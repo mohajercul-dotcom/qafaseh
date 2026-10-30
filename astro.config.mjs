@@ -25,7 +25,17 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/books/') || page.includes('/books/'),
+      // Keep redirect stubs out of the sitemap: /books/ index pages redirect to
+      // the language home, while /books/<code>/ and legacy file-name slugs
+      // (e.g. Eteghadate_Fereghe) only forward to the canonical page.
+      filter: (page) => {
+        const segments = new URL(page).pathname.split('/').filter(Boolean);
+        const last = segments[segments.length - 1] || '';
+        if (last === 'books') return false;
+        if (/^[a-z0-9]{5}$/.test(last)) return false;
+        if (last.includes('_')) return false;
+        return true;
+      },
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),

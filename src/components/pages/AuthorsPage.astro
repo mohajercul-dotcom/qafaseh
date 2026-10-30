@@ -34,9 +34,11 @@ for (const book of all) {
 const authorList = [...authors.values()].sort((a, b) => a.name.localeCompare(b.name, locale));
 ---
 
-<MainLayout>
+<MainLayout title={t.menu.authors.label} description={t.authors.desc}>
 
     <section class="page-hero">
+
+        <h1 class="sr-only">{t.menu.authors.label}</h1>
 
         <div class="page-icon">
             <img class="icon-light" src={localizeAsset(locale, "/icons/nevisande-l.svg")} alt={t.menu.authors.label} />

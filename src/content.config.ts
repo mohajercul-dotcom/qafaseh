@@ -3,6 +3,9 @@ import { glob } from "astro/loaders";
 
 const bookSchema = z.object({
     title: z.string(),
+    // Latin transliteration used for <title>, <h1> and structured data, so the
+    // book can be found by English queries while the page stays in its language.
+    titleEn: z.string().optional(),
     author: z.string(),
     translator: z.string().optional(),
     pages: z.number().optional(),

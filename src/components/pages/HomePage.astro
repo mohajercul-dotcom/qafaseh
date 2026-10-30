@@ -10,6 +10,8 @@ import { assetUrl } from "../../lib/assets.js";
 const { locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
+const siteBase = (import.meta.env.SITE || "https://www.qafaseh.us").replace(/\/+$/, "");
+
 const books = await allBooks();
 
 const localBooks = books.filter((b) => bookSiteLang(b) === locale);
@@ -114,7 +116,38 @@ const todayPanels = [];
 }
 ---
 
-<MainLayout>
+<MainLayout title={t.seo.homeTitle} description={t.seo.homeDescription}>
+
+    <Fragment slot="head">
+        <script
+            type="application/ld+json"
+            set:html={JSON.stringify({
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "WebSite",
+                        "@id": `${siteBase}/#website`,
+                        name: t.siteTitle,
+                        alternateName: "Qafaseh",
+                        url: `${siteBase}/`,
+                        description: t.seo.homeDescription,
+                        inLanguage: ["fa", "ar", "ur"],
+                        publisher: { "@id": `${siteBase}/#organization` },
+                    },
+                    {
+                        "@type": "Organization",
+                        "@id": `${siteBase}/#organization`,
+                        name: t.siteTitle,
+                        alternateName: "Qafaseh",
+                        url: `${siteBase}/`,
+                        logo: `${siteBase}/icons/Light.svg`,
+                    },
+                ],
+            })}
+        />
+    </Fragment>
+
+    <h1 class="sr-only">{t.seo.homeTitle} — {t.siteTitle}</h1>
 
     <section class="hero">
 

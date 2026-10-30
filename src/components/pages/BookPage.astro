@@ -15,6 +15,9 @@ const { book, mode = "page", locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
 const category = book.category;
+// Latin transliteration is used for <title>/<h1>; the original title stays
+// visible underneath and in structured data.
+const seoTitle = book.data.titleEn?.trim() || book.data.title;
 const canonicalSlug = slugify(book.data.title);
 const bookLang = bookSiteLang(book);
 const canonicalUrl = localizePath(bookLang, `/books/${canonicalSlug}`);
@@ -22,7 +25,9 @@ const localizedUrl = canonicalUrl;
 const shortSlug = shortCode(book.id + book.data.title);
 const siteBase = import.meta.env.SITE || Astro.url.origin;
 const shortUrl = new URL(`/books/${shortSlug}`, siteBase).href;
-const siteUrl = siteBase + canonicalUrl;
+// Absolute canonical URL, with the trailing slash Astro emits for directory pages.
+const siteUrl = (siteBase + canonicalUrl).replace(/\/+$/, "") + "/";
+const absPath = (path) => (siteBase + localizePath(locale, path)).replace(/\/+$/, "") + "/";
 
 const { Content } = await render(book);
 
@@ -44,7 +49,7 @@ const firstParagraph = (() => {
 
 const ogImage = assetUrl(book.data.cover);
 const ogDesc = bookDescription(book, locale) || firstParagraph || t.siteDescription;
-const ogUrl = siteBase + canonicalUrl;
+const ogUrl = siteUrl;
 
 const downloadSources = [
     { key: "telegram", href: book.data.telegram, cls: "tg", label: t.book.fromTelegram, short: t.book.dlTelegram },
@@ -70,17 +75,18 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
         <head>
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>{book.data.title} — {t.siteTitle}</title>
-            <link rel="canonical" href={canonicalUrl} />
+            <title>{seoTitle} — {t.siteTitle}</title>
+            <meta name="robots" content="noindex, follow" />
+            <link rel="canonical" href={siteUrl} />
             <meta name="description" content={ogDesc} />
-            <meta property="og:title" content={book.data.title} />
+            <meta property="og:title" content={seoTitle} />
             <meta property="og:type" content="book" />
             <meta property="og:url" content={ogUrl} />
             <meta property="og:description" content={ogDesc} />
             <meta property="og:site_name" content={t.siteTitle} />
             {ogImage && <meta property="og:image" content={ogImage} />}
             <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
-            <meta name="twitter:title" content={book.data.title} />
+            <meta name="twitter:title" content={seoTitle} />
             <meta name="twitter:description" content={ogDesc} />
             {ogImage && <meta name="twitter:image" content={ogImage} />}
             <meta http-equiv="refresh" content={`0; url=${localizedUrl}`} />
@@ -100,10 +106,10 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
     </html>
 ) : (
     <MainLayout
-        title={book.data.title}
+        title={seoTitle}
         description={ogDesc}
         og={{
-            title: book.data.title,
+            title: seoTitle,
             description: ogDesc,
             type: "book",
             image: ogImage,
@@ -118,12 +124,58 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
         {book.data.translator && <span data-pagefind-meta="translator" style="display:none">{book.data.translator}</span>}
         </Fragment>
 
+        <Fragment slot="head">
+            <script
+                type="application/ld+json"
+                set:html={JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Book",
+                    name: seoTitle,
+                    alternateName: book.data.title,
+                    url: ogUrl,
+                    description: ogDesc,
+                    image: ogImage || undefined,
+                    inLanguage: { fa: "fa", ar: "ar", ur: "ur" }[locale] || "fa",
+                    bookFormat: "https://schema.org/EBook",
+                    numberOfPages: book.data.pages || undefined,
+                    author: { "@type": "Person", name: book.data.author },
+                    publisher: { "@id": `${siteBase}/#organization` },
+                    genre: t.menu[category]?.label || undefined,
+                })}
+            />
+            <script
+                type="application/ld+json"
+                set:html={JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                        {
+                            "@type": "ListItem",
+                            position: 1,
+                            name: t.nav.home,
+                            item: absPath("/"),
+                        },
+                        {
+                            "@type": "ListItem",
+                            position: 2,
+                            name: t.menu[category]?.label || category,
+                            item: absPath(`/${category}`),
+                        },
+                        { "@type": "ListItem", position: 3, name: seoTitle, item: ogUrl },
+                    ],
+                })}
+            />
+        </Fragment>
+
         <div class="book-layout">
 
             <section class="book-main">
 
                 <div class="title-row">
-                    <h1>{book.data.title}</h1>
+                    <div class="title-text">
+                        <h1 lang="en" dir="ltr">{seoTitle}</h1>
+                        <p class="book-title-original" dir="auto">{book.data.title}</p>
+                    </div>
                     <TextSizeToggle target=".content" />
                 </div>
 
@@ -794,11 +846,24 @@ justify-content:space-between;
 gap:16px;
 margin-bottom:18px;
 
+.title-text{
+flex:1;
+min-width:0;
+}
+
 h1{
 font-size:25px;
 font-weight:900;
-line-height:1.5;
-flex:1;
+line-height:1.4;
+overflow-wrap:anywhere;
+}
+
+.book-title-original{
+margin-top:6px;
+font-size:15px;
+font-weight:500;
+line-height:1.9;
+color:var(--gray);
 }
 
 :global(.text-size){

@@ -3,6 +3,11 @@ export type CategoryKey = "shiite" | "atheism" | "aqeedah" | "adyan" | "nazaheb"
 export interface UiDict {
     siteTitle: string;
     siteDescription: string;
+    seo: {
+        homeTitle: string;
+        homeDescription: string;
+        faqDescription: string;
+    };
     lang: {
         fa: string;
         ar: string;

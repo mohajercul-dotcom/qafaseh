@@ -34,7 +34,7 @@ const total = allBooksForAuthor.length;
 const isRecommendedAuthor = allBooksForAuthor.some((b) => b.data.recommendedAuthor);
 ---
 
-<MainLayout>
+<MainLayout title={name} description={t.authors.desc}>
 
     <section class="author-header">
 

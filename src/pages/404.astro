@@ -1,0 +1,46 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="صفحه پیدا نشد" description="این صفحه وجود ندارد یا جابه‌جا شده است." noindex>
+
+    <section class="not-found">
+
+        <h1>صفحه پیدا نشد</h1>
+
+        <p>نشانی‌ای که باز کرده‌اید وجود ندارد یا جابه‌جا شده است.</p>
+
+        <a class="home-link" href="/">بازگشت به خانه</a>
+
+    </section>
+
+</MainLayout>
+
+<style lang="scss">
+
+.not-found{
+padding:80px 0;
+text-align:center;
+
+h1{
+font-size:34px;
+font-weight:900;
+}
+
+p{
+margin-top:14px;
+color:var(--gray);
+}
+
+.home-link{
+display:inline-block;
+margin-top:26px;
+padding:10px 22px;
+border-radius:999px;
+background:var(--accent);
+color:#fff;
+font-weight:700;
+}
+}
+
+</style>

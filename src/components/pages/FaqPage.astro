@@ -8,9 +8,11 @@ const t = getUi(locale);
 const faq = getFaq(locale);
 ---
 
-<MainLayout>
+<MainLayout title={t.nav.faq} description={t.seo.faqDescription}>
 
     <section class="page-hero">
+
+        <h1 class="sr-only">{t.nav.faq}</h1>
 
         <div class="page-icon">
             <img class="icon-light" src={localizeAsset(locale, "/icons/faq-l.svg")} alt={t.faqAlt} />
