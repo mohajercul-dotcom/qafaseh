@@ -8,6 +8,7 @@ import { slugify, shortCode } from "../../lib/books.js";
 import { getUi } from "../../i18n/index.js";
 import { localizePath, toLocaleDigits, bookDescription, bookSiteLang } from "../../lib/i18n.js";
 import { assetUrl } from "../../lib/assets.js";
+import { bookTitleEn } from "../../lib/bookTitlesEn.js";
 import IconFromFile from "../icons/IconFromFile.astro";
 import { existsSync } from "node:fs";
 
@@ -15,9 +16,9 @@ const { book, mode = "page", locale = "fa" } = Astro.props;
 const t = getUi(locale);
 
 const category = book.category;
-// Latin transliteration is used for <title>/<h1>; the original title stays
-// visible underneath and in structured data.
-const seoTitle = book.data.titleEn?.trim() || book.data.title;
+// Latin transliteration is used for <title>/<h1>; the visible heading stays the
+// original title (see src/lib/bookTitlesEn.js).
+const seoTitle = bookTitleEn(book);
 const canonicalSlug = slugify(book.data.title);
 const bookLang = bookSiteLang(book);
 const canonicalUrl = localizePath(bookLang, `/books/${canonicalSlug}`);

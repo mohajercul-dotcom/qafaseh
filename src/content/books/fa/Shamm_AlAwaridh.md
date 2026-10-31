@@ -1,6 +1,5 @@
 ---
 title: "شمّ العوارض فی ذمّ الروافض"
-titleEn: "Shamm al-Awaridh fi Dhamm al-Rawafidh"
 author: "ملا علی قاری"
 language: "العربية"
 pages: 258

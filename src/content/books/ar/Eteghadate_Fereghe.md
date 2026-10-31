@@ -1,6 +1,5 @@
 ---
 title: "اعتقادات فرق المسلمين والمشركين"
-titleEn: "Eteghadat Feregh al-Muslimin wa al-Mushrikin"
 author: "فخرالدين الرازي"
 language: "العربية"
 pages: 224

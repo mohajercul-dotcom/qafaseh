@@ -5,6 +5,7 @@ import TagFilter from "../TagFilter.astro";
 import { booksInCategory, categoryNames } from "../../lib/paths.js";
 import { slugify } from "../../lib/books.js";
 import { buildTagFilters } from "../../lib/buildTagFilters.js";
+import { bookTitleEn } from "../../lib/bookTitlesEn.js";
 import { getUi } from "../../i18n/index.js";
 import { localizePath, bookDescription, localizeAsset } from "../../lib/i18n.js";
 
@@ -57,7 +58,7 @@ const pageUrl = absPageUrl(`/${category}`);
                     itemListElement: books.map((book, i) => ({
                         "@type": "ListItem",
                         position: i + 1,
-                        name: book.data.titleEn?.trim() || book.data.title,
+                        name: bookTitleEn(book),
                         url: absPageUrl(`/books/${slugify(book.data.title)}`),
                     })),
                 },

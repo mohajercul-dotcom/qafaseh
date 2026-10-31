@@ -1,6 +1,5 @@
 ---
 title: "الأجوبة الفاخرة عن الأسئلة الفاجرة"
-titleEn: "Al-Ajwiba al-Fakhira an al-Asila al-Fajira"
 author: "شهاب الدين القرافي"
 language: "العربية"
 pages: 200

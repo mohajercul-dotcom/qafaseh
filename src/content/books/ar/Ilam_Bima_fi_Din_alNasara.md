@@ -1,6 +1,5 @@
 ---
 title: "الإعلام بما في دين النصارى من الفساد والأوهام"
-titleEn: "Al-Ilam bima fi Din al-Nasara min al-Fasad wa al-Awham"
 author: "ابن المزين القرطبي"
 language: "العربية"
 pages: 504
