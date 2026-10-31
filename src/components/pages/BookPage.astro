@@ -173,8 +173,10 @@ const hasIcon = (key) => existsSync(new URL(`../../../public/icons/${key}.svg`, 
 
                 <div class="title-row">
                     <div class="title-text">
-                        <h1 lang="en" dir="ltr">{seoTitle}</h1>
-                        <p class="book-title-original" dir="auto">{book.data.title}</p>
+                        {/* English transliteration stays in the markup for search engines, but the
+                            visible heading is the original title, matching the rest of the design. */}
+                        <h1 class="sr-only" lang="en">{seoTitle}</h1>
+                        <p class="book-title" dir="auto">{book.data.title}</p>
                     </div>
                     <TextSizeToggle target=".content" />
                 </div>
@@ -858,12 +860,11 @@ line-height:1.4;
 overflow-wrap:anywhere;
 }
 
-.book-title-original{
-margin-top:6px;
-font-size:15px;
-font-weight:500;
-line-height:1.9;
-color:var(--gray);
+.book-title{
+font-size:25px;
+font-weight:900;
+line-height:1.4;
+overflow-wrap:anywhere;
 }
 
 :global(.text-size){
