@@ -19,7 +19,7 @@ cover: ""
 
 categories: [
     # همهٔ دسته‌های معتبر (دقیقاً همین انگلیسی) — فقط یکی را نگه دار:
-    "shiite", "atheism", "aqeedah", "adyan", "nazaheb", "fraq", "daavat"
+    "shiite", "atheism", "aqeedah", "adyan", "mazaheb", "fraq", "daavat"
 ]
 
 today: false

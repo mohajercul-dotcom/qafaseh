@@ -28,7 +28,7 @@ cover: "/name.webp"                   # اختیاری — مسیر کاور
 #   atheism    ← الحاد
 #   aqeedah    ← عقیده
 #   adyan      ← ادیان
-#   nazaheb    ← مکاتب فکری
+#   mazaheb    ← مکاتب فکری
 #   fraq       ← فرقه‌ها
 #   daavat     ← دعوت
 categories: ["shiite"]    # الزامی — بدون آن کتاب نمایش داده نمی‌شود
