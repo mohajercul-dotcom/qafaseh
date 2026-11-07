@@ -2,7 +2,7 @@
 title: "اعتقادات فرق المسلمين والمشركين"
 author: "فخرالدين الرازي"
 language: "العربية"
-pages: 224
+pages: 112
 volumes: 1
 format: "PDF"
 cover: "/etqadat.png"
